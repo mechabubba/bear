@@ -2,7 +2,13 @@
 
 sandplate is a boilerplate/template discord.js bot and a sandbox for new ideas/testing stuff.
 
-### invites
+## trello
+
+the trello board is publically viewable
+
+https://trello.com/b/nHqrWfYR/sandplate
+
+## invites
 
 the bot account itself is private for the time being.
 
