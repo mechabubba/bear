@@ -1,0 +1,9 @@
+{
+  "version": "a01",
+  "token": "",
+  "logging": {
+    "comment": "You can control which log levels are enabled via these booleans",
+    "": false,
+  },
+  "censorSensitiveLogs": true
+}
