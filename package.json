@@ -1,7 +1,7 @@
 {
   "name": "sandplate",
   "version": "1.0.0",
-  "description": "",
+  "description": "sandplate is a boilerplate/template discord.js bot and a sandbox for new ideas/testing",
   "main": "index.js",
   "scripts": {
     "test": "run.bat"
