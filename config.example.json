@@ -1,9 +1,25 @@
 {
-  "version": "a01",
+  "//": [],
   "token": "",
-  "logging": {
-    "comment": "You can control which log levels are enabled via these booleans",
-    "": false,
-  },
-  "censorSensitiveLogs": true
+  "logger": {
+    "//": [
+      "Enable/disable log levels via the booleans",
+      "You can also change whether timestamps are enabled, and their format"
+    ],
+    "fatal": true,
+    "error": true,
+    "warn": true,
+    "info": true,
+    "ready": true,
+    "msg": true,
+    "cmd": true,
+    "debug": true,
+    "trace": true,
+    "none": true,
+    "timestamp": {
+      "//": "https://momentjs.com/docs/#/displaying/format/",
+      "enabled": true,
+      "format": "YY-MM-DD hh:mm:ss a"
+    }
+  }
 }
