@@ -1,20 +1,24 @@
 {
   "name": "sandplate",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "sandplate is a boilerplate/template discord.js bot and a sandbox for new ideas/testing",
   "main": "index.js",
   "scripts": {
     "test": "run.bat"
   },
   "author": "https://github.com/06000208",
-  "license": "ISC",
+  "license": "Unlicense",
   "dependencies": {
     "chalk": "^2.4.2",
     "discord.js": "^11.5.1",
     "dot-prop": "^5.2.0",
     "filehound": "^1.17.3",
+    "fs-extra": "^8.1.0",
+    "fs-jetpack": "^2.2.3",
+    "lodash": "^4.17.15",
     "moment": "^2.24.0",
-    "node-cache": "^5.0.1",
+    "node-cache": "^5.0.2",
     "node-persist": "^3.0.5"
-  }
+  },
+  "devDependencies": {}
 }
