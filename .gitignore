@@ -1,5 +1,12 @@
 node_modules
 .vscode
+.env
 config.json
-temp.js
+*/config.json
 run.bat
+data/*
+!data/.gitkeep
+temp/*
+!temp/.gitkeep
+storage/*
+!storage/.gitkeep
