@@ -10,7 +10,7 @@ It's purpose is essentially to be the "basics" of your discord.js bot- this incl
 - Event handler/framework with reloadable events
 - Ability to login either with a persisted token (stored in config.json) or non-persisted (command prompt argument)
 
-### Documentation (& a forewarning to developers)
+### Documentation (& a forewarning to aspiring developers)
 
 However, it's purpose is **not** to skip learning how to code these things- In fact, to use sandplate properly, you will need to understand how they're implemented, along with how to use them, and I don't use the word "understand" lightly.
 
