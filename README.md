@@ -1,6 +1,6 @@
 # Sandplate
 
-Sandplate is a boilerplate/template discord.js bot, and a sandbox for new ideas/concepts/testing.
+Sandplate is a boilerplate/template discord.js bot, and can be used as a sandbox for new ideas, concepts, and testing.
 
 It's purpose is essentially to be the "basics" of your discord.js bot- this includes, but is not limited to:
 
