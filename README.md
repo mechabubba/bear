@@ -16,7 +16,7 @@ However, it's purpose is **not** to skip learning how to code these things- In f
 
 That said, for programmers, the barrier to entry will be very small- The project will launch when it reaches v1.0.0 internally, which includes fully fledged documentation :)
 
-If you don't know javascript, or have never programmed before, then please read [this](https://github.com/06000208/sandplate/wiki/Resources#learning-javascript)
+If you don't know JavaScript, you're in the process of learning the language, or have never programmed before, then please read [this](https://github.com/06000208/sandplate/wiki/Resources#learning-javascript)!
 
 ## Invites
 
