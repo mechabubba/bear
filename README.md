@@ -31,4 +31,4 @@ The bot account itself is private for the time being. After the project reaches 
 | Link | Role? | Permission Bitwise |
 | ---- | ----- | ------------------ |
 | [Invite](https://discordapp.com/oauth2/authorize?client_id=642469616932880395&amp;scope=bot) | Won't create a role | |
-| [Invite](https://discordapp.com/oauth2/authorize?client_id=642469616932880395&amp;scope=bot&amp;permissions=104188992) | Creates a bot managed role with basic non-administrative permissions | `104188992` |
+| [Invite](https://discordapp.com/oauth2/authorize?client_id=642469616932880395&amp;scope=bot&amp;permissions=104188992) | Creates a bot managed role with basic non-administrative permissions | [104188992](https://discordapi.com/permissions.html#104188992) |
