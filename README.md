@@ -1,14 +1,19 @@
 # Sandplate
 
-Sandplate is a boilerplate/template discord.js bot, and can be used as a sandbox for new ideas, concepts, and testing.
+Sandplate is a boilerplate/template discord.js bot, and can be used as a bot "base" to expand upon or as a sandbox for trying out news ideas, concepts, and testing.
 
 It's purpose is essentially to be the "basics" of your discord.js bot- this includes, but is not limited to:
 
 - Improved console logging (timestamps and logging levels/labels)
-- Command handler/framework with reloadable commands
-- Message parser to run commands
-- Event handler/framework with reloadable events
+- Handlers for Commands and Events
+- Live reloadable commands, events, and listeners
+- Both handlers support multiple commands/listeners within a single "module"
+- Message parser that supports configurable prefix(s) and mention prefix
+- Comes with a full set of commands for pinging, shutting down the bot, changing bot username, avatar, etc
 - Ability to login either with a persisted token (stored in config.json) or non-persisted (command prompt argument)
+- Batch script for running & automatically restarting the bot
+
+This way, you don't need to write these things yourself- they're already made, the wheel already reinvented, and you can pull fixes and improvements from sandplate as they occur.
 
 ### Documentation (& a forewarning to aspiring developers)
 
