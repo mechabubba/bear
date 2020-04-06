@@ -3,7 +3,6 @@ node_modules
 .env
 config.json
 */config.json
-run.bat
 data/*
 !data/.gitkeep
 temp/*
