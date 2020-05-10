@@ -4,7 +4,7 @@ Welcome! Firstly, sandplate uses it's [issue section](https://github.com/0600020
 
 At the [bottom of this page](#labels), you can see all of our issue labels along with how they're used.
 
-If you want to report a bug or issue, suggest an enhancement / new feature, or just ask a question, feel free to look and see if an issue for your topic already exists, and if not, open one and label it appropriately!
+If you want to report a bug or issue, suggest an enhancement / new feature, or just ask a question, look and see if an issue for your topic already exists, and if not, open one and label it appropriately!
 
 Aside from sandplate's issue tracker, for real time communication, the preferred way is through [this discord server](https://discord.gg/xErQY6M), in the `#discord` channel.
 
@@ -12,25 +12,23 @@ Aside from sandplate's issue tracker, for real time communication, the preferred
 
 ## Contributing Code
 
-If you want to contribute code and help out directly, great! All forms of contributions are appreciated.
+Want to contribute code and help out directly? Great! All contributions are appreciated.
 
 If you have something specific you want to do, the first step is to find the appropriate issue or open one if it doesn't exist, followed by sharing your intentions to work on it so that others know.
 
-If it's an enhancement or new feature that hasn't had any prior discussion, i.e. you opened the issue, it would be best to wait for a response before starting on it.
+However, If it's an enhancement or new feature that hasn't had any prior discussion, i.e. you opened the issue, it would be best to wait for a response before starting on it.
 
 For everything else, you can generally tell from context when something has been approved and needs doing, but doesn't have anyone working on it at the moment, such as having no one assigned.
 
-If someone's already assigned to the issue, that generally means that they're working on it already, but if you have anything to say or add, feel free to leave a comment!
+When someone's already assigned to the issue, that generally means that they're working on it already, but if you have something to say or want to help, leave a comment!
 
 If you don't have something to specific in mind, but want to help out, these labels are a good place to start:
 
-- [`good first issue`](https://github.com/06000208/sandplate/labels/good%20first%20issue) 
+- [`good first issue`](https://github.com/06000208/sandplate/labels/good%20first%20issue) Issues that are aren't too complex and could be taken care of relatively easily.
 
-  Issues that are aren't too complex and could be taken care of relatively easily.
+- [`help wanted`](https://github.com/06000208/sandplate/labels/help%20wanted) Highlights an issue as needing attention from other developers, such as a bug we can't figure out or something that needs worked on more urgently than other stuff. Usually more complex than the issues that you would find in the former label.
 
-- [`help wanted`](https://github.com/06000208/sandplate/labels/help%20wanted)
-
-  Highlights an issue as needing attention from other developers, such as a bug we can't figure out or something that needs worked on more urgently than other stuff. Usually more complex than the issues that you would find in the former label.
+After you've found something to do and communicated with the rest of us, feel free to fork the repository and make a pull request.
 
 ### ESLint
 
@@ -71,4 +69,3 @@ This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md
 | ![Light Gray](https://satyr.io/64x16/d4d4d4?text=+) | `+.x.x`              | This is part of a new major version (breaking changes)                          |
 | ![White](https://satyr.io/64x16/ffffff?text=+)      | `invalid`            | This doesn't seem right                                                         |
 | ![White](https://satyr.io/64x16/ffffff?text=+)      | `duplicate`          | This issue or pull request already exists     
-
