@@ -69,4 +69,3 @@ This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md
 | ![Light Gray](https://satyr.io/64x16/d4d4d4?text=+) | `+.x.x`              | This is part of a new major version (breaking changes)                          |
 | ![White](https://satyr.io/64x16/ffffff?text=+)      | `invalid`            | This doesn't seem right                                                         |
 | ![White](https://satyr.io/64x16/ffffff?text=+)      | `duplicate`          | This issue or pull request already exists     
-
