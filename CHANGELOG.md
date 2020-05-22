@@ -1,5 +1,29 @@
+
+`0.0.2` / `2020-05-22`
+----------------------
+
+- Folder and app structure changes:
+  - Renamed `events` folders to `listeners` in favor of being more semantically correct
+  - Folders like `listeners` and `commands` will now be located in what they belong to (moved to be within `./bot/`)
+  - Removed `./storage/` folder as it's redundant for the time being, may bring it back in the future
+  - Updated the gitignore files accordingly
+
+- `./modules/log.js`, a logging module for aesthetically pleasing and slightly more useful console logging
+  - Timestamps and colored labels
+  - Implemented using [bind](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind) instead of a wrapper function, preserving expected stack trace behavior
+  - For example usage see [this page](https://github.com/06000208/sandplate/wiki/Log-Module-Usage).
+
+- Created `./index.js`
+  - Intended as the application start point and to be the "core" of the app
+  - Added event listeners for node.js [`process`](https://nodejs.org/api/process.html) events `uncaughtException`, `unhandledRejection`, `rejectionHandled`, `warning`, and `exit` for logging purposes
+  - Version checks for node.js and discord.js, both required to be at least v12.0.0
+
+- Created `./bot.js`, just an empty file to start off with.
+  
+  As a side note, splitting interactions with discord.js and the client off into it's own file like this is a practice that was adopted from how discord.js's [ShardingManager](https://discord.js.org/#/docs/main/stable/class/ShardingManager) works.
+
 `0.0.1` / `2020-05-08`
-------------------
+----------------------
 
 First version! 
 
