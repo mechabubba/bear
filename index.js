@@ -1,4 +1,4 @@
-const log = require("./modules/log.js");
+const log = require("./modules/log");
 const { version } = require("discord.js");
 
 // node.js process event listeners (if you can improve these, please contribute!)
@@ -7,7 +7,7 @@ process.on("uncaughtException", (error, origin) => {
   log.fatal(`${origin},`, error);
   return process.exit(1); // Always let code exit on uncaught exceptions
 });
-process.on("unhandledRejection", (reason, promise) => log.error(`unhandledRejection: ${reason}\n`, promise));
+process.on("unhandledRejection", (reason, promise) => log.error(`unhandledRejection\n`, promise));
 process.on("rejectionHandled", (promise) => log.debug("rejectionHandled\n", promise));
 process.on("warning", (warning) => log.warn(warning));
 process.on("exit", (code) => code === 0 ? log.info("Exiting peacefully") : log.warn("Exiting abnormally with code:", code));
@@ -24,4 +24,4 @@ if (Number(process.version.slice(1).split(".")[0]) < 12) { // version < minVer
 }
 
 // Work in progress
-require("./bot.js");
+require("./bot");
