@@ -1,0 +1,10 @@
+const CommandModule = require("../../modules/CommandModule");
+
+module.exports = new CommandModule({
+  identity: ["ping", "latency"],
+  summary: "Simple connection test",
+  description: "Two latency statistics, the rough time it took to respond and the bot's average heartbeat. Generally used to check if the bot is responsive.",
+}, async function(client, message, content, args) {
+  const reply = await message.channel.send("ping...");
+  reply.edit(`pong!\nresponding took roughly \`${reply.createdTimestamp - message.createdTimestamp}ms\`\naverage heartbeat is around \`${Math.round(client.ws.ping)}ms\``);
+});
