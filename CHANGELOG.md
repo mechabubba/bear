@@ -1,4 +1,4 @@
-`0.0.3` / `2020-06-XX`
+`0.0.3` / `2020-06-16`
 ----------------------
 
 With this update, sandplate can now login!
