@@ -1,6 +1,6 @@
 {
   "name": "sandplate",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "A boilerplate/template discord.js bot",
   "main": "index.js",
   "scripts": {

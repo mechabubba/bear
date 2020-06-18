@@ -1,3 +1,11 @@
+`0.0.4` / `2020-06-18`
+----------------------
+
+- Changed `log.js` to use a wrapper function, included the alternative approach commented out, and simplified the default export to be the same as `log.info()`
+  - This fixes [issue #7](https://github.com/06000208/sandplate/issues/7)
+
+- Removed a broken check from `run.bat` as a temporary fix
+
 `0.0.3` / `2020-06-16`
 ----------------------
 
