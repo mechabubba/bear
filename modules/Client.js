@@ -33,7 +33,7 @@ class Client extends Discord.Client {
 
     /**
      * Arbitrary Collection
-     * @type {Collection<*, *>}
+     * @type {Discord.Collection<*, *>}
      */
     this.cookies = new Discord.Collection();
 
