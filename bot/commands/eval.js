@@ -1,5 +1,4 @@
 const CommandModule = require("../../modules/CommandModule");
-const { lovely } = require("../../modules/miscellaneous");
 const log = require("../../modules/log");
 const { inspect } = require("util");
 const _ = require("lodash");
@@ -12,15 +11,10 @@ Should only be allowed to those who already possess the bot's token.
 const clean = async function(input, token) {
   let value = input;
   if (_.isNil(value)) return null;
-  if (value && value.constructor.name == "Promise") {
+  if (value && value instanceof Promise) {
     value = await value;
   }
-  if (_.isPlainObject(value) || _.isArray(value)) {
-    value = lovely(value, 2, true);
-  } else {
-    if (!_.isString(value)) value = inspect(value);
-    value = `\`\`\`\n${value}\n\`\`\``;
-  }
+  if (!_.isString(value)) value = inspect(value);
   // This next line is just a basic precaution to prevent the bot from accidentally posting it
   // It **does not** make eval safe!
   value = value.replace(token, "password1");
@@ -39,6 +33,7 @@ module.exports = new CommandModule({
   userPermissions: null,
 }, async function(client, message, code, args) {
   if (!code) return message.react(client.config.get("metadata.reactions.negative").value());
+  log.debug(`Code provided to eval from ${message.author.tag}:`, code);
   let cleaned = null;
   try {
     const result = eval(code);
@@ -51,6 +46,6 @@ module.exports = new CommandModule({
     message.react(client.config.get("metadata.reactions.negative").value());
   }
   if (cleaned && cleaned.length <= 1800) {
-    message.channel.send(cleaned);
+    message.channel.send(`\`\`\`\n${cleaned}\n\`\`\``);
   }
 });
