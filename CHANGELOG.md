@@ -10,8 +10,12 @@
   This regards everything in [issue #10](https://github.com/06000208/sandplate/issues/10):
   
   - Loading modules is now noticeably faster
-  - A new handler function, `resolvePath()`, which is essentially a wrapper for `require.resolve()` that takes care of try/catching and returns data using the Response class
+  - A new handler function, `resolvePath()`, which is essentially a wrapper for `require.resolve()` that takes care of try/catching and returns data using the Response class.
   - The four other handler functions now make use of the Response class as what they return, and they have gone through numerous changes and improvements to their logic
+  - `fs-extra` is no longer used to check that files exist, as `resolvePath()` handles that far better and with identical behavior to `require()`
+  - Handling of paths in general has been improved, and paths mapped in collections as well as the `.filePath` property on block instances are the same paths resolved to by the require internals, such as [`require.cache`](https://nodejs.org/api/modules.html#modules_require_cache) or `require.resolve()` This means that everything is far more consistent internally, and that any number of different dynamic paths will work so long as they all resolve to the same path. 
+  
+    You won't need to use `resolvePath()` externally to resolve a path before use, though,, because `unloadModule()` and `requireModule()` already use it themselves internally.
   - The `setup()` handler function has been renamed to `loadDirectory()`
   
   And [issue #11](https://github.com/06000208/sandplate/issues/11):
@@ -28,9 +32,7 @@
 
     For more detail, I would recommend viewing the classes themselves and how `CommandConstruct`, `EventConstruct`, `CommandBlock`, and `ListenerBlock` now extend them.
 
-  As well as these other things:
-  
-  - `firstPrefix` getter for `CommandConstruct` and command name related getters for `CommandBlock` (Issues [#8](https://github.com/06000208/sandplate/issues/8) and [#9](https://github.com/06000208/sandplate/issues/9), respectively)
+- `firstPrefix` getter for `CommandConstruct` and command name related getters for `CommandBlock` (Issues [#8](https://github.com/06000208/sandplate/issues/8) and [#9](https://github.com/06000208/sandplate/issues/9), respectively)
 
 - All modules under `./bot/` have been switched to using `CommandBlock` and `ListenerBlock` accordingly
 
