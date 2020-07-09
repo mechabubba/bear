@@ -1,6 +1,6 @@
 {
   "name": "sandplate",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "A boilerplate/template discord.js bot",
   "main": "index.js",
   "scripts": {
@@ -21,13 +21,13 @@
   "homepage": "https://github.com/06000208/sandplate#readme",
   "dependencies": {
     "bufferutil": "^4.0.1",
-    "chalk": "^4.0.0",
+    "chalk": "^4.1.0",
     "discord.js": "^12.2.0",
     "filehound": "^1.17.4",
     "fs-extra": "^9.0.1",
     "lodash": "^4.17.15",
     "lowdb": "^1.0.0",
-    "moment": "^2.26.0",
+    "moment": "^2.27.0",
     "node-fetch": "^2.6.0",
     "slash": "^3.0.0",
     "utf-8-validate": "^5.0.2"
