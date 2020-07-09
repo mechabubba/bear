@@ -1,3 +1,34 @@
+`0.0.5` / `2020-07-XX`
+----------------------
+
+*The changelog for this version is incomplete/w.i.p and presently being written*
+
+- New `Response` class as a way for functions to return more data to their caller than they could by returning booleans or strings alone
+
+- Overhauled the handler framework and all classes related to modules with lots of improvements! (Issues [#10](https://github.com/06000208/sandplate/issues/10) and [#11](https://github.com/06000208/sandplate/issues/11))
+  - Loading modules is now noticeably faster
+  - Use of the term "Module" for the classes exported by modules has been ditched in favor of "Block", with `BaseModule` becoming  `BaseBlock`, `CommandModule` becoming `CommandBlock`, and so on! This way, the term module only refers to [actual modules](https://nodejs.org/docs/latest-v12.x/api/modules.html#modules_modules), and the terminology of "block" works quite well. You can laso 
+  - The `setup()` handler function has been renamed to `loadDirectory()`
+  - A new handler function, `resolvePath()`, which is essentially a wrapper for `require.resolve()` that takes care of try/catching it and returns data using the Response class
+  - The four handler functions before this update now make use of the Response class as what they return, and they have gone through numerous logical changes
+  - `BaseBlock` and `BaseConstruct` have been logically reworked and now both extend a new class, `Base`.
+ 
+    Before, they were incomplete, and compatibility with the handler framework itself relied upon properties and methods added when extending the classes, but this is no longer the case. For example, BaseConstruct now has `load` and `unload` methods itself.
+  
+    As such, `CommandConstruct` and `EventConstruct` have been reworked as well for compatibility, as this is a breaking change.
+
+    For more detail, I would recommend viewing the classes themselves and how `CommandConstruct`, `EventConstruct`, `CommandBlock`, and `ListenerBlock` now extend them.
+  - Construct instances now have ids and names, as described in issue [#11](https://github.com/06000208/sandplate/issues/11)
+  - `firstPrefix` getter for CommandConstruct and command name related getters for CommandBlock (Issues [#8](https://github.com/06000208/sandplate/issues/8) and [#9](https://github.com/06000208/sandplate/issues/9), respectively)
+
+- All modules under `./bot/` have been switched to using `CommandBlock` and `ListenerBlock` accordingly
+
+- Fixed config properties `commands.directory` and `events.directory` not being used
+
+- Improved `./bot/commands/eval.js`'s check for promises and abandoned code block syntax highlighting in favor of the error resilience gained from always using `util.inspect()`
+
+- Issue [#6](https://github.com/06000208/sandplate/issues/6) changes for `run.bat` (a new check for when npm modules aren't installed alongside bringing back the check for the configuration file now fixed and with with a better response)
+
 `0.0.4` / `2020-06-18`
 ----------------------
 
