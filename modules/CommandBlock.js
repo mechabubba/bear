@@ -1,9 +1,9 @@
-/* eslint-disable no-unused-vars */
-const BaseModule = require("./BaseModule");
-const _ = require("lodash");
+const BaseBlock = require("./BaseBlock");
 const { isArrayOfStrings, isPermissionResolvable } = require("./miscellaneous");
+const _ = require("lodash");
 
 /**
+ * Data regarding the command such as it's names and metadata
  * @typedef {Object} CommandData
  * @property {(string|string[])} identity - The command's name(s)
  * @property {?string} [summary=null] - A sentence about what the command does, should be kept relatively short
@@ -18,27 +18,29 @@ const { isArrayOfStrings, isPermissionResolvable } = require("./miscellaneous");
 
 /**
  * Function used as a command's run method
- * @callback CommandCallback
+ * @callback run
  * @param {Client} client - Bound as the first parameter by CommandConstruct.load()
  * @param {Message} message
  * @param {?string} [content=null]
  * @param {Array} [args=[]]
  * @param {...*}
- * @this CommandModule
  * @todo Should the bound parameter be included?
+ * @todo Is there a way to specify that this callback's this value is an instance of CommandBlock?
  */
 
 /**
- * @extends {BaseModule}
+ * @extends {BaseBlock}
  */
-class CommandModule extends BaseModule {
+class CommandBlock extends BaseBlock {
   /**
    * @param {CommandData} data
-   * @param {CommandCallback} run
+   * @param {run} code
    */
   constructor(data = {}, run) {
     super();
-    CommandModule.validateParameters(data, run);
+    CommandBlock.validateParameters(data, run);
+
+    // Data
 
     /**
      * @type {(string|string[])}
@@ -85,22 +87,56 @@ class CommandModule extends BaseModule {
      */
     this.userPermissions = _.has(data, "userPermissions") && !_.isNil(data.userPermissions) ? data.userPermissions : null;
 
+    // Methods
+    // Note that bind() isn't used here in favor of doing it in CommandConstruct's load method, so that it can bind parameters as well
+
     /**
-     * Function used as the command's code
-     * @type {CommandCallback}
+     * @type {run}
      */
     this.run = run;
-    // Note that bind() isn't used here in favor of doing it in CommandConstruct.load() instead so it can also bind the client
   }
 
-  unload() {
-    return;
+  /**
+   * @type {string}
+   * @readonly
+   */
+  get firstName() {
+    if (_.isArray(this.identity)) {
+      return this.identity[0];
+    } else {
+      return this.identity;
+    }
+  }
+
+  /**
+   * @type {string}
+   * @readonly
+   */
+  get shortestName() {
+    if (_.isArray(this.identity)) {
+      return this.identity.reduce((acc, cur) => acc.length <= cur.length ? acc : cur);
+    } else {
+      return this.identity;
+    }
+  }
+
+  /**
+   * @type {string}
+   * @readonly
+   */
+  get longestName() {
+    if (_.isArray(this.identity)) {
+      return this.identity.reduce((acc, cur) => acc.length < cur.length ? cur : acc);
+    } else {
+      return this.identity;
+    }
   }
 
   /**
    * @param {CommandData} data
-   * @param {CommandCallback} run
+   * @param {run} run
    * @private
+   * @todo May be worth looking into schema based validation
    */
   static validateParameters(data, run) {
     if (!_.isPlainObject(data)) throw new TypeError("Command data parameter must be an Object.");
@@ -133,4 +169,4 @@ class CommandModule extends BaseModule {
   }
 }
 
-module.exports = CommandModule;
+module.exports = CommandBlock;
