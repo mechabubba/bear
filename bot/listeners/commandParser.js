@@ -1,7 +1,7 @@
-const ListenerModule = require("../../modules/ListenerModule");
+const ListenerBlock = require("../../modules/ListenerBlock");
 const _ = require("lodash"); // Used by forAny and resultFromAny
 
-module.exports = new ListenerModule({
+module.exports = new ListenerBlock({
   event: "message",
   once: false,
 }, function(client, message) {

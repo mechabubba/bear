@@ -1,4 +1,4 @@
-const CommandModule = require("../../modules/CommandModule");
+const CommandBlock = require("../../modules/CommandBlock");
 const log = require("../../modules/log");
 const { inspect } = require("util");
 const _ = require("lodash");
@@ -21,7 +21,7 @@ const clean = async function(input, token) {
   return value;
 };
 
-module.exports = new CommandModule({
+module.exports = new CommandBlock({
   identity: ["eval", "js"],
   summary: "Evaluates arbitrary javascript",
   description: "A huge security hole/risk for development purposes: the ability to evaluate arbitrary javascript. Should only be allowed to those who already possess the bot's token.",

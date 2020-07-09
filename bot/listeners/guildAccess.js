@@ -1,4 +1,4 @@
-const ListenerModule = require("../../modules/ListenerModule");
+const ListenerBlock = require("../../modules/ListenerBlock");
 const log = require("../../modules/log");
 const chalk = require("chalk");
 
@@ -8,7 +8,7 @@ const chalk = require("chalk");
 // Refer to documentation in ./modules/defaultConfig.js for info about guild groups
 
 module.exports = [
-  new ListenerModule({
+  new ListenerBlock({
     event: "ready",
     once: false,
   }, function(client) {
@@ -37,7 +37,7 @@ module.exports = [
       }
     }
   }),
-  new ListenerModule({
+  new ListenerBlock({
     event: "guildCreate",
     once: false,
   }, function(client, guild) {

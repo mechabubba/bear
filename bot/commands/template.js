@@ -1,10 +1,10 @@
-const CommandModule = require("../../modules/CommandModule");
+const CommandBlock = require("../../modules/CommandBlock");
 const log = require("../../modules/log");
 
 // all keys other than identity can be set to null or omitted for default value
-// refer to CommandModule.js for documentation
+// refer to CommandBlock.js for documentation
 
-module.exports = new CommandModule({
+module.exports = new CommandBlock({
   identity: "template",
   summary: null,
   description: null,

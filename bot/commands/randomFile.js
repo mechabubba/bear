@@ -1,9 +1,9 @@
-const CommandModule = require("../../modules/CommandModule");
+const CommandBlock = require("../../modules/CommandBlock");
 const { MessageEmbed } = require("discord.js");
 const moment = require("moment");
 const fetch = require("node-fetch");
 
-module.exports = new CommandModule({
+module.exports = new CommandBlock({
   identity: ["file", "wikimedia", "commons", "cc", "wm"],
   summary: "Retrieves a random file (occasionally NSFW)",
   description: "Retrieves a random file from [Wikimedia Commons](https://commons.wikimedia.org/wiki/Main_Page). This, rarely, will contain NSFW or graphic content.",

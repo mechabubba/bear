@@ -1,6 +1,6 @@
-const CommandModule = require("../../modules/CommandModule");
+const CommandBlock = require("../../modules/CommandBlock");
 
-module.exports = new CommandModule({
+module.exports = new CommandBlock({
   identity: ["ping", "latency"],
   summary: "Simple connection test",
   description: "Two latency statistics, the rough time it took to respond and the bot's average heartbeat. Generally used to check if the bot is responsive.",

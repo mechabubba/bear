@@ -1,6 +1,6 @@
-const CommandModule = require("../../modules/CommandModule");
+const CommandBlock = require("../../modules/CommandBlock");
 
-module.exports = new CommandModule({
+module.exports = new CommandBlock({
   identity: "example",
 }, function(client, message, content, args) {
   if (!content) return message.channel.send(`hello world, ${message.author.tag}!`);
