@@ -3,17 +3,12 @@ const { SnowflakeUtil, Util } = require("discord.js");
 /**
  * @abstract
  */
-class BaseModule {
+class Base {
   constructor() {
     /**
      * @type {Snowflake}
      */
     this.id = SnowflakeUtil.generate();
-
-    /**
-     * @type {?string}
-     */
-    this.filePath = null;
   }
 
   /**
@@ -37,4 +32,4 @@ class BaseModule {
   }
 }
 
-module.exports = BaseModule;
+module.exports = Base;
