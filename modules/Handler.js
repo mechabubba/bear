@@ -33,12 +33,12 @@ class Handler {
         log.error("[resolvePath]", error);
       }
     }
-    if (!_.has(obj, "value") || !_.isString(obj.value)) {
-      obj.success = false;
-      obj.message = "Something went wrong while resolving path, but didn't result in an error";
-    } else {
+    if (_.has(obj, "value") && _.isString(obj.value)) {
       obj.success = true;
       obj.message = "Path successfully resolved";
+    } else if (!_.has(obj, "error")) {
+      obj.success = false;
+      obj.message = "Something went wrong while resolving path, but didn't result in an error";
     }
     return new Response(obj);
   }
@@ -71,7 +71,7 @@ class Handler {
       }
       blocks = true;
     }
-    return new Response({ message: `Unloaded ${cache ? `"${target}" from the cache` : ""}${cache && blocks ? " and " : ""}${blocks ? (target ? "the blocks mapped to it" : "all anonymous blocks") : ""} from ${construct.name}`, success: true });
+    return new Response({ message: `Unloaded ${cache ? `"${target}" from the cache` : ""}${cache && blocks ? " and " : ""}${blocks ? (target ? "the blocks mapped to that path" : "all anonymous blocks") : ""} from the ${construct.name}`, success: true });
   }
 
   /**
