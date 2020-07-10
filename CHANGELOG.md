@@ -13,10 +13,11 @@
   - A new handler function, `resolvePath()`, which is essentially a wrapper for `require.resolve()` that takes care of try/catching and returns data using the Response class.
   - The four other handler functions now make use of the Response class as what they return, and they have gone through numerous changes and improvements to their logic
   - `fs-extra` is no longer used to check that files exist, as `resolvePath()` handles that far better and with identical behavior to `require()`
-  - Handling of paths in general has been improved, and paths mapped in collections as well as the `.filePath` property on block instances are the same paths resolved to by the require internals, such as [`require.cache`](https://nodejs.org/api/modules.html#modules_require_cache) or `require.resolve()` This means that everything is far more consistent internally, and that any number of different dynamic paths will work so long as they all resolve to the same path. 
+  - Handling of paths in general has been improved, and paths mapped in collections as well as the `.filePath` property on block instances are the same paths resolved to by the require internals, such as [`require.cache`](https://nodejs.org/api/modules.html#modules_require_cache) or `require.resolve()` This means that everything is far more consistent internally, and that any number of different dynamic paths will work so long as they all resolve to the same path
   
-    You won't need to use `resolvePath()` externally to resolve a path before use, though,, because `unloadModule()` and `requireModule()` already use it themselves internally.
+    You won't need to use `resolvePath()` externally to resolve a path before use, though, because `unloadModule()` and `requireModule()` already use it themselves internally
   - The `setup()` handler function has been renamed to `loadDirectory()`
+  - Fixed config properties `commands.directory` and `events.directory` not being used by the bot
   
   And [issue #11](https://github.com/06000208/sandplate/issues/11):
 
@@ -24,23 +25,19 @@
   - Construct instances now have ids and names, as described in the above linked issue
   - `BaseBlock`, `BaseConstruct`, `CommandConstruct`, and `EventConstruct` have all been entirely reworked.
   
-    `BaseBlock` and `BaseConstruct` both extend a new class, `Base`, in order to easily share some features such as having snowflake ids, and before, they were mostly incomplete blank slates, with most of the code and logic being in the classes that extended them.
+    `BaseBlock` and `BaseConstruct` both extend a new class, `Base`, in order to easily share some features such as having snowflake ids, and before they were mostly incomplete blank slates, with most (or all) of their code being in the classes that extended them.
     
-    This is no longer the case, with all non-unique code being moved to them and improved upon, with `CommandConstruct` and `EventConstruct` being altered and reworked accordingly.
+    This is no longer the case, with `CommandConstruct` and `EventConstruct` being altered and reworked accordingly. As an example, `BaseConstruct` now has `load` and `unload` methods itself, which the two construct classes call in their own `load` and `unload` methods using `super`.
 
-    As an example, BaseConstruct now has `load` and `unload` methods itself, which the two construct classes call in their own `load` and `unload` methods using `super`.
-
-    For more detail, I would recommend viewing the classes themselves and how `CommandConstruct`, `EventConstruct`, `CommandBlock`, and `ListenerBlock` now extend them.
+    For more detail, I would recommend viewing all the classes themselves.
 
 - `firstPrefix` getter for `CommandConstruct` and command name related getters for `CommandBlock` (Issues [#8](https://github.com/06000208/sandplate/issues/8) and [#9](https://github.com/06000208/sandplate/issues/9), respectively)
 
 - All modules under `./bot/` have been switched to using `CommandBlock` and `ListenerBlock` accordingly
 
-- Fixed config properties `commands.directory` and `events.directory` not being used
-
 - Improved `./bot/commands/eval.js`'s check for promises and abandoned code block syntax highlighting in favor of the error resilience gained from always using `util.inspect()`
 
-- Issue [#6](https://github.com/06000208/sandplate/issues/6) changes for `run.bat` (a new check for when npm modules aren't installed alongside bringing back the check for the configuration file now fixed and with with a better response)
+- [Issue #6](https://github.com/06000208/sandplate/issues/6) changes for `run.bat` (a new check for when npm modules aren't installed alongside bringing back the check for the configuration file now fixed and with with a better response)
 
 `0.0.4` / `2020-06-18`
 ----------------------
