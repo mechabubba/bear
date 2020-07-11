@@ -50,7 +50,7 @@ class Handler {
   static unloadModule(construct, filePath = null) {
     if (!construct) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
-    let target = null, cache = false, blocks = false;
+    let target = null, cache = false, blocks = false, ids = [];
     if (filePath) {
       const resolvedPath = Handler.resolvePath(filePath);
       if (resolvedPath.success && !resolvedPath.error) {
@@ -64,7 +64,7 @@ class Handler {
       }
     }
     if (construct.idsByPath.has(target)) {
-      const ids = construct.idsByPath.get(target);
+      ids = construct.idsByPath.get(target);
       for (const id of ids) {
         if (!construct.cache.has(id)) continue;
         construct.unload(construct.cache.get(id));
@@ -73,12 +73,27 @@ class Handler {
     }
     const obj = { success: true };
     if (blocks || cache) {
-      obj.message = `Unloaded ${cache ? `"${target}" from the cache` : ""}${cache && blocks ? "\n" : ""}${blocks ? (target ? "Unloaded the blocks mapped to that path" : "all anonymous blocks") : ""} from the ${construct.name}`;
+      obj.message = `Unloaded ${cache ? `"${target}" from the cache` : ""}${cache && blocks ? " and " : ""}${blocks ? (target ? `${ids.length} ${ids.length === 1 ? "block" : "blocks"} mapped to that path` : "all anonymous blocks") : ""} from the ${construct.name}`;
     } else {
       obj.message = `Didn't unload anything as "${target}" wasn't cached nor mapped to any blocks`;
     }
     return new Response(obj);
   }
+
+  /**
+   * @param {BaseConstruct} construct
+   * @param {[string]} filePaths
+   * @param {?string} [directoryPath=null]
+   */
+  static unloadMultipleModules(construct, filePaths, directoryPath = null) {
+    if (!construct || !filePaths) return new Response({ message: "Required parameters weren't supplied", success: false });
+    if (!filePaths.length) return new Response({ message: `Unloaded 0/0 modules (No modules to unload, skipped)`, success: true });
+    let successes = 0;
+    for (const filePath of filePaths) {
+      const result = Handler.unloadModule(construct, filePath);
+      if (result.success && !result.error) ++successes;
+    }
+    return new Response({ message: `Unloaded ${successes}/${filePaths.length} modules${directoryPath ? ` in "${directoryPath}"` : ""}`, success: true });
   }
 
   /**
@@ -127,26 +142,38 @@ class Handler {
 
   /**
    * @param {BaseConstruct} construct
+   * @param {[string]} filePaths
+   * @param {?string} [directoryPath=null]
+   */
+  static requireMultipleModules(construct, filePaths, directoryPath = null) {
+    if (!construct || !filePaths) return new Response({ message: "Required parameters weren't supplied", success: false });
+    if (!filePaths.length) return new Response({ message: `Loaded 0/0 modules (No modules to require, skipped)`, success: true });
+    let successes = 0;
+    for (const filePath of filePaths) {
+      const result = Handler.requireModule(construct, filePath);
+      if (result.success && !result.error) ++successes;
+    }
+    return new Response({ message: `Loaded ${successes}/${filePaths.length} modules${directoryPath ? ` in "${directoryPath}"` : ""}`, success: true });
+  }
+
+  /**
+   * @param {BaseConstruct} construct
    * @param {string} directoryPath
    */
-  static async loadDirectory(construct, directoryPath) {
+  static async requireDirectory(construct, directoryPath) {
     if (!construct || !directoryPath) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
-    let files;
+    let filePaths;
     try {
-      files = await filehound.create().paths(directoryPath).ext(".js").find();
+      filePaths = await filehound.create().paths(directoryPath).ext(".js").find();
     } catch (error) {
       log.error(error);
       return new Response({ message: "Error while attempting to scan directory", success: false, error: error });
     }
-    if (_.isNil(files)) return new Response({ message: "Something went wrong while scanning directory but didn't result in an error", success: false });
-    if (!files.length) return new Response({ message: `Nothing to load in "${directoryPath}", skipping`, success: true });
-    let successes = 0;
-    for (const filePath of files) {
-      const result = Handler.requireModule(construct, path.join("../", filePath));
-      if (result.success && !result.error) ++successes;
-    }
-    return new Response({ message: `Loaded ${successes}/${files.length} modules in ${directoryPath}`, success: true });
+    if (_.isNil(filePaths)) return new Response({ message: "Something went wrong while scanning directory but didn't result in an error", success: false });
+    if (!filePaths.length) return new Response({ message: `Nothing to load in "${directoryPath}", skipping`, success: true });
+    filePaths = filePaths.map(filePath => path.join("../", filePath));
+    return Handler.requireMultipleModules(construct, filePaths, directoryPath);
   }
 }
 
