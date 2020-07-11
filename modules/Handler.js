@@ -71,12 +71,18 @@ class Handler {
       }
       blocks = true;
     }
-    return new Response({ message: `Unloaded ${cache ? `"${target}" from the cache` : ""}${cache && blocks ? " and " : ""}${blocks ? (target ? "the blocks mapped to that path" : "all anonymous blocks") : ""} from the ${construct.name}`, success: true });
+    const obj = { success: true };
+    if (blocks || cache) {
+      obj.message = `Unloaded ${cache ? `"${target}" from the cache` : ""}${cache && blocks ? "\n" : ""}${blocks ? (target ? "Unloaded the blocks mapped to that path" : "all anonymous blocks") : ""} from the ${construct.name}`;
+    } else {
+      obj.message = `Didn't unload anything as "${target}" wasn't cached nor mapped to any blocks`;
+    }
+    return new Response(obj);
+  }
   }
 
   /**
    * @param {BaseConstruct} construct
-   * @param {(*|*[])} mod
    * @param {(*|[*])} mod
    * @param {?string} [filePath=null]
    */
