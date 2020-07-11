@@ -10,26 +10,51 @@
   This regards everything in [issue #10](https://github.com/06000208/sandplate/issues/10):
   
   - Loading modules is now noticeably faster
-  - A new handler function, `resolvePath()`, which is essentially a wrapper for `require.resolve()` that takes care of try/catching and returns data using the Response class.
+  - A new handler function, `resolvePath()`, which is essentially a wrapper for `require.resolve()` that takes care of try/catching and returns data using the Response class
+  - Two new handler functions, `unloadMultipleModules()` and `requireMultipleModules()`, which both take an array of file paths and use `unloadModule()` and `requireModule()`, respectively, on each path in the array, allowing for bulk loading or unloading
   - The four other handler functions now make use of the Response class as what they return, and they have gone through numerous changes and improvements to their logic
   - `fs-extra` is no longer used to check that files exist, as `resolvePath()` handles that far better and with identical behavior to `require()`
   - Handling of paths in general has been improved, and paths mapped in collections as well as the `.filePath` property on block instances are the same paths resolved to by the require internals, such as [`require.cache`](https://nodejs.org/api/modules.html#modules_require_cache) or `require.resolve()` This means that everything is far more consistent internally, and that any number of different dynamic paths will work so long as they all resolve to the same path
   
     You won't need to use `resolvePath()` externally to resolve a path before use, though, because `unloadModule()` and `requireModule()` already use it themselves internally
-  - The `setup()` handler function has been renamed to `loadDirectory()`
+  - The `setup()` handler function has been renamed to `requireDirectory()` and now uses `requireMultipleModules()`
   - Fixed config properties `commands.directory` and `events.directory` not being used by the bot
   
   And [issue #11](https://github.com/06000208/sandplate/issues/11):
 
   - Use of the term "Module" for the classes exported by modules has been ditched in favor of "Block", with `BaseModule` becoming  `BaseBlock`, `CommandModule` becoming `CommandBlock`, and so on! This way, the term module only refers to [actual modules](https://nodejs.org/docs/latest-v12.x/api/modules.html#modules_modules), and the terminology of "blocks" for the classes exported by modules works quite well.
   - Construct instances now have ids and names, as described in the above linked issue
-  - `BaseBlock`, `BaseConstruct`, `CommandConstruct`, and `EventConstruct` have all been entirely reworked.
+  - `BaseBlock`, `BaseConstruct`, `CommandConstruct`, and `EventConstruct` have all been entirely reworked
   
-    `BaseBlock` and `BaseConstruct` both extend a new class, `Base`, in order to easily share some features such as having snowflake ids, and before they were mostly incomplete blank slates, with most (or all) of their code being in the classes that extended them.
+    `BaseBlock` and `BaseConstruct` both extend a new class, `Base`, in order to easily share some features such as having snowflake ids, and before they were mostly incomplete blank slates, with most (or all) of their code being in the classes that extended them
     
-    This is no longer the case, with `CommandConstruct` and `EventConstruct` being altered and reworked accordingly. As an example, `BaseConstruct` now has `load` and `unload` methods itself, which the two construct classes call in their own `load` and `unload` methods using `super`.
+    This is no longer the case, with `CommandConstruct` and `EventConstruct` being altered and reworked accordingly. As an example, `BaseConstruct` now has `load` and `unload` methods itself, which the two construct classes call in their own `load` and `unload` methods using `super`
 
-    For more detail, I would recommend viewing all the classes themselves.
+    For more detail, I would recommend viewing all the classes themselves
+
+- A lot of new commands, as described in [issue #5](https://github.com/06000208/sandplate/issues/5)!
+  - `moduleCommands.js` Loading, unloading, and reloading of modules, commands, listeners, and events!
+
+    Usage:
+
+    - `load command/event <path>`
+    - `unload command/event [name/path]`
+    - `reload command/event <name/path>`
+    - `debug command/event [input to test]`
+
+    Examples:
+
+    - `load command ../bot/commands/ping.js`
+    - `load listener ../bot/listeners/startup.js`
+    - `unload command ping`
+    - `unload cmd ping`
+    - `unload c ../bot/commands/ping.js`
+    - `unload commands`
+    - `reload event ready`
+    - `reload e message`
+    - `reload command ping`
+    - `reload command ../bot/commands/ping.js`
+    - `reload l ../bot/listeners/startup.js`
 
 - `firstPrefix` getter for `CommandConstruct` and command name related getters for `CommandBlock` (Issues [#8](https://github.com/06000208/sandplate/issues/8) and [#9](https://github.com/06000208/sandplate/issues/9), respectively)
 
