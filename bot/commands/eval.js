@@ -33,7 +33,7 @@ module.exports = new CommandBlock({
   userPermissions: null,
 }, async function(client, message, code, args) {
   if (!code) return message.react(client.config.get("metadata.reactions.negative").value());
-  log.debug(`Code provided to eval from ${message.author.tag}:`, code);
+  log.debug(`Code provided to eval from ${message.author.tag}:`, "\n" + code);
   let cleaned = null;
   try {
     const result = eval(code);
