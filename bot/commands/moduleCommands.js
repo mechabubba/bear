@@ -63,6 +63,7 @@ module.exports = [
     const constructProperty = determineConstruct(choice);
     if (!constructProperty) return message.channel.send(`Unknown construct "${choice}"\nUsage: \`${this.firstName} ${this.usage}\``);
     const filePath = content.substring(choice.length).trim();
+    if (!filePath.length) return message.channel.send(`A path is required\nUsage: \`${this.firstName} ${this.usage}\``);
     const loadResult = Handler.requireModule(client[constructProperty], filePath);
     return message.channel.send(`\`\`\`\n${loadResult.message}\n\`\`\``);
   }),
