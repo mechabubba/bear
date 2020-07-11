@@ -28,7 +28,7 @@ class BaseConstruct extends Base {
 
     /**
      * Module file paths mapped to arrays containing the ids of blocks originating from that module. If anonymous blocks were loaded, `null` is mapped to an array of their ids
-     * @type {Collection<?string, Snowflake[]>}
+     * @type {Collection<?string, [Snowflake]>}
      */
     this.idsByPath = new Collection();
   }

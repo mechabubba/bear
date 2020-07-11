@@ -5,13 +5,13 @@ const _ = require("lodash");
 /**
  * Data regarding the command such as it's names and metadata
  * @typedef {Object} CommandData
- * @property {(string|string[])} identity - The command's name(s)
+ * @property {(string|[string])} identity - The command's name(s)
  * @property {?string} [summary=null] - A sentence about what the command does, should be kept relatively short
  * @property {?string} [description="No Description Provided"] - Description about what the command does and it's usage, should be kept below 1800 characters
  * @property {?string} [usage=null] - String containing argument usage descriptors
- * @property {?string[]} [scope=["dm", "text", "news"]] - An array of channel types where the command is allowed https://discord.js.org/#/docs/main/stable/class/Channel?scrollTo=type
+ * @property {?[string]} [scope=["dm", "text", "news"]] - An array of channel types where the command is allowed https://discord.js.org/#/docs/main/stable/class/Channel?scrollTo=type
  * @property {?boolean} [nsfw=false] - Whether or not the command is nsfw
- * @property {?(boolean|string|string[])} [locked=false] - Powerful command access control. `false` command is not locked, `true` command is locked, `string` command is locked to a user group name or an account id, `Array` command is locked to any number of group names or account ids
+ * @property {?(boolean|string|[string])} [locked=false] - Powerful command access control. `false` command is not locked, `true` command is locked, `string` command is locked to a user group name or an account id, `Array` command is locked to any number of group names or account ids
  * @property {?PermissionResolvable} [clientPermissions=null] - PermissionResolvable the client must have in the scope of a guild for the command to work
  * @property {?PermissionResolvable} [userPermissions=null] - PermissionResolvable the user of the command must have in the scope of a guild to use the command
  */
@@ -43,7 +43,7 @@ class CommandBlock extends BaseBlock {
     // Data
 
     /**
-     * @type {(string|string[])}
+     * @type {(string|[string])}
      */
     this.identity = data.identity;
 
@@ -63,7 +63,7 @@ class CommandBlock extends BaseBlock {
     this.usage = _.has(data, "usage") && !_.isNil(data.usage) ? data.usage : null;
 
     /**
-     * @type {string[]}
+     * @type {[string]}
      */
     this.scope = _.has(data, "scope") && !_.isNil(data.scope) ? data.scope : ["dm", "text", "news"];
 
@@ -73,7 +73,7 @@ class CommandBlock extends BaseBlock {
     this.nsfw = _.has(data, "nsfw") && !_.isNil(data.nsfw) ? data.nsfw : false;
 
     /**
-     * @type {(boolean|string|string[])}
+     * @type {(boolean|string|[string])}
      */
     this.locked = _.has(data, "locked") && !_.isNil(data.locked) ? data.locked : false;
 

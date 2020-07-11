@@ -77,6 +77,7 @@ class Handler {
   /**
    * @param {BaseConstruct} construct
    * @param {(*|*[])} mod
+   * @param {(*|[*])} mod
    * @param {?string} [filePath=null]
    */
   static loadModule(construct, mod, filePath = null) {

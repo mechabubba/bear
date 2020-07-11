@@ -34,7 +34,7 @@ class CommandConstruct extends BaseConstruct {
 
     /**
      * Module file paths mapped to arrays containing the ids of CommandBlocks originating from that module. If anonymous CommandBlocks were loaded, `null` is mapped to an array of their ids
-     * @type {Collection<?string, Snowflake[]>}
+     * @type {Collection<?string, [Snowflake]>}
      * @name CommandConstruct#idsByPath
      */
 
@@ -107,7 +107,7 @@ class CommandConstruct extends BaseConstruct {
    * @param {string} name
    * @param {Message} Message
    * @param {?string} [content=null]
-   * @param {string[]} [args=[]]
+   * @param {[string]} [args=[]]
    * @param {...*} [passThrough]
    */
   run(name, message, content = null, args = [], ...passThrough) {

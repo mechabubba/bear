@@ -32,19 +32,19 @@ class EventConstruct extends BaseConstruct {
 
     /**
      * Module file paths mapped to arrays containing the ids of ListenerBlocks originating from that module. If anonymous ListenerBlocks were loaded, `null` is mapped to an array of their ids
-     * @type {Collection<?string, Snowflake[]>}
+     * @type {Collection<?string, [Snowflake]>}
      * @name EventConstruct#idsByPath
      */
 
     /**
      * Event names mapped to arrays of ids for ListenerBlocks that target those events
-     * @type {Collection<string, Snowflake[]>}
+     * @type {Collection<string, [Snowflake]>}
      */
     this.idsByEvent = new Collection();
 
     /**
      * Event names mapped to arrays of file paths for modules that add listeners for those events
-     * @type {Collection<string, string[]>}
+     * @type {Collection<string, [string]>}
      */
     this.pathsByEvent = new Collection();
   }
