@@ -44,8 +44,8 @@ if (argv.length !== 0) {
 // Initialize bot
 const init = async function() {
   log.debug("init");
-  const commandLoadResult = await Handler.loadDirectory(client.commands, client.config.get("commands.directory").value());
-  const eventLoadResult = await Handler.loadDirectory(client.events, client.config.get("events.directory").value());
+  const commandLoadResult = await Handler.requireDirectory(client.commands, client.config.get("commands.directory").value());
+  const eventLoadResult = await Handler.requireDirectory(client.events, client.config.get("events.directory").value());
   log.info(commandLoadResult.message);
   log.info(eventLoadResult.message);
   // Ground control to major tom
