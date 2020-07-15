@@ -109,6 +109,7 @@ class CommandConstruct extends BaseConstruct {
    * @param {?string} [content=null]
    * @param {[string]} [args=[]]
    * @param {...*} [passThrough]
+   * @todo This function needs to be fixed up
    */
   run(name, message, content = null, args = [], ...passThrough) {
     if (!name || !message) return;
@@ -145,6 +146,12 @@ class CommandConstruct extends BaseConstruct {
             return true;
           }) === false) return;
         }
+      }
+    }
+    // Correct content to null if it's an empty string (this behavior may be changed in the future)
+    if (content) {
+      if (!content.trim().length) {
+        content = null;
       }
     }
     log.debug(`${chalk.gray("[command]")} ${message.author.tag} ran "${name}${(!content ? "\"" : `" with "${content}"`)}`);
