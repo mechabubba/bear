@@ -6,7 +6,7 @@ const actions = {
   username: ["u", "user", "name", "username"],
   presence: ["p", "presence"],
   status: ["s", "status"],
-  activity: ["activity", "game"],
+  activity: ["activity"],
 };
 const fileTypes = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
 const statuses = {
@@ -15,7 +15,7 @@ const statuses = {
   idle: ["idle", "away", "asleep", "afk", "lazy", "unbindall"],
   dnd: ["dnd", "busy", "do", "do not", "do not disturb", "disturb", "occupied"],
 };
-const activityTypes = ["playing", "watching", "listening"];
+const activityTypes = ["playing", "game", "watching", "video", "listening", "music", "streaming", "twitch"];
 const validateUsername = function(input) {
   if (input.length < 2 || input.length > 32) return false;
   if (input.includes("@")) return false;
@@ -52,7 +52,7 @@ const resolveInputToImage = function(message, input) {
     return null;
   }
 };
-const resolveActivity = function(content, args) {
+const resolveActivity = function(client, content, args) {
   const data = { "activity": { "name": "" } };
   if (!content) return data;
   const type = args[0].toLowerCase();
@@ -60,10 +60,13 @@ const resolveActivity = function(content, args) {
   if (activityTypes.includes(type)) {
     data.activity.name = content.substring(type.length).trim();
     if (!data.activity.name.length) return data;
-    if (type === "watching") {
+    if (type === "watching" || type === "video") {
       data.activity.type = "WATCHING";
-    } else if (type === "listening") {
+    } else if (type === "listening" || type === "music") {
       data.activity.type = "LISTENING";
+    } else if (type === "streaming" || type === "twitch") {
+      data.activity.type = "STREAMING";
+      data.activity.url = "https://twitch.tv/" + client.config.get("metadata.twitch").value();
     }
   }
   if (data.activity.name.length > 128) return null;
@@ -183,14 +186,12 @@ module.exports = [
     userPermissions: null,
   }, async function(client, message, content, args) {
     // Presence
-    if (!content) {
+    if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\`\n<https://discord.js.org/#/docs/main/stable/typedef/PresenceData>`);
+    if (!content.includes("{") || !content.includes("}")) {
       message.react(client.config.get("metadata.reactions.negative").value());
-      return message.channel.send(`No json detected\nUsage: \`${this.firstName} ${this.usage}\`\n<https://discord.js.org/#/docs/main/stable/typedef/PresenceData>`);
+      return message.channel.send(`Input isn't enclosed in curly brackets, valid json is required\nUsage: \`${this.firstName} ${this.usage}\`\n<https://discord.js.org/#/docs/main/stable/typedef/PresenceData>`);
     }
-    let data = content;
-    if (data.startsWith("```")) data = data.substring(3).trim();
-    if (data.startsWith("json")) data = data.substring(4).trim();
-    if (data.endsWith("```")) data = data.slice(0, -3).trim();
+    let data = content.substring(content.indexOf("{"), content.lastIndexOf("}") + 1).trim();
     try {
       data = JSON.parse(data);
     } catch (error) {
@@ -252,7 +253,7 @@ module.exports = [
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     userPermissions: null,
   }, async function(client, message, content, args) {
-    const data = resolveActivity(content, args);
+    const data = resolveActivity(client, content, args);
     if (!data) {
       message.react(client.config.get("metadata.reactions.negative").value());
       return message.channel.send("Activity text must be 128 characters or shorter in length");
