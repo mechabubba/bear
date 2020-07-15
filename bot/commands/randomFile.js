@@ -17,7 +17,7 @@ module.exports = new CommandBlock({
 }, async function(client, message, content, args) {
   if (client.cookies.has(`wm-rate-limit-${message.author.id}`)) {
     if (moment().isBefore(client.cookies.get(`wm-rate-limit-${message.author.id}`))) {
-      return message.react("⏳");
+      return message.react(client.config.get("metadata.reactions.cooldown").value());
     }
   }
   client.cookies.set(`wm-rate-limit-${message.author.id}`, moment().add("10", "s").valueOf());
@@ -36,7 +36,7 @@ module.exports = new CommandBlock({
   if (fileTypes.includes(url.toLowerCase().substring(url.lastIndexOf(".")))) {
     fileEmbed.setImage(url);
   } else {
-    fileEmbed.setDescription("Can't display this file, use the above link to view");
+    fileEmbed.setDescription("Cannot display this file, use the above link to view");
   }
   return message.channel.send(fileEmbed);
 });
