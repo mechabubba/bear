@@ -12,11 +12,13 @@
  * @property {string} events.directory - Path of a folder where modules are located
  * @property {Object} metadata - Metadata for the bot such as configurable visuals, links, and invites
  * @property {ColorResolvable} metadata.color - Embed color used throughout the bot. https://discord.js.org/#/docs/main/master/typedef/ColorResolvable
+ * @property {string} metadata.twitch - Twitch account name used as part of the PresenceData activity.url for the streaming status https://discord.js.org/#/docs/main/stable/typedef/PresenceData
  * @property {Object} metadata.reactions - Reactions used throughout the bot. https://discord.js.org/#/docs/main/master/typedef/EmojiIdentifierResolvable
  * @property {EmojiIdentifierResolvable} metadata.reactions.positive - Emoji representing something positive, yes, confirmation, acceptance
  * @property {EmojiIdentifierResolvable} metadata.reactions.negative - Emoji representing something negative, no, denial, refusal
  * @property {EmojiIdentifierResolvable} metadata.reactions.inquiry - Emoji representing something unknown, questioning, confusion
  * @property {EmojiIdentifierResolvable} metadata.reactions.alert - Emoji representing something that invokes attention, a warning, an alert
+ * @property {EmojiIdentifierResolvable} metadata.reactions.cooldown - Emoji representing something involving time, a cool down, a delay, a rate limit
  * @property {Object} users - User groups, arrays that contain user ids. Null means that group and by extension feature it's for is disabled
  * @property {?[Snowflake]} users.hosts - Represents the people hosting the bot, or more specifically, the people who have access to the bot's token.
  * @property {?[Snowflake]} users.trusted - Trusted users. Just an example group, not relied upon by anything.
@@ -41,11 +43,13 @@ const defaultConfig = {
   },
   "metadata": {
     "color": "#2F3136",
+    "twitch": "bobross",
     "reactions": {
       "positive": "✅",
       "negative": "❎",
       "inquiry": "❔",
       "alert": "❕",
+      "cooldown": "⏳",
     },
   },
   "users": {
