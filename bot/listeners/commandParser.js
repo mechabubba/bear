@@ -15,32 +15,35 @@ module.exports = new ListenerBlock({
   if (users.blocked !== null) {
     if (users.blocked.includes(message.author.id)) return;
   }
-  let content = message.content.trim();
-  let prefixed = false;
+  const input = {
+    prefixed: false,
+  };
+  input.parsed = message.content.trim();
+  input.lowercase = input.parsed.toLowerCase();
   if (config.prefix) {
     if (_.isArray(config.prefix)) {
       for (const prefix of config.prefix) {
-        if (content.startsWith(prefix)) {
-          prefixed = true;
-          content = content.substring(prefix.length).trim();
+        if (input.lowercase.startsWith(prefix)) {
+          input.prefixed = true;
+          input.parsed = input.parsed.substring(prefix.length).trim();
           break;
         }
       }
-    } else if (content.startsWith(config.prefix)) {
-      prefixed = true;
-      content = content.substring(config.prefix.length).trim();
+    } else if (input.lowercase.startsWith(config.prefix)) {
+      input.prefixed = true;
+      input.parsed = input.parsed.substring(config.prefix.length).trim();
     }
   }
-  if (!prefixed) {
+  if (!input.prefixed) {
     if (!config.mentions) return;
-    if (!content.startsWith("<@")) return;
-    if (!RegExp(`^<@!?${client.user.id}>`).test(content)) return;
-    content = content.substring(content.indexOf(">") + 1).trim();
+    if (!input.lowercase.startsWith("<@")) return;
+    if (!RegExp(`^<@!?${client.user.id}>`).test(input.lowercase)) return;
+    input.parsed = input.parsed.substring(input.parsed.indexOf(">") + 1).trim();
   }
-  if (content.length === 0) return;
-  const args = content.split(/[\n\r\s]+/g);
+  if (!input.parsed.length) return;
+  const args = input.parsed.split(/[\n\r\s]+/g);
   const name = args.shift().toLowerCase();
-  content = content.slice(name.length).trim();
-  if (content.length === 0) content = null;
-  client.commands.run(name, message, content, args);
+  input.parsed = input.parsed.slice(name.length).trim();
+  if (!input.parsed.length) input.parsed = null;
+  client.commands.run(name, message, input.parsed, args);
 });
