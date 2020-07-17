@@ -50,8 +50,8 @@ const resolveInputToPaths = function(client, constructProperty, content, choice)
 module.exports = [
   new CommandBlock({
     identity: "load",
-    summary: null,
-    description: null,
+    summary: "Load modules by path",
+    description: "Load command or event modules by file path.",
     usage: "command/event <path>",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -69,8 +69,8 @@ module.exports = [
   }),
   new CommandBlock({
     identity: "unload",
-    summary: null,
-    description: null,
+    summary: "Unload modules by name/path",
+    description: "Unload command or event modules by command name, event name, or file path.",
     usage: "command/event [name/path]",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -87,8 +87,8 @@ module.exports = [
   }),
   new CommandBlock({
     identity: "reload",
-    summary: null,
-    description: null,
+    summary: "Reload modules by name/path",
+    description: "Reloading command or event modules by command name, event name, or file path.",
     usage: "command/event <name/path>",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -105,22 +105,5 @@ module.exports = [
     if (!unloadResult.success || unloadResult.error) return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n\`\`\``);
     const loadResult = _.isArray(pathsResult.value) ? Handler.requireMultipleModules(client[constructProperty], pathsResult.value) : Handler.requireModule(client[constructProperty], pathsResult.value);
     return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${loadResult.message}\n\`\`\``);
-  }),
-  new CommandBlock({
-    identity: "debug",
-    summary: null,
-    description: null,
-    usage: "command/event [input to test]",
-    scope: ["dm", "text", "news"],
-    nsfw: false,
-    locked: false,
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
-  }, function(client, message, content, [choice, args]) {
-    if (!choice) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
-    const constructProperty = determineConstruct(choice);
-    if (!constructProperty) return message.channel.send(`Unknown construct "${choice}"\nUsage: \`${this.firstName} ${this.usage}\``);
-    const pathsResult = resolveInputToPaths(client, constructProperty, content, choice);
-    return message.channel.send(`\`\`\`\n${pathsResult.message}\nResolved Value: ${inspect(pathsResult.value)}\n\`\`\``);
   }),
 ];
