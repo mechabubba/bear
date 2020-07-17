@@ -1,15 +1,10 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const { MessageEmbed } = require("discord.js");
-const querystring = require("querystring");
 const moment = require("moment");
 const fetch = require("node-fetch");
 const fileTypes = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
 const _ = require("lodash");
 
-// action=query &generator=random&grnnamespace=6 &prop=imageinfo&iiprop=url|timestamp&format=json
-// http://commons.wikimedia.org/w/api.php?action=query&&generator=random&grnnamespace=6&prop=imageinfo&iiprop=url|timestamp&format=json
-
-// 21304840
 module.exports = new CommandBlock({
   identity: ["file", "wikimedia", "commons", "cc", "wm"],
   summary: "Retrieves a file from wikimedia (occasionally NSFW)",
