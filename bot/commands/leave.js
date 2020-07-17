@@ -3,8 +3,8 @@ const log = require("../../modules/log");
 
 module.exports = new CommandBlock({
   identity: "leave",
-  summary: null,
-  description: null,
+  summary: "Leave a guild",
+  description: "Instruct the bot to leave specific guilds.",
   usage: "<guild id>",
   scope: ["dm", "text", "news"],
   nsfw: false,
