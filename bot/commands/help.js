@@ -3,7 +3,7 @@ const { MessageEmbed } = require("discord.js");
 const log = require("../../modules/log");
 const _ = require("lodash");
 
-const validator = function(client, command, message) {
+const validator = function(client, message, command) {
   // permissions
   if (message.channel.type !== "dm") {
     if (command.userPermissions) {
@@ -46,23 +46,15 @@ module.exports = new CommandBlock({
   userPermissions: null,
 }, async function(client, message, content, args) {
   if (!content) {
-    // Honestly, command lists shouldn't be done within discord itself if you want to
-    // include detail or summaries as shown below, because it doesn't scale well at all.
-    // It's implemented here regardless to show some real interaction with the CommandConstruct and it's collections.
-    // The preferred alternative would be to have a website, and the below data could be easily exported.
-    const commands = client.commands.cache.filter(command => validator(client, command, message));
-    let text = "📄 Command List\n";
-    commands.forEach((command) => {
-      text += `**-** \`${command.firstName}\` `;
-      if (command.summary) text += command.summary;
-      text += "\n";
-    });
-    text += `🔍 For per command info, use \`${this.firstName} ${this.usage}\``;
-    if (text.length < 1990) {
-      return message.channel.send(text);
-    } else {
-      return log.warn("[help] The command list has exceeded 1990 characters in length and is no longer usable!");
-    }
+    const commands = client.commands.cache.filter(command => validator(client, message, command));
+    const names = commands.map(command => command.firstName);
+    const text = `🔍 For per command info, use \`${this.firstName} ${this.usage}\`\n\`\`\`\n${names.join(", ")}\n\`\`\``;
+    if (text.length > 1900) return log.warn("[help] The command list has exceeded 1990 characters in length and is no longer usable!");
+    const embed = new MessageEmbed()
+      .setTitle("Command List")
+      .setColor(client.config.get("metadata.color").value())
+      .setDescription(text);
+    return message.channel.send(embed);
   } else {
     const name = content.toLowerCase();
     if (!client.commands.index.has(name)) return message.channel.send(`Command \`${content}\` not found`);
@@ -72,7 +64,7 @@ module.exports = new CommandBlock({
       return message.channel.send(`Command \`${content}\` not found`);
     }
     const command = client.commands.cache.get(id);
-    if (!validator(client, command, message)) return message.channel.send(`Command \`${content}\` not found`);
+    if (!validator(client, message, command)) return message.channel.send(`Command \`${content}\` not found`);
     const embed = new MessageEmbed()
       .setTitle(command.firstName)
       .setColor(client.config.get("metadata.color").value())
