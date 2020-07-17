@@ -7,7 +7,7 @@ const _ = require("lodash");
  * @typedef {Object} CommandData
  * @property {(string|[string])} identity - The command's name(s)
  * @property {?string} [summary=null] - A sentence about what the command does, should be kept relatively short
- * @property {?string} [description="No Description Provided"] - Description about what the command does and it's usage, should be kept below 1800 characters
+ * @property {?string} [description=null] - Description about what the command does and it's usage, should be kept below 1800 characters
  * @property {?string} [usage=null] - String containing argument usage descriptors
  * @property {?[string]} [scope=["dm", "text", "news"]] - An array of channel types where the command is allowed https://discord.js.org/#/docs/main/stable/class/Channel?scrollTo=type
  * @property {?boolean} [nsfw=false] - Whether or not the command is nsfw
@@ -53,9 +53,9 @@ class CommandBlock extends BaseBlock {
     this.summary = _.has(data, "summary") && !_.isNil(data.summary) ? data.summary : null;
 
     /**
-     * @type {string}
+     * @type {?string}
      */
-    this.description = _.has(data, "description") && !_.isNil(data.description) ? data.description : "No Description Provided";
+    this.description = _.has(data, "description") && !_.isNil(data.description) ? data.description : null;
 
     /**
      * @type {?string}
