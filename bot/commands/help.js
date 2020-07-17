@@ -48,7 +48,7 @@ module.exports = new CommandBlock({
   if (!content) {
     const commands = client.commands.cache.filter(command => validator(client, message, command));
     const names = commands.map(command => command.firstName);
-    const text = `🔍 For per command info, use \`${this.firstName} ${this.usage}\`\n\`\`\`\n${names.join(", ")}\n\`\`\``;
+    const text = `🔍 To query command info, use \`${this.firstName} ${this.usage}\`\n\`\`\`\n${names.join(", ")}\n\`\`\``;
     if (text.length > 1900) return log.warn("[help] The command list has exceeded 1990 characters in length and is no longer usable!");
     const embed = new MessageEmbed()
       .setTitle("Command List")
