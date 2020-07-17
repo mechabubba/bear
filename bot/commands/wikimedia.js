@@ -1,0 +1,56 @@
+const CommandBlock = require("../../modules/CommandBlock");
+const { MessageEmbed } = require("discord.js");
+const querystring = require("querystring");
+const moment = require("moment");
+const fetch = require("node-fetch");
+const fileTypes = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
+const _ = require("lodash");
+
+// action=query &generator=random&grnnamespace=6 &prop=imageinfo&iiprop=url|timestamp&format=json
+// http://commons.wikimedia.org/w/api.php?action=query&&generator=random&grnnamespace=6&prop=imageinfo&iiprop=url|timestamp&format=json
+
+// 21304840
+module.exports = new CommandBlock({
+  identity: ["file", "wikimedia", "commons", "cc", "wm"],
+  summary: "Retrieves a file from wikimedia (occasionally NSFW)",
+  description: "Query a random or specific file from [Wikimedia Commons](https://commons.wikimedia.org/wiki/Main_Page). This, rarely, will contain NSFW or graphic content.",
+  usage: "[page id]",
+  scope: ["dm", "text", "news"],
+  nsfw: true,
+  locked: false,
+  clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS", "ATTACH_FILES", "ADD_REACTIONS"],
+  userPermissions: null,
+}, async function(client, message, content, args) {
+  if (client.cookies.has(`wm-rate-limit-${message.author.id}`)) {
+    if (moment().isBefore(client.cookies.get(`wm-rate-limit-${message.author.id}`))) {
+      return message.react(client.config.get("metadata.reactions.cooldown").value());
+    }
+  }
+  if (content && !/^\d+$/.test(content)) return message.channel.send(`Cannot query page as \`${content}\` is not a valid page id`);
+  client.cookies.set(`wm-rate-limit-${message.author.id}`, moment().add("10", "s").valueOf());
+  const response = await fetch(`http://commons.wikimedia.org/w/api.php?action=query${content ? "&pageids=" + content : "&generator=random&grnnamespace=6"}&prop=imageinfo&iiprop=url|timestamp&format=json`);
+  const json = await response.json();
+  const page = json.query.pages[Object.keys(json.query.pages)[0]];
+  const embed = new MessageEmbed()
+    .setColor(client.config.get("metadata.color").value())
+    .setFooter(`This has a 10s cool down. Page ID: ${page.pageid}`);
+  if (_.has(page, "missing")) {
+    embed.setTitle("No page").setDescription("The queried page does not exist.");
+    return message.channel.send(embed);
+  }
+  embed.setURL(`https://commons.wikimedia.org/w/index.php?curid=${page.pageid}`);
+  if (!_.has(page, "imageinfo")) {
+    embed.setTitle(page.title).setDescription("The queried page is not a file.");
+    return message.channel.send(embed);
+  }
+  const { timestamp, url } = page.imageinfo[0];
+  let title = page.title.replace(/\.[^/.]+$/, "").substring(5);
+  if (title.length > 200) title = title.substring(0, 200).trim() + "...";
+  embed.setTitle(title).setTimestamp(timestamp);
+  if (fileTypes.includes(url.toLowerCase().substring(url.lastIndexOf(".")))) {
+    embed.setImage(url);
+  } else {
+    embed.setDescription("Cannot display this file, use the above link to view.");
+  }
+  return message.channel.send(embed);
+});
