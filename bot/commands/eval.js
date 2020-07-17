@@ -38,14 +38,15 @@ module.exports = new CommandBlock({
   try {
     const result = eval(code);
     cleaned = await clean(result, client.token);
-    log.debug(`Eval from ${message.author.tag} resulted in:`, result);
     message.react(client.config.get("metadata.reactions.positive").value());
+    log.debug(`Eval from ${message.author.tag} resulted in:`, result);
   } catch (error) {
     cleaned = await clean(error, client.token);
-    log.error(`Eval from ${message.author.tag} resulted in error:`, error);
     message.react(client.config.get("metadata.reactions.negative").value());
+    log.error(`Eval from ${message.author.tag} caused an error:`, error);
+    return message.channel.send(`Failed to evaluate javascript, an error occurred: \`${error.message}\``);
   }
-  if (cleaned && cleaned.length <= 1800) {
+  if (cleaned && cleaned.length <= 1500) {
     message.channel.send(`\`\`\`\n${cleaned}\n\`\`\``);
   }
 });
