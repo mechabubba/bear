@@ -51,7 +51,7 @@ module.exports = [
   new CommandBlock({
     identity: "load",
     summary: "Load modules by path",
-    description: "Load command or event modules by file path.",
+    description: "Load command or event modules by file path. Note that the /modules/ folder is treated as the working directory.",
     usage: "command/event <path>",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -70,7 +70,7 @@ module.exports = [
   new CommandBlock({
     identity: "unload",
     summary: "Unload modules by name/path",
-    description: "Unload command or event modules by command name, event name, or file path.",
+    description: "Unload command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory.",
     usage: "command/event [name/path]",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -88,7 +88,7 @@ module.exports = [
   new CommandBlock({
     identity: "reload",
     summary: "Reload modules by name/path",
-    description: "Reloading command or event modules by command name, event name, or file path.",
+    description: "Reloading command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory.",
     usage: "command/event <name/path>",
     scope: ["dm", "text", "news"],
     nsfw: false,
