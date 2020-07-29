@@ -13,14 +13,11 @@ module.exports = [
     once: false,
   }, function(client) {
     // block list
-    log.debug("checking for blocked guilds");
     const blocked = client.config.get("guilds.blocked").value();
     if (blocked !== null) {
-      log.debug("there is at least one blocked guild");
       const blockedGuilds = client.guilds.cache.array().filter(guild => blocked.includes(guild.id));
       log.debug(blockedGuilds);
       if (blockedGuilds.length) {
-        log.debug("we are in at least one blocked guild");
         for (const guild of blockedGuilds) {
           if (!guild.available) continue;
           log.info(`${chalk.gray("[blocked guild]")} Automatically leaving ${guild.name} (${guild.id})`);
