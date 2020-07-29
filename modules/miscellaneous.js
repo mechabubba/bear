@@ -4,7 +4,7 @@
  */
 
 const { promisify } = require("util");
-const _ = require("lodash");
+const { isArray, isString, isFinite } = require("lodash");
 const { Permissions } = require("discord.js");
 
 /**
@@ -38,9 +38,9 @@ module.exports.lovely = function(object, whitespace = 2, codeBlock = false) {
  * @returns {boolean} Returns `true` if value is a non-empty array that only contains strings, else `false`
  */
 module.exports.isArrayOfStrings = function(value) {
-  if (!_.isArray(value)) return false;
+  if (!isArray(value)) return false;
   if (!value.length) return false;
-  return !value.some(element => !_.isString(element));
+  return !value.some(element => !isString(element));
 };
 
 /**
@@ -49,7 +49,7 @@ module.exports.isArrayOfStrings = function(value) {
  * @returns {boolean} Returns `true` if value is resolvable as a permission, else `false`
  */
 module.exports.isPermissionResolvable = function(value) {
-  if (_.isString(value) || _.isArray(value) || _.isFinite(value) || value instanceof Permissions) {
+  if (isString(value) || isArray(value) || isFinite(value) || value instanceof Permissions) {
     return true;
   } else {
     return false;
@@ -80,7 +80,7 @@ module.exports.collectionArrayFilter = function(collection, key, ...values) {
   if (!values.length) return;
   if (collection.has(key)) {
     const data = collection.get(key);
-    if (!_.isArray(data)) return;
+    if (!isArray(data)) return;
     if (data.length === 1 && values.includes(data[0])) {
       collection.delete(key);
     } else {
@@ -105,7 +105,7 @@ module.exports.collectionArrayFilter = function(collection, key, ...values) {
  * @param {...*} args
  */
 module.exports.forAny = function(callback, value, ...params) {
-  if (_.isArray(value)) {
+  if (isArray(value)) {
     for (const element of value) {
       callback(element, ...params);
     }
