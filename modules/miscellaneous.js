@@ -114,3 +114,12 @@ module.exports.forAny = function(callback, value, ...params) {
   }
 };
 
+/**
+ * Checks whether value is a string that consists of only numeric character
+ * @param {*} value
+ * @returns {boolean} Returns `true` if value is a string with only numeric characters, else `false`
+ */
+module.exports.isNumeric = function(value) {
+  if (!value || !isString(value)) return false;
+  return /^\d+$/.test(value);
+};
