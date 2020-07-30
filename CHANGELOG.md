@@ -38,14 +38,44 @@ The handler framework and all classes related to modules have been overhauled! I
 
 Several new commands as described in [issue #5](https://github.com/06000208/sandplate/issues/5), mostly focused around aiding development or controlling the bot. If you notice anything wrong or done poorly with these commands, please point it out in the discord or make an issue!
 
-- `moduleCommands.js` Loading, unloading, and reloading of modules/commands/listeners/events
+- `help.js` An average help command, list commands or query specific command info
+
+  - `help [command]`
+
+- `leave.js` Instruct the bot to leave a specific guild
+
+  - `leave <guild id>`
+
+- `accessControl.js` Blocking/unblocking users and guilds, and modifying user groups
+
+  - `block user/guild <id>`
+  - `unblock user/guild <id>`
+  - `group <group> [id]`
+
+  Usage Examples:
+
+  - `block user 642469616932880395`
+  - `block guild 273550655673860106`
+  - `unblock user 642469616932880395`
+  - `unblock guild 273550655673860106`
+  - `group hosts`
+  - `group trusted`
+  - `group example`
+  - `group example 642469616932880395`
+    
+    Note the following:
+    
+    - If a group does not exist, it will be created
+    - Adding/removing ids to/from groups works like a toggle
+    - When a guild is blocked, it will be left on the next [`ready`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-ready) or [`guildCreate`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-guildCreate) event
+
+- `moduleCommands.js` Loading, unloading, and reloading of modules, commands, listeners, and events
 
   - `load command/event <path>`
   - `unload command/event [name/path]`
   - `reload command/event <name/path>`
-  - `debug command/event [input to test]`
 
-  <br>
+  Usage Examples:
 
   - `load command ../bot/commands/ping.js`
   - `load listener ../bot/listeners/startup.js`
@@ -58,10 +88,6 @@ Several new commands as described in [issue #5](https://github.com/06000208/sand
   - `reload command ping`
   - `reload command ../bot/commands/ping.js`
   - `reload listener ../bot/listeners/startup.js`
-
-- `leave.js` Instruct the bot to leave a specific guild
-
-  - `leave <guild id>`
 
 - `set.js` Setting the bot's avatar, name, presence, activity, and status
 
@@ -76,7 +102,7 @@ Several new commands as described in [issue #5](https://github.com/06000208/sand
   - `set playing/watching/listening [text]`
   - `set status [status]`
 
-  <br>
+  Usage Examples:
 
   - `setavatar` (with an attached image)
   - `setavatar https://example.com/avatar.jpg` (with a real image link)
@@ -105,28 +131,40 @@ Several new commands as described in [issue #5](https://github.com/06000208/sand
   - `set status dnd`
   - `set status busy`
   - `set status do not disturb`
-  - Using `status`, `set status`, or an unrecognized status will reset status to online
+  - Using `status` or `set status` with no input or an unrecognized status will reset status to online
   - `activity with discord.js`
   - `activity listening to Caravan Palace`
   - `activity playing with discord.js`
   - `activity watching some birds`
+  - `activity streaming Bob Ross`
   - `set activity with discord.js`
   - `set playing with discord.js`
   - `set listening to Caravan Palace`
   - `set watching some birds`
   - `set watching YouTube`
   - `set activity watching YouTube`
+  - `set activity watching YouTube`
+  - `set streaming Bob Ross`
+  - `set activity streaming Bob Ross`
   - Using `activity` or `set activity` will clear activity
 
 **Other Changes**
 
+- Prefixes are now checked case insensitively
+
+- Changed how arrays are documented (an array of strings is now `[string]` as opposed to `string[]`)
+
+- Fixed guild access control (`guildAccess.js`), it was quite broken and [stank](https://en.wikipedia.org/wiki/Code_smell). Not sure how I didn't notice this previously.
+
 - Added `metadata.twitch` and `metadata.reaction.cooldown` to `defaultConfig.js`
 
-- Improved `randomFile.js`'s embed, what data it displays, and now makes use of the config's `metadata.reaction.cooldown` for it's reaction
+- Renamed `randomFile.js` to `wikimedia.js`, added new functionality, improved the embed and what data is displayed, how unknown api responses & files that can't be displayed are handled, and adjusted it to make use of `metadata.reaction.cooldown` appropriately
  
-- Improved `eval.js`'s check for promises and abandoned code block syntax highlighting in favor of the error resilience gained from always using `util.inspect()`
+- Improved `eval.js`'s check for promises, abandoned code block syntax highlighting in favor of the error resilience gained from always using `util.inspect()`, added error message replies, and adjusted the wall of text prevention
 
 - [Issue #6](https://github.com/06000208/sandplate/issues/6) changes for `run.bat` (a new check for when npm modules aren't installed alongside bringing back the check for the configuration file now fixed and with with a better response)
+
+- Disabled featureless templates/example commands by default, as their only purpose is documentation. `example.js` is now `example.js.disabled`, and so on. To restore them, simply remove the `.disabled` extension.
 
 ## `0.0.4` / `2020-06-18`
 
