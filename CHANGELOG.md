@@ -7,7 +7,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
 The handler framework and all classes related to modules have been overhauled! Issues [#10](https://github.com/06000208/sandplate/issues/10) and [#11](https://github.com/06000208/sandplate/issues/11) are relevant to most of this.
 
 - Loading modules is now noticeably faster
-- New `Response` class as a way for functions to return more data to their caller than they could by returning booleans or strings alone
+- New `Response` class as a way for functions to return more data to their caller than they could otherwise
 - A new handler function, `resolvePath()`, which is essentially a wrapper for `require.resolve()` that takes care of try/catching and returns data using the Response class
 - Two new handler functions, `unloadMultipleModules()` and `requireMultipleModules()`, which both take an array of file paths and use `unloadModule()` and `requireModule()`, respectively, on each path in the array, allowing for bulk loading or unloading
 - All handler functions now make use of the Response class as what they return, and they have gone through numerous changes and improvements to their logic
@@ -23,7 +23,7 @@ The handler framework and all classes related to modules have been overhauled! I
 - Fixed config properties `commands.directory` and `events.directory` not being used by the bot
 - Use of the term "Module" for the classes exported by modules has been ditched in favor of "Block", with `BaseModule` becoming `BaseBlock`, `CommandModule` becoming `CommandBlock`, and so on! This way, the term module only refers to [actual modules](https://nodejs.org/docs/latest-v12.x/api/modules.html#modules_modules), and the terminology of "blocks" for the classes exported by modules works quite well.
 - All modules under `./bot/` have been updated to use `CommandBlock` and `ListenerBlock` accordingly
-- Construct instances now have ids and names, as described in the above linked issue
+- Construct instances now have ids and names, as described in [issue #11](https://github.com/06000208/sandplate/issues/11)
 - `BaseBlock`, `BaseConstruct`, `CommandConstruct`, and `EventConstruct` have all been entirely reworked
 
   `BaseBlock` and `BaseConstruct` both extend a new class, `Base`, in order to easily share some features such as having snowflake ids, and before they were mostly incomplete blank slates, with most (or all) of their code being in the classes that extended them
@@ -63,11 +63,11 @@ Several new commands as described in [issue #5](https://github.com/06000208/sand
   - `group example`
   - `group example 642469616932880395`
     
-    Note the following:
-    
+  Note the following:
+
     - If a group does not exist, it will be created
     - Adding/removing ids to/from groups works like a toggle
-    - When a guild is blocked, it will be left on the next [`ready`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-ready) or [`guildCreate`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-guildCreate) event
+    - When a guild is blocked, it will be left on the next [`ready`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-ready) or [`guildCreate`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-guildCreate) event.
 
 - `moduleCommands.js` Loading, unloading, and reloading of modules, commands, listeners, and events
 
