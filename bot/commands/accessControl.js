@@ -95,6 +95,7 @@ module.exports = [
     const name = args[0].toLowerCase();
     if (name === "allowed") return message.channel.send("Interacting with that group is forbidden.");
     const group = ["users", name]; // not using an object like block/unblock because this only interacts with user groups
+    const group = ["users", name]; // not using an object like the block/unblock commands because this only interacts with user groups
     let reply = "";
     const id = args.length > 1 ? args[1] : null;
     if (!client.config.has(group).value()) {
