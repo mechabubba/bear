@@ -1,8 +1,7 @@
-/* eslint-disable no-unused-vars */
 const { Collection } = require("discord.js");
 const BaseConstruct = require("./BaseConstruct");
-const CommandModule = require("./CommandModule");
-const { collectionArrayPush, collectionArrayFilter, forAny } = require("./miscellaneous");
+const CommandBlock = require("./CommandBlock");
+const { forAny } = require("./miscellaneous");
 const log = require("./log");
 const chalk = require("chalk");
 const _ = require("lodash");
@@ -14,82 +13,103 @@ const _ = require("lodash");
 class CommandConstruct extends BaseConstruct {
   /**
    * @param {Client} client
+   * @param {string} [name]
    */
-  constructor(client) {
-    super();
+  constructor(client, name) {
+    super(name);
 
     /**
      * Reference to the Client this CommandConstruct is for
      * @type {Client}
+     * @name CommandConstruct#client
      * @readonly
      */
     Object.defineProperty(this, "client", { value: client });
 
     /**
-     * Cached CommandModules mapped by their ids
-     * @type {Collection<Snowflake, CommandModule>}
+     * Cached CommandBlocks mapped by their ids
+     * @type {Collection<Snowflake, CommandBlock>}
+     * @name CommandConstruct#cache
      */
-    this.cache = new Collection();
+
+    /**
+     * Module file paths mapped to arrays containing the ids of CommandBlocks originating from that module. If anonymous CommandBlocks were loaded, `null` is mapped to an array of their ids
+     * @type {Collection<?string, [Snowflake]>}
+     * @name CommandConstruct#idsByPath
+     */
 
     /**
      * Index of command names mapped to command ids
      * @type {Collection<string, Snowflake>}
      */
     this.index = new Collection();
-
-    /**
-     * Module file paths mapped to arrays of CommandModules ids originating from that module. If anonymous CommandModules have been loaded `null` is mapped to an array of their ids.
-     * @type {Collection<?string, Snowflake[]>}
-     */
-    this.idsByPath = new Collection();
   }
 
   /**
-   * @param {CommandModule} command
-   * @param {?string} [filePath=null]
+   * @type {string}
+   * @readonly
    */
-  load(command, filePath = null) {
+  get firstPrefix() {
+    const prefix = this.client.config.get("commands.prefix").value();
+    const mentions = this.client.config.get("commands.mentions").value();
+    if (prefix) {
+      if (_.isArray(prefix)) {
+        return prefix[0];
+      } else {
+        return prefix;
+      }
+    } else if (mentions) {
+      return `@${this.client.user.username} `;
+    } else {
+      return "";
+    }
+  }
+
+  /**
+   * @param {CommandBlock} command
+   * @param {?string} [filePath]
+   */
+  load(command, filePath) {
     // validation
-    if (command instanceof CommandModule === false) return;
-    // file path
-    command.filePath = filePath;
+    if (command instanceof CommandBlock === false) return;
+    // parent
+    super.load(command, filePath);
     // bind correct this value & prefix the client as the first parameter
     command.run = command.run.bind(command, this.client);
     // collections
-    this.cache.set(command.id, command);
     forAny((name) => {
       if (this.index.has(name) && this.cache.has(this.index.get(name))) {
         const oldCommand = this.cache.get(this.index.get(name));
-        log.warn(`Command name "${name}" from ${oldCommand.filePath === false ? "(anonymous)" : oldCommand.filePath} was overwritten in the index by ${command.filePath === false ? "(anonymous)" : command.filePath}`);
+        log.warn(`Command name "${name}" from ${!oldCommand.filePath ? "an anonymous block" : oldCommand.filePath} was overwritten in the index by ${!command.filePath ? "an anonymous block" : command.filePath}`);
       }
-      if (/[\n\r\s]+/.test(name)) log.warn(`Command name "${name}" contains white space and won't be reached by the parsing in commandParser.js\n(from ${command.filePath === false ? "(anonymous)" : command.filePath})`);
+      if (/[\n\r\s]+/.test(name)) log.warn(`Command name "${name}" from ${!command.filePath ? "an anonymous block" : command.filePath} contains white space and won't be reached by the parsing in commandParser.js`);
       this.index.set(name, command.id);
     }, command.identity);
-    collectionArrayPush(this.idsByPath, command.filePath, command.id);
     // log
-    log.trace("Loaded a command module", command);
+    log.trace("Loaded a command", command);
   }
 
   /**
-   * @param {CommandModule} command
+   * @param {CommandBlock} command
    */
   unload(command) {
     // validation
-    if (command instanceof CommandModule === false) return;
+    if (command instanceof CommandBlock === false) return;
+    // parent
+    super.unload(command);
     // collections
-    this.cache.delete(command.id);
     forAny((name) => this.index.delete(name), command.identity);
-    collectionArrayFilter(this.idsByPath, command.filePath, command.id);
     // log
-    log.trace("Unloaded a command module", command);
+    log.trace("Unloaded a command", command);
   }
 
   /**
    * @param {string} name
    * @param {Message} Message
    * @param {?string} [content=null]
-   * @param {string[]} [args=[]]
+   * @param {[string]} [args=[]]
    * @param {...*} [passThrough]
+   * @todo This function needs to be fixed up
    */
   run(name, message, content = null, args = [], ...passThrough) {
     if (!name || !message) return;
@@ -126,6 +146,12 @@ class CommandConstruct extends BaseConstruct {
             return true;
           }) === false) return;
         }
+      }
+    }
+    // Correct content to null if it's an empty string (this behavior may be changed in the future)
+    if (content) {
+      if (!content.trim().length) {
+        content = null;
       }
     }
     log.debug(`${chalk.gray("[command]")} ${message.author.tag} ran "${name}${(!content ? "\"" : `" with "${content}"`)}`);

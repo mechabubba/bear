@@ -1,8 +1,8 @@
-const ListenerModule = require("../../modules/ListenerModule");
+const ListenerBlock = require("../../modules/ListenerBlock");
 const log = require("../../modules/log");
 const _ = require("lodash");
 
-module.exports = new ListenerModule({
+module.exports = new ListenerBlock({
   event: "ready",
   once: true,
 }, async function(client) {

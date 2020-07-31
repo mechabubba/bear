@@ -5,9 +5,8 @@ const Discord = require("discord.js");
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const fse = require("fs-extra");
-const slash = require("slash");
 const path = require("path");
-const configPath = slash(path.join(__dirname, "../data/config.json"));
+const configPath = path.join(__dirname, "../data/config.json");
 const defaultConfig = require("./defaultConfig");
 
 /**
@@ -33,7 +32,7 @@ class Client extends Discord.Client {
 
     /**
      * Arbitrary Collection
-     * @type {Collection<*, *>}
+     * @type {Discord.Collection<*, *>}
      */
     this.cookies = new Discord.Collection();
 
@@ -41,13 +40,13 @@ class Client extends Discord.Client {
      * Commands
      * @type {CommandConstruct}
      */
-    this.commands = new CommandConstruct(this);
+    this.commands = new CommandConstruct(this, "bot command construct");
 
     /**
      * Events
      * @type {EventConstruct}
      */
-    this.events = new EventConstruct(this);
+    this.events = new EventConstruct(this, "discord.js event construct");
   }
 }
 

@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
+const Client = require("./modules/Client");
+const Handler = require("./modules/Handler");
+const log = require("./modules/log");
 const fse = require("fs-extra");
 const { SnowflakeUtil } = require("discord.js");
-const Handler = require("./modules/Handler");
-const Client = require("./modules/Client");
-const log = require("./modules/log.js");
 
 // Discord token regex
 const tokenRegex = RegExp(/^[\w]{24}\.[\w-]{6}\.[\w-]{27}$/);
@@ -43,13 +43,17 @@ if (argv.length !== 0) {
 
 // Initialize bot
 const init = async function() {
-  await Handler.setup(client.commands, "./bot/commands/");
-  await Handler.setup(client.events, "./bot/listeners/");
+  log.debug("init");
+  const commandLoadResult = await Handler.requireDirectory(client.commands, client.config.get("commands.directory").value());
+  const eventLoadResult = await Handler.requireDirectory(client.events, client.config.get("events.directory").value());
+  log.info(commandLoadResult.message);
+  log.info(eventLoadResult.message);
+  // Ground control to major tom
   if (client.cookies.has("token") || client.config.get("client.token").value() !== null) {
     client.login(client.cookies.has("token") ? client.cookies.get("token") : client.config.get("client.token").value());
   } else {
-    log.fatal("No token to login with! Please set one in config.json or pass one in as an argument");
-    process.exit(1);
+    log.warn("No token available to login with! Please set one in config.json or pass one in as an argument");
+    process.exit(0);
   }
 };
 

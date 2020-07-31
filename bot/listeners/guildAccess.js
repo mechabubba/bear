@@ -1,4 +1,4 @@
-const ListenerModule = require("../../modules/ListenerModule");
+const ListenerBlock = require("../../modules/ListenerBlock");
 const log = require("../../modules/log");
 const chalk = require("chalk");
 
@@ -8,16 +8,17 @@ const chalk = require("chalk");
 // Refer to documentation in ./modules/defaultConfig.js for info about guild groups
 
 module.exports = [
-  new ListenerModule({
+  new ListenerBlock({
     event: "ready",
     once: false,
   }, function(client) {
     // block list
     const blocked = client.config.get("guilds.blocked").value();
     if (blocked !== null) {
-      const blockedGuilds = client.guilds.cache.filter((guild) => blocked.includes(guild.id));
-      if (blockedGuilds.length > 0) {
-        for (const guild in blockedGuilds) {
+      const blockedGuilds = client.guilds.cache.array().filter(guild => blocked.includes(guild.id));
+      log.debug(blockedGuilds);
+      if (blockedGuilds.length) {
+        for (const guild of blockedGuilds) {
           if (!guild.available) continue;
           log.info(`${chalk.gray("[blocked guild]")} Automatically leaving ${guild.name} (${guild.id})`);
           guild.leave();
@@ -27,9 +28,9 @@ module.exports = [
     // allow list
     const allowed = client.config.get("guilds.allowed").value();
     if (allowed !== null) {
-      const unknownGuilds = client.guilds.cache.filter((guild) => !allowed.includes(guild.id));
-      if (unknownGuilds.length > 0) {
-        for (const guild in unknownGuilds) {
+      const unknownGuilds = client.guilds.cache.array().filter(guild => !allowed.includes(guild.id));
+      if (unknownGuilds.length) {
+        for (const guild of unknownGuilds) {
           if (!guild.available) continue;
           log.info(`${chalk.gray("[unknown guild")} Automatically leaving ${guild.name} (${guild.id})`);
           guild.leave();
@@ -37,7 +38,7 @@ module.exports = [
       }
     }
   }),
-  new ListenerModule({
+  new ListenerBlock({
     event: "guildCreate",
     once: false,
   }, function(client, guild) {

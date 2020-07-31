@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-const BaseModule = require("./BaseModule");
+const BaseBlock = require("./BaseBlock");
 const _ = require("lodash");
 
 /**
@@ -13,21 +12,23 @@ const _ = require("lodash");
  * @callback listener
  * @param {EventEmitter} emitter - Bound as first parameter by EventConstruct.load()
  * @param {...*} - Provided by the event being emitted
- * @this ListenerModule
  * @todo Should the bound parameter be included?
+ * @todo Is there a way to specify that this callback's this value is an instance of ListenerBlock?
  */
 
 /**
- * @extends {BaseModule}
+ * @extends {BaseBlock}
  */
-class ListenerModule extends BaseModule {
+class ListenerBlock extends BaseBlock {
   /**
    * @param {ListenerData} data
    * @param {listener} run
    */
   constructor(data = {}, run) {
     super();
-    ListenerModule.validateParameters(data, run);
+    ListenerBlock.validateParameters(data, run);
+
+    // Data
 
     /**
      * The name of the event this listener is for
@@ -41,22 +42,21 @@ class ListenerModule extends BaseModule {
      */
     this.once = Boolean(data.once);
 
+    // Methods
+    // Note that bind() isn't used here in favor of doing it in EventConstruct's load method, so that it can bind parameters as well
+
     /**
-     * Callback function called when ListenerModule.event is emitted
+     * Callback function called when the event named by the ListenerBlock.event property is emitted
      * @type {listener}
      */
     this.run = run;
-    // Note that bind() isn't used here in favor of doing it in EventConstruct.load() instead so it can also bind the emitter
-  }
-
-  unload() {
-    return;
   }
 
   /**
    * @param {ListenerData} data
    * @param {listener} run
    * @private
+   * @todo May be worth looking into schema based validation
    */
   static validateParameters(data, run) {
     if (!_.isPlainObject(data)) throw new TypeError("Listener data parameter must be an Object.");
@@ -67,4 +67,4 @@ class ListenerModule extends BaseModule {
 
 }
 
-module.exports = ListenerModule;
+module.exports = ListenerBlock;

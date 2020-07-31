@@ -1,7 +1,6 @@
-/* eslint-disable no-unused-vars */
 const { Collection } = require("discord.js");
 const BaseConstruct = require("./BaseConstruct");
-const ListenerModule = require("./ListenerModule");
+const ListenerBlock = require("./ListenerBlock");
 const { collectionArrayPush, collectionArrayFilter } = require("./miscellaneous");
 const log = require("./log");
 
@@ -12,85 +11,85 @@ const log = require("./log");
 class EventConstruct extends BaseConstruct {
   /**
    * @param {EventEmitter} emitter
+   * @param {string} [name]
    */
-  constructor(emitter) {
-    super();
+  constructor(emitter, name) {
+    super(name);
 
     /**
      * Reference to the EventEmitter this EventConstruct is for
+     * @name EventConstruct#emitter
      * @type {EventEmitter}
      * @readonly
      */
     Object.defineProperty(this, "emitter", { value: emitter });
 
     /**
-     * Cached ListenerModules mapped by their ids
-     * @type {Collection<Snowflake, ListenerModule>}
+     * Cached ListenerBlocks mapped by their ids
+     * @type {Collection<Snowflake, ListenerBlock>}
+     * @name EventConstruct#cache
      */
-    this.cache = new Collection();
 
     /**
-     * Event names mapped to arrays of file paths for modules that add listeners for those events
-     * @type {Collection<string, string[]>}
+     * Module file paths mapped to arrays containing the ids of ListenerBlocks originating from that module. If anonymous ListenerBlocks were loaded, `null` is mapped to an array of their ids
+     * @type {Collection<?string, [Snowflake]>}
+     * @name EventConstruct#idsByPath
      */
-    this.pathsByEvent = new Collection();
 
     /**
-     * Event names mapped to arrays of ids for ListenerModules that target those events
-     * @type {Collection<string, Snowflake[]>}
+     * Event names mapped to arrays of ids for ListenerBlocks that target those events
+     * @type {Collection<string, [Snowflake]>}
      */
     this.idsByEvent = new Collection();
 
     /**
-     * Module file paths mapped to arrays of ListenerModule ids originating from that module. If anonymous ListenerModules have been loaded `null` is mapped to an array of their ids.
-     * @type {Collection<?string, Snowflake[]>}
+     * Event names mapped to arrays of file paths for modules that add listeners for those events
+     * @type {Collection<string, [string]>}
      */
-    this.idsByPath = new Collection();
+    this.pathsByEvent = new Collection();
   }
 
   /**
-   * @param {ListenerModule} mod
-   * @param {?string} [filePath=null]
+   * @param {ListenerBlock} block
+   * @param {?string} [filePath]
    */
-  load(mod, filePath = null) {
+  load(block, filePath) {
     // validation
-    if (mod instanceof ListenerModule === false) return;
-    // file path
-    mod.filePath = filePath;
+    if (block instanceof ListenerBlock === false) return;
+    // parent
+    super.load(block, filePath);
     // bind correct this value & prefix the emitter as the first parameter
-    mod.run = mod.run.bind(mod, this.emitter);
+    block.run = block.run.bind(block, this.emitter);
     // .once() or .on()
-    if (mod.once) {
-      this.emitter.once(mod.event, mod.run);
+    if (block.once) {
+      this.emitter.once(block.event, block.run);
     } else {
-      this.emitter.on(mod.event, mod.run);
-    }
-    // collection data
-    this.cache.set(mod.id, mod);
-    collectionArrayPush(this.pathsByEvent, mod.event, mod.filePath);
-    collectionArrayPush(this.idsByEvent, mod.event, mod.id);
-    collectionArrayPush(this.idsByPath, mod.filePath, mod.id);
-    // log
-    log.trace("Loaded a listener module", mod);
-  }
-
-  /**
-   * @param {ListenerModule} mod
-   */
-  unload(mod) {
-    // validation
-    if (mod instanceof ListenerModule === false) return;
-    // remove listener
-    if (this.emitter.listeners(mod.event).includes(mod.run)) {
-      this.emitter.removeListener(mod.event, mod.run);
+      this.emitter.on(block.event, block.run);
     }
     // collections
-    this.cache.delete(mod.id);
-    collectionArrayFilter(this.pathsByEvent, mod.event, mod.filePath);
-    collectionArrayFilter(this.idsByEvent, mod.event, mod.id);
-    collectionArrayFilter(this.idsByPath, mod.filePath, mod.id);
+    collectionArrayPush(this.idsByEvent, block.event, block.id);
+    collectionArrayPush(this.pathsByEvent, block.event, block.filePath);
     // log
-    log.trace("Unloaded a listener module", mod);
+    log.trace("Loaded a listener", block);
+  }
+
+  /**
+   * @param {ListenerBlock} block
+   */
+  unload(block) {
+    // validation
+    if (block instanceof ListenerBlock === false) return;
+    // parent
+    super.unload(block);
+    // remove listener
+    if (this.emitter.listeners(block.event).includes(block.run)) {
+      this.emitter.removeListener(block.event, block.run);
+    }
+    // collections
+    collectionArrayFilter(this.pathsByEvent, block.event, block.filePath);
+    collectionArrayFilter(this.idsByEvent, block.event, block.id);
+    // log
+    log.trace("Unloaded a listener", block);
   }
 }
 
