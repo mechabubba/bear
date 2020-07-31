@@ -15,7 +15,7 @@ module.exports = new CommandBlock({
   if (!content) return message.channel.send(`Arguments are required\nUsage: \`${this.firstName} ${this.usage}\``);
   if (!client.guilds.cache.has(content)) return message.channel.send(`${client.user.tag} did not have \`${content}\` mapped to a guild in the guilds cache`);
   const guild = client.guilds.cache.get(content);
-  if (!guild.available) return message.channel.send("Guild was marked as unavailable and thus couldn't be interacted with. This is indicative of a server outage.");
+  if (!guild.available) return message.channel.send("The guild was unavailable and could not be interacted with. This is indicative of a server outage.");
   try {
     await guild.leave();
   } catch (error) {
