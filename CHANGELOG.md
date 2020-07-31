@@ -74,7 +74,7 @@ Several new commands as described in [issue #5](https://github.com/06000208/sand
 
   - `guild [guild id]`
 
-Usage Examples:
+  Usage Examples:
 
   - `guild`
   - `guild 273550655673860106`
