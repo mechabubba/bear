@@ -19,9 +19,7 @@ This way, you don't need to write these things in full yourself, they'd be avail
 
 However, the idea is *not* to skip learning how to code what sandplate does for you. Rather, to make use of sandplate in any meaningful way, you'll need to know how these things are implemented and familiarize yourself with the internals.
 
-Sandplate is now in initial development, during which it isn't intended for any real use, and anything may change at any time.
-
-Progress can be found over in the [`initial-development`](https://github.com/06000208/sandplate/tree/initial-development) branch and on our [`1.0.0` milestone](https://github.com/06000208/sandplate/milestone/1)!
+Sandplate is currently in initial development, during which it isn't intended for any real use, and anything may change at any time.
 
 ## Contributing
 
