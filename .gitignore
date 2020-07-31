@@ -1,11 +1,9 @@
 node_modules
 .vscode
 .env
-config.json
-*/config.json
-data/*
-!data/.gitkeep
-temp/*
-!temp/.gitkeep
-storage/*
-!storage/.gitkeep
+.log
+**/config.json
+**/data/*
+!**/data/.gitkeep
+**/temp/*
+!**/temp/.gitkeep
