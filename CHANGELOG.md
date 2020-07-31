@@ -1,13 +1,37 @@
-## `0.0.5` / `2020-07-XX`
+## `0.0.5` / `2020-07-31`
 
-_The changelog for this version is incomplete/w.i.p and currently being written_
+In regards to the github repository, It's about time to give it a fresh new coat of paint, updating the README and adding templates, etc.
+
+Sandplate is not out of initial development yet, but the `initial-development` branch is going to be merged into master as there's no real reason to have it separate now that we've gotten into the flow of things.
+  
+As was started with `0.0.5`, specific versions that are in development will continue to have their own branches until being completed and merged.
+
+**Changes**
+
+- Prefixes are now checked case insensitively
+
+- Changed how arrays are documented (an array of strings is now `[string]` as opposed to `string[]`)
+
+- Fixed guild access control (`guildAccess.js`), it was quite broken and [stank](https://en.wikipedia.org/wiki/Code_smell). Not sure how I didn't notice this previously.
+
+- Added `metadata.twitch` and `metadata.reaction.cooldown` to `defaultConfig.js`
+
+- Renamed `randomFile.js` to `wikimedia.js`, added new functionality, improved the embed and what data is displayed, how unknown api responses & files that can't be displayed are handled, and adjusted it to make use of `metadata.reaction.cooldown` appropriately
+
+- Improved `eval.js`'s check for promises, abandoned code block syntax highlighting in favor of the error resilience gained from always using `util.inspect()`, added error message replies, and adjusted the wall of text prevention
+
+- Gave many commands summaries/descriptions and improved existing ones, as well as more names
+
+- [Issue #6](https://github.com/06000208/sandplate/issues/6) changes for `run.bat` (a new check for when npm modules aren't installed alongside bringing back the check for the configuration file now fixed and with with a better response)
+
+- Disabled the featureless templates/example commands (other than `template.js`) by default, as their only purpose is documentation. `example.js` is now `example.js.disabled`, and so on. To restore them, simply remove the `.disabled` extension and use the load command or restart the bot.
 
 **Handler Framework Overhaul**
 
 The handler framework and all classes related to modules have been overhauled! Issues [#10](https://github.com/06000208/sandplate/issues/10) and [#11](https://github.com/06000208/sandplate/issues/11) are relevant to most of this.
 
 - Loading modules is now noticeably faster
-- New `Response` class as a way for functions to return more data to their caller than they could otherwise
+- New `Response` class as a way for functions to return more data to their caller
 - A new handler function, `resolvePath()`, which is essentially a wrapper for `require.resolve()` that takes care of try/catching and returns data using the Response class
 - Two new handler functions, `unloadMultipleModules()` and `requireMultipleModules()`, which both take an array of file paths and use `unloadModule()` and `requireModule()`, respectively, on each path in the array, allowing for bulk loading or unloading
 - All handler functions now make use of the Response class as what they return, and they have gone through numerous changes and improvements to their logic
@@ -38,13 +62,22 @@ The handler framework and all classes related to modules have been overhauled! I
 
 Several new commands as described in [issue #5](https://github.com/06000208/sandplate/issues/5), mostly focused around aiding development or controlling the bot. If you notice anything wrong or done poorly with these commands, please point it out in the discord or make an issue!
 
-- `help.js` An average help command, list commands or query specific command info
+- `help.js` List commands or query specific command info
 
   - `help [command]`
 
 - `leave.js` Instruct the bot to leave a specific guild
 
   - `leave <guild id>`
+
+- `guild.js` Log a list of guilds to the console or fetch info about individual guilds
+
+  - `guild [guild id]`
+
+Usage Examples:
+
+  - `guild`
+  - `guild 273550655673860106`
 
 - `accessControl.js` Blocking/unblocking users and guilds, and modifying user groups
 
@@ -147,24 +180,6 @@ Several new commands as described in [issue #5](https://github.com/06000208/sand
   - `set streaming Bob Ross`
   - `set activity streaming Bob Ross`
   - Using `activity` or `set activity` will clear activity
-
-**Other Changes**
-
-- Prefixes are now checked case insensitively
-
-- Changed how arrays are documented (an array of strings is now `[string]` as opposed to `string[]`)
-
-- Fixed guild access control (`guildAccess.js`), it was quite broken and [stank](https://en.wikipedia.org/wiki/Code_smell). Not sure how I didn't notice this previously.
-
-- Added `metadata.twitch` and `metadata.reaction.cooldown` to `defaultConfig.js`
-
-- Renamed `randomFile.js` to `wikimedia.js`, added new functionality, improved the embed and what data is displayed, how unknown api responses & files that can't be displayed are handled, and adjusted it to make use of `metadata.reaction.cooldown` appropriately
- 
-- Improved `eval.js`'s check for promises, abandoned code block syntax highlighting in favor of the error resilience gained from always using `util.inspect()`, added error message replies, and adjusted the wall of text prevention
-
-- [Issue #6](https://github.com/06000208/sandplate/issues/6) changes for `run.bat` (a new check for when npm modules aren't installed alongside bringing back the check for the configuration file now fixed and with with a better response)
-
-- Disabled featureless templates/example commands by default, as their only purpose is documentation. `example.js` is now `example.js.disabled`, and so on. To restore them, simply remove the `.disabled` extension.
 
 ## `0.0.4` / `2020-06-18`
 
