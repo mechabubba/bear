@@ -35,9 +35,9 @@ const validator = function(client, message, command) {
 };
 
 module.exports = new CommandBlock({
-  identity: "help",
+  identity: ["help", "commands", "command", "cmds", "cmd"],
   summary: "Lists commands & provides command info",
-  description: "Provides a list of commands or additional info about individual commands when queried.",
+  description: "Provides a list of commands or info about individual commands when queried.",
   usage: "[command]",
   scope: ["dm", "text", "news"],
   nsfw: false,

@@ -8,19 +8,19 @@ const { inspect } = require("util");
 // You wouldn't want to prevent all command use or cause the bot to leave all of it's guilds by accident, right?
 // If you want to make use of them, do it manually.
 
-const actions = {
+const types = {
   user: ["u", "user", "users", "account", "accounts"],
   guild: ["g", "guild", "guilds", "s", "server", "servers"],
 };
 
 const determineType = function(input) {
-  const action = input.toLowerCase();
-  if (actions.user.includes(action)) {
+  const type = input.toLowerCase();
+  if (types.user.includes(type)) {
     return {
       path: "users.blocked",
       type: "user",
     };
-  } else if (actions.guild.includes(action)) {
+  } else if (types.guild.includes(type)) {
     return {
       path: "guilds.blocked",
       type: "guild",
@@ -32,9 +32,9 @@ const determineType = function(input) {
 
 module.exports = [
   new CommandBlock({
-    identity: "block",
-    summary: null,
-    description: null,
+    identity: ["block", "deny"],
+    summary: "Deny access to the bot",
+    description: "Prohibits a user or guild from interacting with the bot.",
     usage: "user/guild <id>",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -56,9 +56,9 @@ module.exports = [
     return message.channel.send(`Blocked ${group.type} \`${id}\``);
   }),
   new CommandBlock({
-    identity: "unblock",
-    summary: null,
-    description: null,
+    identity: ["unblock", "allow"],
+    summary: "Restore access to the bot",
+    description: "Restore a user or guild's access to the bot.",
     usage: "user/guild <id>",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -81,9 +81,9 @@ module.exports = [
     return message.channel.send(`Unblocked ${group.type} \`${id}\``);
   }),
   new CommandBlock({
-    identity: ["group"],
-    summary: null,
-    description: null,
+    identity: ["group", "usergroup", "usergroups"],
+    summary: "Modify user groups",
+    description: "Create user groups and toggle ids in/out of them.",
     usage: "<group> [id]",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -93,7 +93,7 @@ module.exports = [
   }, async function(client, message, content, args) {
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const name = args[0].toLowerCase();
-    if (name === "allowed") return message.channel.send("Interacting with that group is forbidden.");
+    if (name === "allowed") return message.channel.send("Interacting with that group is forbidden");
     const group = ["users", name]; // not using an object like the block/unblock commands because this only interacts with user groups
     let reply = "";
     const id = args.length > 1 ? args[1] : null;

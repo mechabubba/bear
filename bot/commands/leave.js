@@ -4,7 +4,7 @@ const log = require("../../modules/log");
 module.exports = new CommandBlock({
   identity: "leave",
   summary: "Leave a guild",
-  description: "Instruct the bot to leave specific guilds.",
+  description: "Instruct the bot to leave a specific guild.",
   usage: "<guild id>",
   scope: ["dm", "text", "news"],
   nsfw: false,
@@ -12,7 +12,7 @@ module.exports = new CommandBlock({
   clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   userPermissions: null,
 }, async function(client, message, content, args) {
-  if (!content) return message.channel.send(`Arguments required\nUsage: \`${this.firstName} ${this.usage}\``);
+  if (!content) return message.channel.send(`Arguments are required\nUsage: \`${this.firstName} ${this.usage}\``);
   if (!client.guilds.cache.has(content)) return message.channel.send(`${client.user.tag} did not have \`${content}\` mapped to a guild in the guilds cache`);
   const guild = client.guilds.cache.get(content);
   if (!guild.available) return message.channel.send("Guild was marked as unavailable and thus couldn't be interacted with. This is indicative of a server outage.");
@@ -28,5 +28,4 @@ module.exports = new CommandBlock({
     message.react(client.config.get("metadata.reactions.positive").value());
     message.channel.send(`Left guild \`${guild.name}\` (id \`${guild.id}\`)`);
   }
-  return;
 });

@@ -4,8 +4,8 @@ const { inspect } = require("util");
 const _ = require("lodash");
 
 /*
-A huge security hole/risk for development purposes: the ability to evaluate arbitrary javascript.
-Should only be allowed to those who already possess the bot's token.
+A huge security hole/risk, but included for development purposes: arbitrary javascript evaluation
+It should only be allowed to those who already possess the bot's token!
 */
 
 const clean = async function(input, token) {
@@ -22,9 +22,9 @@ const clean = async function(input, token) {
 };
 
 module.exports = new CommandBlock({
-  identity: ["eval", "js"],
+  identity: ["eval", "evaluate", "js"],
   summary: "Evaluates arbitrary javascript",
-  description: "A huge security hole/risk for development purposes: the ability to evaluate arbitrary javascript. Should only be allowed to those who already possess the bot's token.",
+  description: "A huge security hole/risk for development purposes: arbitrary javascript evaluation. Should only be allowed to those who already possess the bot's token.",
   usage: "<code>",
   scope: ["dm", "text", "news"],
   nsfw: false,

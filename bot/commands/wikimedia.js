@@ -6,9 +6,9 @@ const fileTypes = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
 const _ = require("lodash");
 
 module.exports = new CommandBlock({
-  identity: ["file", "wikimedia", "commons", "cc", "wm"],
+  identity: ["file", "wm", "wikimedia", "commons", "cc"],
   summary: "Retrieves a file from wikimedia (occasionally NSFW)",
-  description: "Query a random or specific file from [Wikimedia Commons](https://commons.wikimedia.org/wiki/Main_Page). This, rarely, will contain NSFW or graphic content.",
+  description: "Query a random or specific file from [Wikimedia Commons](https://commons.wikimedia.org/wiki/Main_Page). This, rarely, will contain NSFW, graphic, or otherwise inappropriate content.",
   usage: "[page id]",
   scope: ["dm", "text", "news"],
   nsfw: true,

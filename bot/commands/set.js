@@ -116,7 +116,7 @@ module.exports = [
   new CommandBlock({
     identity: ["setavatar", "seticon"],
     summary: "Change the bot's avatar",
-    description: "Lets you set the bot's avatar. Be aware that this has a strict cool down (shared with changing the bot's name) in the discord api.",
+    description: "Changes the bot's avatar. Be aware that this has a strict cool down (shared with changing the bot's name) in the discord api.",
     usage: "<image attachment/link>",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -145,7 +145,7 @@ module.exports = [
   new CommandBlock({
     identity: ["setname", "setusername"],
     summary: "Change the bot's name",
-    description: "Lets you set the bot's username. Be aware that this has a strict cool down (shared with changing the bot's avatar) in the discord api.",
+    description: "Changes the bot's username. Be aware that this has a strict cool down (shared with changing the bot's avatar) in the discord api.",
     usage: "<text>",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -177,7 +177,7 @@ module.exports = [
   new CommandBlock({
     identity: ["presence", "setpresence"],
     summary: "Set the bot's presence with json",
-    description: "Lets you set the bot's presence with raw json. Refer to the [`PresenceData`](https://discord.js.org/#/docs/main/stable/typedef/PresenceData) object for what properties and values to use. Using a codeblock with your json input is supported so long that your message contains a singular string of valid json somewhere within it.",
+    description: "Sets the bot's presence with raw json. Refer to the [`PresenceData`](https://discord.js.org/#/docs/main/stable/typedef/PresenceData) object for what properties and values to use. Using a codeblock with your json input is supported so long that your message contains a singular string of valid json somewhere within it.",
     usage: "<json>",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -212,7 +212,7 @@ module.exports = [
   new CommandBlock({
     identity: ["status", "setstatus"],
     summary: "Set the bot's status",
-    description: "Lets you set the bot's status. All four statuses are supported (online, idle, do not disturb, and invisible)",
+    description: "Sets the bot's status. All four statuses are supported (online, idle, do not disturb, and invisible)",
     usage: "[status]",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -245,7 +245,7 @@ module.exports = [
   new CommandBlock({
     identity: ["activity", "setactivity"],
     summary: "Set the bot's activity",
-    description: "Lets you set the bot's activity. All four activities are supported (playing, watching, listening, and streaming)",
+    description: "Sets the bot's activity. All four activities are supported (playing, watching, listening, and streaming)",
     usage: "[type] [text]",
     scope: ["dm", "text", "news"],
     nsfw: false,
