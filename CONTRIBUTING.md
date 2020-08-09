@@ -28,15 +28,12 @@ If you don't have something to specific in mind, but want to help out, these lab
 
 After you've found something to do and communicated with the rest of us, feel free to fork the repository and make a pull request.
 
-<<<<<<< HEAD
-=======
 ### [Branches](https://github.com/06000208/sandplate/branches)
 
 The `master` branch is treated as the latest stable version. Future versions have their own "in development" branches, awaiting their completion and merge into `master`.
 
 While sandplate is undergoing initial development, [releases](https://github.com/06000208/sandplate/releases/) for each version aren't being published, but they will be in the future.
 
->>>>>>> initial-development
 ### ESLint
 
 We make use of [ESLint](https://www.npmjs.com/package/eslint) to keep code consistent, so having it alongside the appropriate plugin(s) for your editor of choice will help your workflow.
