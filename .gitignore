@@ -7,3 +7,5 @@ node_modules
 !**/data/.gitkeep
 **/temp/*
 !**/temp/.gitkeep
+**/logs/*
+!**/logs/.gitkeep
