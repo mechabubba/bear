@@ -1,3 +1,11 @@
+## `0.0.6` / `2020-XX-XX`
+
+_The changelog for this version is incomplete/w.i.p and currently being written_
+
+- Fix a bunch of mistakes in the various markdown files.
+
+- When merging the branches, some minor stuff went awry. The /temp/ folder has been restored, and a merge conflict left over in CONTRIBUTING.md has been fixed.
+
 ## `0.0.5` / `2020-07-31`
 
 In regards to the github repository, It's about time to give it a fresh new coat of paint, updating the README and adding templates, etc.
