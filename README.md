@@ -31,7 +31,7 @@ While sandplate uses it's [issue section](https://github.com/06000208/sandplate/
 
 <a href="https://discord.gg/xErQY6M"><img src="https://discordapp.com/api/guilds/273550655673860106/embed.png" alt="Discord Server" /></a>
 
-Additionally, you can get in touch with the project lead directly by emailing [`a0600208@protonmail.com`](mailto:a0600208@protonmail.com) if necessary.
+Additionally, you can get in touch with the project lead directly by emailing [`a06000208@protonmail.com`](mailto:a06000208@protonmail.com) if necessary.
 
 ## Code Of Conduct
 
