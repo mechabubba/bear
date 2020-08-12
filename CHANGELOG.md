@@ -1,3 +1,9 @@
+## `0.0.6` / `2020-08-12`
+
+- When merging the branches, some minor stuff went awry. The /temp/ folder has been restored, and a merge conflict left over in CONTRIBUTING.md has been fixed.
+
+- Fixed a bunch of mistakes & provide clarifications in the various markdown files
+
 ## `0.0.5` / `2020-07-31`
 
 In regards to the github repository, It's about time to give it a fresh new coat of paint, updating the README and adding templates, etc.
@@ -74,7 +80,7 @@ Several new commands as described in [issue #5](https://github.com/06000208/sand
 
   - `guild [guild id]`
 
-Usage Examples:
+  Usage Examples:
 
   - `guild`
   - `guild 273550655673860106`

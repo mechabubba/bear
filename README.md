@@ -2,7 +2,7 @@
 
 Sandplate is a boilerplate/template [discord.js](https://discord.js.org) bot, and can be used as a base to expand upon.
 
-It's current goal (and eventual purpose) is to cover all of the "basics" of a discord bot's internals, such as, but not limited to:
+It's purpose is to cover all of the "basics" of a discord bot's internals, such as, but not limited to:
 
 - Automatically generating the configuration file
 - Logging in with either a persisted token (stored in the config) or non-persisted (command prompt argument)
@@ -31,7 +31,7 @@ While sandplate uses it's [issue section](https://github.com/06000208/sandplate/
 
 <a href="https://discord.gg/xErQY6M"><img src="https://discordapp.com/api/guilds/273550655673860106/embed.png" alt="Discord Server" /></a>
 
-Additionally, you can get in touch with the project lead directly by emailing [`a0600208@protonmail.com`](mailto:a0600208@protonmail.com) if necessary.
+Additionally, you can get in touch with the project lead directly by emailing [`a06000208@protonmail.com`](mailto:a06000208@protonmail.com) if necessary.
 
 ## Code Of Conduct
 

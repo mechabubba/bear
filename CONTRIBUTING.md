@@ -2,17 +2,15 @@
 
 Welcome! Firstly, sandplate uses it's [issue section](https://github.com/06000208/sandplate/issues) for collaboration and project planning, and everything from bug reports to feature requests can be found and discussed there. 
 
-At the [bottom of this page](#labels), you can see all of our issue labels along with how they're used.
-
-If you want to report a bug or issue, suggest an enhancement / new feature, or just ask a question, look and see if an issue for your topic already exists, and if not, open one and label it appropriately!
-
 Aside from sandplate's issue tracker, for real time communication, the preferred way is through [this discord server](https://discord.gg/xErQY6M), in the `#discord` channel.
 
 <a href="https://discord.gg/xErQY6M"><img src="https://discordapp.com/api/guilds/273550655673860106/embed.png" alt="Discord Server" /></a>
 
+If you're interested, at the [bottom of this page](#labels), you can see a list of all our issue labels and how they're used.
+
 ## Contributing Code
 
-Want to contribute code and help out directly? Great! All contributions are appreciated.
+if you want to contribute code and help out directly, that's great! All contributions are appreciated.
 
 If you have something specific you want to do, the first step is to find the appropriate issue or open one if it doesn't exist, followed by sharing your intentions to work on it so that others know.
 
@@ -30,15 +28,12 @@ If you don't have something to specific in mind, but want to help out, these lab
 
 After you've found something to do and communicated with the rest of us, feel free to fork the repository and make a pull request.
 
-<<<<<<< HEAD
-=======
 ### [Branches](https://github.com/06000208/sandplate/branches)
 
 The `master` branch is treated as the latest stable version. Future versions have their own "in development" branches, awaiting their completion and merge into `master`.
 
 While sandplate is undergoing initial development, [releases](https://github.com/06000208/sandplate/releases/) for each version aren't being published, but they will be in the future.
 
->>>>>>> initial-development
 ### ESLint
 
 We make use of [ESLint](https://www.npmjs.com/package/eslint) to keep code consistent, so having it alongside the appropriate plugin(s) for your editor of choice will help your workflow.
