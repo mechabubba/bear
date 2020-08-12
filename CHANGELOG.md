@@ -1,3 +1,7 @@
+## `0.0.7` / `2020-XX-XX`
+
+_The changelog for this version is incomplete/w.i.p and currently being written_
+
 ## `0.0.6` / `2020-08-12`
 
 - When merging the branches, some minor stuff went awry. The /temp/ folder has been restored, and a merge conflict left over in CONTRIBUTING.md has been fixed.
