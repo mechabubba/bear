@@ -1,10 +1,8 @@
-## `0.0.6` / `2020-XX-XX`
-
-_The changelog for this version is incomplete/w.i.p and currently being written_
-
-- Fix a bunch of mistakes in the various markdown files.
+## `0.0.6` / `2020-08-12`
 
 - When merging the branches, some minor stuff went awry. The /temp/ folder has been restored, and a merge conflict left over in CONTRIBUTING.md has been fixed.
+
+- Fixed a bunch of mistakes & provide clarifications in the various markdown files
 
 ## `0.0.5` / `2020-07-31`
 
