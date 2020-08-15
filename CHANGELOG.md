@@ -2,11 +2,13 @@
 
 _The changelog for this version is incomplete/w.i.p and currently being written_
 
+- A new class, `BaseEventEmitter`, which is the same as [Base](https://github.com/06000208/sandplate/blob/master/modules/Base.js) but extending [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter). Closes [#20](https://github.com/06000208/sandplate/issues/20)
+
 ## `0.0.6` / `2020-08-12`
 
 - When merging the branches, some minor stuff went awry. The /temp/ folder has been restored, and a merge conflict left over in CONTRIBUTING.md has been fixed.
 
-- Fixed a bunch of mistakes & provide clarifications in the various markdown files
+- Fixed a bunch of mistakes in the various markdown files and clarified something in README.md
 
 ## `0.0.5` / `2020-07-31`
 
