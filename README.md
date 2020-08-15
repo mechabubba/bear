@@ -2,7 +2,7 @@
 
 Sandplate is a boilerplate/template [discord.js](https://discord.js.org) bot, and can be used as a base to expand upon.
 
-It's purpose is to cover all of the "basics" of a discord bot's internals, such as, but not limited to:
+It's purpose is to cover all the "basics" of a discord bot's internals, such as, but not limited to:
 
 - Automatically generating the configuration file
 - Logging in with either a persisted token (stored in the config) or non-persisted (command prompt argument)
@@ -11,9 +11,9 @@ It's purpose is to cover all of the "basics" of a discord bot's internals, such 
 - Command access control
 - Blocking users or guilds from interacting with the bot
 - Supports any number of command prefixes alongside @mention prefix support
-- A full set of default commands written in the framework
 - Improved console logging (timestamps and labels)
 - Batch script for running & automatically restarting the bot
+- A full set of default commands written in the framework
 
 This way, you don't need to write these things in full yourself, they'd be available to expand upon and use, whatever your purposes, and you could pull fixes and improvements from this repository as they occur.
 
