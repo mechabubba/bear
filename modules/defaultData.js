@@ -63,3 +63,11 @@ module.exports.config = {
     "allowed": null,
   },
 };
+
+/**
+ * Dynamic paths of modules to be automatically disabled by default when creating modules.json
+ */
+module.exports.disabledModules = [
+  "../bot/commands/example",
+  "../bot/commands/templateMultiple",
+];

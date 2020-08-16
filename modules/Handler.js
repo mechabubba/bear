@@ -1,9 +1,14 @@
 /* eslint-disable no-unused-vars */
 const BaseConstruct = require("./BaseConstruct");
 const Response = require("./Response");
+const { disabledModules } = require("./defaultData");
 const log = require("./log");
 const _ = require("lodash");
+const low = require("lowdb");
+const FileSync = require("lowdb/adapters/FileSync");
+const fse = require("fs-extra");
 const path = require("path");
+const modulesFile = path.join(__dirname, "../data/modules.json");
 const filehound = require("filehound");
 
 /**
@@ -21,12 +26,33 @@ class Handler {
      * @readonly
      */
     Object.defineProperty(this, "client", { value: client });
+
+    // Cache whether modules.json exists prior to using low()
+    const generating = !fse.pathExistsSync(modulesFile);
+
+    /**
+     * Modules database via lowdb
+     */
+    this.modules = low(new FileSync(modulesFile));
+
+    // Handle modules configured to be disabled by default
+    if (generating) {
+      const modules = {};
+      // If a module hasn't been explicitly disabled, it is implicitly enabled
+      for (const module of disabledModules) {
+        const resolvedPath = Handler.resolvePath(module);
+        if (!resolvedPath.success) continue;
+        modules[resolvedPath] = false;
+      }
+      this.modules.defaultsDeep(modules).write();
+      log.info("A modules.json file has been generated in ./data/");
+    }
   }
 
   /**
    * @param {string} filePath
    */
-  resolvePath(filePath) {
+  static resolvePath(filePath) {
     if (!filePath) return new Response({ message: "Required parameters weren't supplied", success: false });
     const obj = {};
     try {
@@ -127,62 +153,92 @@ class Handler {
   /**
    * @param {BaseConstruct} construct
    * @param {string} filePath
+   * @param {boolean} [respectDisabled=false]
    */
-  requireModule(construct, filePath) {
+  requireModule(construct, filePath, respectDisabled = false) {
     if (!construct || !filePath) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
-    let target;
     const resolvedPath = this.resolvePath(filePath);
-    if (resolvedPath.success && !resolvedPath.error) {
-      target = resolvedPath.value;
-    } else {
-      return resolvedPath;
+    if (!resolvedPath.success || resolvedPath.error) return resolvedPath;
+    if (!this.modules.has(resolvedPath.value).value()) {
+      this.modules.set(resolvedPath.value, true).write();
+    } else if (respectDisabled && !this.modules.get(resolvedPath.value).value()) {
+      return new Response({
+        message: `Module "${resolvedPath.value}" was disabled`,
+        success: false,
+        code: "disabled",
+      });
     }
     let mod;
     try {
-      mod = require(target);
+      mod = require(resolvedPath.value);
     } catch (error) {
       log.error("[requireModule]", error);
       return new Response({ message: "Error while requiring module", success: false, error: error });
     }
-    if (_.isNil(mod)) return new Response({ message: `Something went wrong while requiring module "${target}" but didn't result in an error`, success: false });
-    return this.loadModule(construct, mod, target);
+    if (_.isNil(mod)) return new Response({ message: `Something went wrong while requiring module "${resolvedPath.value}" but didn't result in an error`, success: false });
+    return this.loadModule(construct, mod, resolvedPath.value);
   }
 
   /**
    * @param {BaseConstruct} construct
    * @param {[string]} filePaths
+   * @param {boolean} [respectDisabled=false]
    * @param {?string} [directoryPath=null]
    */
-  requireMultipleModules(construct, filePaths, directoryPath = null) {
+  requireMultipleModules(construct, filePaths, respectDisabled = false, directoryPath = null) {
     if (!construct || !filePaths) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (!filePaths.length) return new Response({ message: `Loaded 0/0 modules (No modules to require, skipped)`, success: true });
-    let successes = 0;
+    let successes = 0, disabled = 0;
     for (const filePath of filePaths) {
-      const result = this.requireModule(construct, filePath);
+      const result = this.requireModule(construct, filePath, respectDisabled);
       if (result.success && !result.error) ++successes;
+      if (respectDisabled && result.code && result.code === "disabled") ++disabled;
     }
-    return new Response({ message: `Loaded ${successes}/${filePaths.length} modules${directoryPath ? ` in "${directoryPath}"` : ""}`, success: true });
+    return new Response({ message: `Loaded ${successes}/${filePaths.length - disabled} modules${disabled ? ` (${disabled} disabled)` : ""}${directoryPath ? ` in "${directoryPath}"` : ""}`, success: true });
+  }
+
+  /**
+   * @param {string} directoryPath
+   */
+  static async searchDirectory(directoryPath) {
+    if (!directoryPath) return new Response({ message: "Required parameters weren't supplied", success: false });
+    const filePaths = await filehound.create().paths(directoryPath).ext(".js").find().catch(error => {
+      log.error(error);
+      return new Response({ message: "Error while attempting to search directory", success: false, error: error });
+    });
+    if (_.isNil(filePaths)) return new Response({ message: "Something went wrong while searching directory but didn't result in an error", success: false });
+    if (!filePaths.length) return new Response({ message: `No files found in "${directoryPath}", skipping`, success: true, value: null });
+    return new Response({
+      message: `Found ${filePaths.length} ${!filePaths.length ? "file" : "files"} under "${directoryPath}"`,
+      success: true,
+      value: filePaths.map(filePath => path.join("../", filePath)),
+    });
+  }
+
+  /**
+   * @param {BaseConstruct} construct
+   * @param {string} directoryPath
+   * @param {boolean} [respectDisabled=false]
+   */
+  async requireDirectory(construct, directoryPath, respectDisabled = false) {
+    if (!construct || !directoryPath) return new Response({ message: "Required parameters weren't supplied", success: false });
+    if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
+    const result = await Handler.searchDirectory(directoryPath);
+    if (!result.value || !result.success) return result;
+    return this.requireMultipleModules(construct, result.value, respectDisabled, directoryPath);
   }
 
   /**
    * @param {BaseConstruct} construct
    * @param {string} directoryPath
    */
-  async requireDirectory(construct, directoryPath) {
+  async unloadDirectory(construct, directoryPath) {
     if (!construct || !directoryPath) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
-    let filePaths;
-    try {
-      filePaths = await filehound.create().paths(directoryPath).ext(".js").find();
-    } catch (error) {
-      log.error(error);
-      return new Response({ message: "Error while attempting to scan directory", success: false, error: error });
-    }
-    if (_.isNil(filePaths)) return new Response({ message: "Something went wrong while scanning directory but didn't result in an error", success: false });
-    if (!filePaths.length) return new Response({ message: `Nothing to load in "${directoryPath}", skipping`, success: true });
-    filePaths = filePaths.map(filePath => path.join("../", filePath));
-    return this.requireMultipleModules(construct, filePaths, directoryPath);
+    const result = await Handler.searchDirectory(directoryPath);
+    if (!result.value || !result.success) return result;
+    return this.unloadMultipleModules(construct, result.value, directoryPath);
   }
 }
 

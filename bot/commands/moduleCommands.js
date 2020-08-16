@@ -101,7 +101,7 @@ module.exports = [
     if (!pathsResult.value) return message.channel.send(`A path or name is required\nIf targeting anonymous blocks, use \`unload\` instead\nUsage: \`${this.firstName} ${this.usage}\``);
     const unloadResult = _.isArray(pathsResult.value) ? client.handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : client.handler.unloadModule(client[constructProperty], pathsResult.value);
     if (!unloadResult.success || unloadResult.error) return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n\`\`\``);
-    const loadResult = _.isArray(pathsResult.value) ? client.handler.requireMultipleModules(client[constructProperty], pathsResult.value) : client.handler.requireModule(client[constructProperty], pathsResult.value);
+    const loadResult = _.isArray(pathsResult.value) ? client.handler.requireMultipleModules(client[constructProperty], false, pathsResult.value) : client.handler.requireModule(client[constructProperty], pathsResult.value);
     return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${loadResult.message}\n\`\`\``);
   }),
 ];
