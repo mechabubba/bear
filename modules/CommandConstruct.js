@@ -85,8 +85,6 @@ class CommandConstruct extends BaseConstruct {
       if (/[\n\r\s]+/.test(name)) log.warn(`Command name "${name}" from ${!command.filePath ? "an anonymous block" : command.filePath} contains white space and won't be reached by the parsing in commandParser.js`);
       this.index.set(name, command.id);
     }, command.identity);
-    // log
-    log.trace("Loaded a command", command);
   }
 
   /**
@@ -99,8 +97,6 @@ class CommandConstruct extends BaseConstruct {
     super.unload(command);
     // collections
     forAny((name) => this.index.delete(name), command.identity);
-    // log
-    log.trace("Unloaded a command", command);
   }
 
   /**

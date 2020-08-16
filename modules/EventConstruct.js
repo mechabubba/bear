@@ -2,7 +2,6 @@ const { Collection } = require("discord.js");
 const BaseConstruct = require("./BaseConstruct");
 const ListenerBlock = require("./ListenerBlock");
 const { collectionArrayPush, collectionArrayFilter } = require("./miscellaneous");
-const log = require("./log");
 
 /**
  * Event framework
@@ -69,8 +68,6 @@ class EventConstruct extends BaseConstruct {
     // collections
     collectionArrayPush(this.idsByEvent, block.event, block.id);
     collectionArrayPush(this.pathsByEvent, block.event, block.filePath);
-    // log
-    log.trace("Loaded a listener", block);
   }
 
   /**
@@ -88,8 +85,6 @@ class EventConstruct extends BaseConstruct {
     // collections
     collectionArrayFilter(this.pathsByEvent, block.event, block.filePath);
     collectionArrayFilter(this.idsByEvent, block.event, block.id);
-    // log
-    log.trace("Unloaded a listener", block);
   }
 }
 
