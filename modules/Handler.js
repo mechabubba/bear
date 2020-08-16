@@ -162,7 +162,7 @@ class Handler {
     if (!this.modules.has([resolvedPath.value]).value()) {
       this.modules.set([resolvedPath.value], true).write();
     } else if (respectDisabled && !this.modules.get([resolvedPath.value]).value()) {
-      log.debug(`Skipping module "${resolvedPath.value}" as it was disabled`);
+      log.debug(`Skipping disabled module "${resolvedPath.value}"`);
       return new Response({
         message: `Module "${resolvedPath.value}" was disabled`,
         success: false,
