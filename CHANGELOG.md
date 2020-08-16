@@ -2,7 +2,11 @@
 
 _The changelog for this version is incomplete/w.i.p and currently being written_
 
-- A new class, `BaseEventEmitter`, which is the same as [Base](https://github.com/06000208/sandplate/blob/master/modules/Base.js) but extending [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter). Closes [#20](https://github.com/06000208/sandplate/issues/20)
+- A new class, `BaseEventEmitter`, which is the same as [Base](https://github.com/06000208/sandplate/blob/master/modules/Base.js) but extends [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter). Closes [#20](https://github.com/06000208/sandplate/issues/20)
+
+- Changed the approach used for the [Handler](https://github.com/06000208/sandplate/blob/master/modules/Handler.js) class, now instantiated on the [Client](https://github.com/06000208/sandplate/blob/master/modules/Client.js) rather than being static. Closes [#25](https://github.com/06000208/sandplate/issues/25)
+
+- Minor updates to README.md
 
 ## `0.0.6` / `2020-08-12`
 
