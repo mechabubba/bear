@@ -17,9 +17,13 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
 
 - New modules.json lowdb database for the ability to disable modules, which is optionally respected by `requireDirectory()`, `requireMultipleModules()`, or `requireModule()`. "Disabled" modules can still be loaded manually or by code elsewhere in the bot. Closes [#26](https://github.com/06000208/sandplate/issues/26)
 
+- Modules `./bot/commands/templateMultiple.js` and `./bot/commands/example.js` have been renamed back accordingly and disabled by default using the new method
+
 - Fixed some syntax in the Client class
 
 - Fixed mistakes in the guild command
+
+- Removed some leftover log messages, although they might be added back later
 
 - Minor updates to README.md
 
