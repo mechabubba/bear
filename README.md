@@ -10,7 +10,7 @@ It's purpose is to cover all the "basics" of a discord bot's internals, such as,
 - Reloadable command and event modules
 - Command access control
 - Blocking users or guilds from interacting with the bot
-- Supports any number of command prefixes alongside @mention prefix support
+- Supporting any number of command prefixes alongside @mention prefix support
 - Improved console logging (timestamps and labels)
 - Batch script for running & automatically restarting the bot
 - A full set of default commands written in the framework
