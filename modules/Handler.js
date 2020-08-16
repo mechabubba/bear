@@ -87,7 +87,7 @@ class Handler {
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
     let target = null, cache = false, blocks = false, ids = [];
     if (filePath) {
-      const resolvedPath = this.resolvePath(filePath);
+      const resolvedPath = Handler.resolvePath(filePath);
       if (resolvedPath.success && !resolvedPath.error) {
         target = resolvedPath.value;
         if (_.has(require.cache, target)) {
@@ -158,7 +158,7 @@ class Handler {
   requireModule(construct, filePath, respectDisabled = false) {
     if (!construct || !filePath) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
-    const resolvedPath = this.resolvePath(filePath);
+    const resolvedPath = Handler.resolvePath(filePath);
     if (!resolvedPath.success || resolvedPath.error) return resolvedPath;
     if (!this.modules.has(resolvedPath.value).value()) {
       this.modules.set(resolvedPath.value, true).write();
