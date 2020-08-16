@@ -1,4 +1,4 @@
-const _ = require("lodash");
+const { has, isNil } = require("lodash");
 
 /**
  * @typedef {Object} ResponseData
@@ -6,6 +6,7 @@ const _ = require("lodash");
  * @property {?boolean} [success=true] - Whether or not the code succeeded
  * @property {?Error} [error=null] - Used to pass along an error, if one occurred
  * @property {?*} [value=null] - Used to return a value alongside the other data
+ * @property {?string} [code=null] - Label used to identify certain situations if more complexity than the above is required
  */
 
 /**
@@ -16,10 +17,11 @@ class Response {
    * @param {ResponseData} data
    */
   constructor(data) {
-    this.message = _.has(data, "message") && !_.isNil(data.message) ? data.message : "No Message Provided";
-    this.success = _.has(data, "success") && !_.isNil(data.success) ? data.success : true;
-    this.error = _.has(data, "error") && !_.isNil(data.error) && data.error instanceof Error ? data.error : null;
-    this.value = _.has(data, "value") && !_.isNil(data.value) ? data.value : null;
+    this.message = has(data, "message") && !isNil(data.message) ? data.message : "No Message Provided";
+    this.success = has(data, "success") && !isNil(data.success) ? data.success : true;
+    this.error = has(data, "error") && !isNil(data.error) && data.error instanceof Error ? data.error : null;
+    this.value = has(data, "value") && !isNil(data.value) ? data.value : null;
+    this.code = has(data, "code") && !isNil(data.code) ? data.code : null;
   }
 }
 
