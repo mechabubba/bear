@@ -8,7 +8,7 @@ const FileSync = require("lowdb/adapters/FileSync");
 const fse = require("fs-extra");
 const path = require("path");
 const configPath = path.join(__dirname, "../data/config.json");
-const defaultConfig = require("./defaultConfig");
+const { config } = require("./defaultData");
 
 /**
  * Extension of the discord.js client
@@ -29,7 +29,7 @@ class Client extends Discord.Client {
      * Config database via lowdb
      */
     this.config = low(new FileSync(configPath));
-    this.config.defaultsDeep(defaultConfig).write();
+    this.config.defaultsDeep(config).write();
 
     /**
      * Arbitrary Collection

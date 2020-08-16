@@ -28,7 +28,7 @@
  * @property {?[Snowflake]} guilds.blocked - Used by bot access control, acts as a "block list" where the bot will auto leave guilds on the list (id based)
  * @property {?[Snowflake]} guilds.allowed - Used by bot access control, acts as an "allow list" where the bot will auto leave guilds not on the list (id based)
  */
-const defaultConfig = {
+module.exports.config = {
   "client": {
     "token": null,
   },
@@ -63,5 +63,3 @@ const defaultConfig = {
     "allowed": null,
   },
 };
-
-module.exports = defaultConfig;

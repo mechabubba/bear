@@ -6,6 +6,9 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
 
 - Changed the approach used for the [Handler](https://github.com/06000208/sandplate/blob/master/modules/Handler.js) class, now instantiated on the [Client](https://github.com/06000208/sandplate/blob/master/modules/Client.js) rather than being static. Closes [#25](https://github.com/06000208/sandplate/issues/25)
 
+- Changed `defaultConfig.js` into `defaultData.js` and updated usage accordingly
+  - Updated old references here in CHANGELOG.md and elsewhere so people won't go looking for a file that doesn't exist
+
 - Fixed mistakes in the guild command
 
 - Minor updates to README.md
@@ -32,7 +35,7 @@ As was started with `0.0.5`, specific versions that are in development will cont
 
 - Fixed guild access control (`guildAccess.js`), it was quite broken and [stank](https://en.wikipedia.org/wiki/Code_smell). Not sure how I didn't notice this previously.
 
-- Added `metadata.twitch` and `metadata.reaction.cooldown` to `defaultConfig.js`
+- Added `metadata.twitch` and `metadata.reaction.cooldown` to `defaultConfig.js` (after 0.0.6, now `defaultData.js`)
 
 - Renamed `randomFile.js` to `wikimedia.js`, added new functionality, improved the embed and what data is displayed, how unknown api responses & files that can't be displayed are handled, and adjusted it to make use of `metadata.reaction.cooldown` appropriately
 
@@ -263,14 +266,14 @@ I'm going to keep this brief and refrain from explaining too much (particularly 
 - Several listener modules are included with v0.0.3 (located in `./bot/listeners/`)
 
   - `commandParser.js` Listener for the [`message`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-message) event that's responsible for determining if messages are prefixed, responsible filtering out anything that isn't valid command use, parsing messages into arguments, and running commands.
-    - Sandplate can be configured with any number of string prefixes, including none, and has support for @mention prefixes. Refer to `./modules/defaultConfig.js` for documentation about this
+    - Sandplate can be configured with any number of string prefixes, including none, and has support for @mention prefixes. Refer to `./modules/defaultConfig.js` (after 0.0.6, now `./modules/defaultData.js`) for documentation about this
   - `startup.js` Listener for the [`ready`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-ready) event, runs after the bot is online and workable, but will only run once, so it's safe for things like cron jobs or startup code. Currently just adds the bot owner's account id to the hosts user group if the hosts group is null.
-  - `guildAccess.js` Implementation of guild access control using the [`ready`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-ready) and [`guildCreate`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-guildCreate) events, which demonstrates exporting multiple event listeners from one module. refer to `./modules/defaultConfig.js` for some information regarding guild groups and this, allow and block lists are both disabled (null) by default.
+  - `guildAccess.js` Implementation of guild access control using the [`ready`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-ready) and [`guildCreate`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-guildCreate) events, which demonstrates exporting multiple event listeners from one module. refer to `./modules/defaultConfig.js` (after 0.0.6, now `./modules/defaultData.js`) for some information regarding guild groups and this, allow and block lists are both disabled (null) by default.
   - `logging.js` Logging and log messages for the [`debug`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-debug), [`warn`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-warn), [`error`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-error), [`ready`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-ready), [`shardError`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-shardError), [`shardReady`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-shardReady), [`shardDisconnect`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-shardDisconnect), [`shardReconnecting`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-shardReconnecting), [`shardResume`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-shardResume), [`rateLimit`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-rateLimit), and [`guildUnavailable`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-guildUnavailable) events
 
 - `Client` class, an extension of discord.js's [Client](https://discord.js.org/#/docs/main/stable/class/Client) class with:
 
-  - `client.config`, Bot configuration via lowdb. Stored at `./data/config.json` and generated with default values from `./modules/defaultConfig.js` which also contains comprehensive documentation for the config file
+  - `client.config`, Bot configuration via lowdb. Stored at `./data/config.json` and generated with default values from `./modules/defaultConfig.js` (after 0.0.6, now `./modules/defaultData.js`) which also contains comprehensive documentation for the config file
   - `client.cookies`, An arbitrary [Collection](https://discord.js.org/#/docs/collection/master/class/Collection) for usage by anything in the bot. Think of browser cookies, but not persisted.
   - Instances of `CommandConstruct` and `EventConstruct` for the bot's commands and discord.js's events
 

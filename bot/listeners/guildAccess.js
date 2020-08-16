@@ -5,7 +5,7 @@ const chalk = require("chalk");
 // Block list auto leaves guilds on the list if enabled
 // Allow list auto leaves guilds not on the list if enabled
 // Both are disabled by default via the guild groups they use being null
-// Refer to documentation in ./modules/defaultConfig.js for info about guild groups
+// Refer to documentation in ./modules/defaultData.js for info about guild groups
 
 module.exports = [
   new ListenerBlock({
