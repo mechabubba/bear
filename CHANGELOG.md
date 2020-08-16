@@ -23,7 +23,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
 
 - Fixed mistakes in the guild command
 
-- Removed some leftover log messages, although they might be added back later
+- Removed some leftover log messages (although they might be added back later) and updated one in `./bot/listeners/logging.js`
 
 - Minor updates to README.md
 
