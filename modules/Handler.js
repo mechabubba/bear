@@ -36,15 +36,13 @@ class Handler {
     this.modules = low(new FileSync(modulesFile));
 
     // Handle modules configured to be disabled by default
+    // If a module hasn't been explicitly disabled, it is implicitly enabled
     if (generating) {
-      const modules = {};
-      // If a module hasn't been explicitly disabled, it is implicitly enabled
       for (const module of disabledModules) {
         const resolvedPath = Handler.resolvePath(module);
-        if (!resolvedPath.success) continue;
-        modules[resolvedPath] = false;
+        if (!resolvedPath.success) continue; // If a path fails to resolve, just skip it
+        if (!this.modules.has([resolvedPath.value]).value()) this.modules.set([resolvedPath.value], false).write();
       }
-      this.modules.defaultsDeep(modules).write();
       log.info("A modules.json file has been generated in ./data/");
     }
   }
@@ -61,6 +59,7 @@ class Handler {
       obj.error = error;
       obj.success = false;
       if (error.code === "MODULE_NOT_FOUND") {
+        obj.code = error.code;
         obj.message = `Path "${filePath}" couldn't be resolved, module not found`;
         log.warn("[resolvePath]", obj.message, error);
       } else {
@@ -160,9 +159,9 @@ class Handler {
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
     const resolvedPath = Handler.resolvePath(filePath);
     if (!resolvedPath.success || resolvedPath.error) return resolvedPath;
-    if (!this.modules.has(resolvedPath.value).value()) {
-      this.modules.set(resolvedPath.value, true).write();
-    } else if (respectDisabled && !this.modules.get(resolvedPath.value).value()) {
+    if (!this.modules.has([resolvedPath.value]).value()) {
+      this.modules.set([resolvedPath.value], true).write();
+    } else if (respectDisabled && !this.modules.get([resolvedPath.value]).value()) {
       return new Response({
         message: `Module "${resolvedPath.value}" was disabled`,
         success: false,
