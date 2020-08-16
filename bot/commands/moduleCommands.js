@@ -1,6 +1,5 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const Response = require("../../modules/Response");
-const Handler = require("../../modules/Handler");
 const log = require("../../modules/log");
 const _ = require("lodash");
 const { inspect } = require("util");
@@ -16,7 +15,6 @@ const determineConstruct = function(choice) {
   }
 };
 const resolveInputToPaths = function(client, constructProperty, content, choice) {
-  log.debug("\nconstructProperty", constructProperty, "\ncontent", content, "\nchoice", choice);
   const input = content.substring(choice.length).trim();
   const obj = {
     message: `Didn't resolve input "${input}" as `,
@@ -64,7 +62,7 @@ module.exports = [
     if (!constructProperty) return message.channel.send(`Unknown construct "${choice}"\nUsage: \`${this.firstName} ${this.usage}\``);
     const filePath = content.substring(choice.length).trim();
     if (!filePath.length) return message.channel.send(`A path is required\nUsage: \`${this.firstName} ${this.usage}\``);
-    const loadResult = Handler.requireModule(client[constructProperty], filePath);
+    const loadResult = client.handler.requireModule(client[constructProperty], filePath);
     return message.channel.send(`\`\`\`\n${loadResult.message}\n\`\`\``);
   }),
   new CommandBlock({
@@ -82,7 +80,7 @@ module.exports = [
     const constructProperty = determineConstruct(choice);
     if (!constructProperty) return message.channel.send(`Unknown construct "${choice}"\nUsage: \`${this.firstName} ${this.usage}\``);
     const pathsResult = resolveInputToPaths(client, constructProperty, content, choice);
-    const unloadResult = _.isArray(pathsResult.value) ? Handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : Handler.unloadModule(client[constructProperty], pathsResult.value);
+    const unloadResult = _.isArray(pathsResult.value) ? client.handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : client.handler.unloadModule(client[constructProperty], pathsResult.value);
     return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n\`\`\``);
   }),
   new CommandBlock({
@@ -101,9 +99,9 @@ module.exports = [
     if (!constructProperty) return message.channel.send(`Unknown construct "${choice}"\nUsage: \`${this.firstName} ${this.usage}\``);
     const pathsResult = resolveInputToPaths(client, constructProperty, content, choice);
     if (!pathsResult.value) return message.channel.send(`A path or name is required\nIf targeting anonymous blocks, use \`unload\` instead\nUsage: \`${this.firstName} ${this.usage}\``);
-    const unloadResult = _.isArray(pathsResult.value) ? Handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : Handler.unloadModule(client[constructProperty], pathsResult.value);
+    const unloadResult = _.isArray(pathsResult.value) ? client.handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : client.handler.unloadModule(client[constructProperty], pathsResult.value);
     if (!unloadResult.success || unloadResult.error) return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n\`\`\``);
-    const loadResult = _.isArray(pathsResult.value) ? Handler.requireMultipleModules(client[constructProperty], pathsResult.value) : Handler.requireModule(client[constructProperty], pathsResult.value);
+    const loadResult = _.isArray(pathsResult.value) ? client.handler.requireMultipleModules(client[constructProperty], pathsResult.value) : client.handler.requireModule(client[constructProperty], pathsResult.value);
     return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${loadResult.message}\n\`\`\``);
   }),
 ];

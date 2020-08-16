@@ -1,5 +1,6 @@
 const CommandConstruct = require("./CommandConstruct");
 const EventConstruct = require("./EventConstruct");
+const Handler = require("./Handler");
 const log = require("./log");
 const Discord = require("discord.js");
 const low = require("lowdb");
@@ -35,6 +36,12 @@ class Client extends Discord.Client {
      * @type {Discord.Collection<*, *>}
      */
     this.cookies = new Discord.Collection();
+
+    /**
+     * Handler framework
+     * @type {Handler}
+     */
+    this.handler = new Handler(this);
 
     /**
      * Commands

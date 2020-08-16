@@ -10,14 +10,23 @@ const filehound = require("filehound");
  * Handler framework
  */
 class Handler {
-  constructor() {
-    throw new Error(`The ${this.constructor.name} class cannot be instantiated.`);
+  /**
+   * @param {Client} client
+   */
+  constructor(client) {
+    /**
+     * Reference to the Client this Handler is for
+     * @type {Client}
+     * @name Handler#client
+     * @readonly
+     */
+    Object.defineProperty(this, "client", { value: client });
   }
 
   /**
    * @param {string} filePath
    */
-  static resolvePath(filePath) {
+  resolvePath(filePath) {
     if (!filePath) return new Response({ message: "Required parameters weren't supplied", success: false });
     const obj = {};
     try {
@@ -47,12 +56,12 @@ class Handler {
    * @param {BaseConstruct} construct
    * @param {?string} [filePath=null]
    */
-  static unloadModule(construct, filePath = null) {
+  unloadModule(construct, filePath = null) {
     if (!construct) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
     let target = null, cache = false, blocks = false, ids = [];
     if (filePath) {
-      const resolvedPath = Handler.resolvePath(filePath);
+      const resolvedPath = this.resolvePath(filePath);
       if (resolvedPath.success && !resolvedPath.error) {
         target = resolvedPath.value;
         if (_.has(require.cache, target)) {
@@ -85,12 +94,12 @@ class Handler {
    * @param {[string]} filePaths
    * @param {?string} [directoryPath=null]
    */
-  static unloadMultipleModules(construct, filePaths, directoryPath = null) {
+  unloadMultipleModules(construct, filePaths, directoryPath = null) {
     if (!construct || !filePaths) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (!filePaths.length) return new Response({ message: `Unloaded 0/0 modules (No modules to unload, skipped)`, success: true });
     let successes = 0;
     for (const filePath of filePaths) {
-      const result = Handler.unloadModule(construct, filePath);
+      const result = this.unloadModule(construct, filePath);
       if (result.success && !result.error) ++successes;
     }
     return new Response({ message: `Unloaded ${successes}/${filePaths.length} modules${directoryPath ? ` in "${directoryPath}"` : ""}`, success: true });
@@ -101,7 +110,7 @@ class Handler {
    * @param {(*|[*])} mod
    * @param {?string} [filePath=null]
    */
-  static loadModule(construct, mod, filePath = null) {
+  loadModule(construct, mod, filePath = null) {
     if (!construct || !mod) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
     if (_.isArray(mod)) {
@@ -119,11 +128,11 @@ class Handler {
    * @param {BaseConstruct} construct
    * @param {string} filePath
    */
-  static requireModule(construct, filePath) {
+  requireModule(construct, filePath) {
     if (!construct || !filePath) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
     let target;
-    const resolvedPath = Handler.resolvePath(filePath);
+    const resolvedPath = this.resolvePath(filePath);
     if (resolvedPath.success && !resolvedPath.error) {
       target = resolvedPath.value;
     } else {
@@ -137,7 +146,7 @@ class Handler {
       return new Response({ message: "Error while requiring module", success: false, error: error });
     }
     if (_.isNil(mod)) return new Response({ message: `Something went wrong while requiring module "${target}" but didn't result in an error`, success: false });
-    return Handler.loadModule(construct, mod, target);
+    return this.loadModule(construct, mod, target);
   }
 
   /**
@@ -145,12 +154,12 @@ class Handler {
    * @param {[string]} filePaths
    * @param {?string} [directoryPath=null]
    */
-  static requireMultipleModules(construct, filePaths, directoryPath = null) {
+  requireMultipleModules(construct, filePaths, directoryPath = null) {
     if (!construct || !filePaths) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (!filePaths.length) return new Response({ message: `Loaded 0/0 modules (No modules to require, skipped)`, success: true });
     let successes = 0;
     for (const filePath of filePaths) {
-      const result = Handler.requireModule(construct, filePath);
+      const result = this.requireModule(construct, filePath);
       if (result.success && !result.error) ++successes;
     }
     return new Response({ message: `Loaded ${successes}/${filePaths.length} modules${directoryPath ? ` in "${directoryPath}"` : ""}`, success: true });
@@ -160,7 +169,7 @@ class Handler {
    * @param {BaseConstruct} construct
    * @param {string} directoryPath
    */
-  static async requireDirectory(construct, directoryPath) {
+  async requireDirectory(construct, directoryPath) {
     if (!construct || !directoryPath) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
     let filePaths;
@@ -173,7 +182,7 @@ class Handler {
     if (_.isNil(filePaths)) return new Response({ message: "Something went wrong while scanning directory but didn't result in an error", success: false });
     if (!filePaths.length) return new Response({ message: `Nothing to load in "${directoryPath}", skipping`, success: true });
     filePaths = filePaths.map(filePath => path.join("../", filePath));
-    return Handler.requireMultipleModules(construct, filePaths, directoryPath);
+    return this.requireMultipleModules(construct, filePaths, directoryPath);
   }
 }
 
