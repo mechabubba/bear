@@ -22,9 +22,8 @@ class Client extends Discord.Client {
     super(options);
 
     // Log to the console if config.json will be created
-    if (fse.pathExistsSync(configPath) !== true) {
-      log.info("A default config.json file will be generated in ./data/");
-    }
+    if (!fse.pathExistsSync(configPath)) log.info("A default config.json file will be generated in ./data/");
+
     /**
      * Config database via lowdb
      */
