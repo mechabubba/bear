@@ -24,7 +24,7 @@ module.exports = new CommandBlock({
         ++unavailable;
       }
     });
-    log.info(`List of ${client.user.tag}'s ${client.guilds.cache.size} ${!unavailable.length ? "guilds" : `guilds (${unavailable} unavailable)`}, requested by ${message.author.tag}${list}`);
+    log.info(`List of ${client.user.tag}'s ${client.guilds.cache.size} ${!client.guilds.cache.size ? "guild" : "guilds"}${unavailable ? ` (${unavailable} unavailable)` : ""}, requested by ${message.author.tag}${list}`);
     return message.channel.send("Logged list to console");
   } else {
     if (!isNumeric(id)) return message.channel.send(`The id \`${id}\` was invalid`);

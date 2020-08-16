@@ -6,6 +6,8 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
 
 - Changed the approach used for the [Handler](https://github.com/06000208/sandplate/blob/master/modules/Handler.js) class, now instantiated on the [Client](https://github.com/06000208/sandplate/blob/master/modules/Client.js) rather than being static. Closes [#25](https://github.com/06000208/sandplate/issues/25)
 
+- Fixed mistakes in the guild command
+
 - Minor updates to README.md
 
 ## `0.0.6` / `2020-08-12`
