@@ -4,10 +4,20 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
 
 - A new class, `BaseEventEmitter`, which is the same as [Base](https://github.com/06000208/sandplate/blob/master/modules/Base.js) but extends [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter). Closes [#20](https://github.com/06000208/sandplate/issues/20)
 
-- Changed the approach used for the [Handler](https://github.com/06000208/sandplate/blob/master/modules/Handler.js) class, now instantiated on the [Client](https://github.com/06000208/sandplate/blob/master/modules/Client.js) rather than being static. Closes [#25](https://github.com/06000208/sandplate/issues/25)
+- Changed the approach used for the [Handler](https://github.com/06000208/sandplate/blob/master/modules/Handler.js) class, now instantiated on the [Client](https://github.com/06000208/sandplate/blob/master/modules/Client.js) rather than being static. `resolvePath()` and the new `searchDirectory()` are both still static methods. Closes [#25](https://github.com/06000208/sandplate/issues/25)
 
 - Changed `defaultConfig.js` into `defaultData.js` and updated usage accordingly
   - Updated old references here in CHANGELOG.md and elsewhere so people won't go looking for a file that doesn't exist
+
+- Added the capacity for codes to the Response class, similar to the [Error.code](https://nodejs.org/api/errors.html#errors_error_code) property
+
+- Moved most of the `requireDirectory()`'s logic to it's own function, `searchDirectory()`, and improved it
+
+- A new handler function, `unloadDirectory()`, which does the exact opposite of `requireDirectory()`
+
+- New modules.json lowdb database for the ability to disable modules, which is optionally respected by `requireDirectory()`, `requireMultipleModules()`, or `requireModule()`. "Disabled" modules can still be loaded manually or by code elsewhere in the bot. Closes [#26](https://github.com/06000208/sandplate/issues/26)
+
+- Fixed some syntax in the Client class
 
 - Fixed mistakes in the guild command
 
