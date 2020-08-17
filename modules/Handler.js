@@ -38,9 +38,10 @@ class Handler {
     // Handle modules configured to be disabled by default
     // If a module hasn't been explicitly disabled, it is implicitly enabled
     if (generating) {
-      for (const module of disabledModules) {
-        const resolvedPath = Handler.resolvePath(module);
+      for (const filePath of disabledModules) {
+        const resolvedPath = Handler.resolvePath(filePath);
         if (!resolvedPath.success) continue; // If a path fails to resolve, just skip it
+        // you have to put the path in an array so that the periods in it while using it as a key aren't interpreted as traversing the db
         if (!this.modules.has([resolvedPath.value]).value()) this.modules.set([resolvedPath.value], false).write();
       }
       log.info("A modules.json file has been generated in ./data/");
@@ -105,7 +106,10 @@ class Handler {
       }
       blocks = true;
     }
-    const obj = { success: true };
+    const obj = {
+      success: true,
+      value: filePath,
+    };
     if (blocks || cache) {
       obj.message = `Unloaded ${cache ? `"${target}" from the cache` : ""}${cache && blocks ? " and " : ""}${blocks ? (target ? `${ids.length} ${ids.length === 1 ? "block" : "blocks"} mapped to that path` : "all anonymous blocks") : ""} from the ${construct.name}`;
     } else {
@@ -123,11 +127,17 @@ class Handler {
     if (!construct || !filePaths) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (!filePaths.length) return new Response({ message: `Unloaded 0/0 modules (No modules to unload, skipped)`, success: true });
     let successes = 0;
+    const resolvedPaths = [];
     for (const filePath of filePaths) {
       const result = this.unloadModule(construct, filePath);
       if (result.success && !result.error) ++successes;
+      if (result.value) resolvedPaths.push(result.value);
     }
-    return new Response({ message: `Unloaded ${successes}/${filePaths.length} modules${directoryPath ? ` in "${directoryPath}"` : ""}`, success: true });
+    return new Response({
+      message: `Unloaded ${successes}/${filePaths.length} modules${directoryPath ? ` in "${directoryPath}"` : ""}`,
+      success: true,
+      value: resolvedPaths,
+    });
   }
 
   /**
@@ -142,10 +152,18 @@ class Handler {
       for (const block of mod) {
         construct.load(block, filePath);
       }
-      return new Response({ message: `Loaded ${mod.length} ${mod.length === 1 ? "block" : "blocks"} from ${!filePath ? "code anonymously" : filePath}`, success: true });
+      return new Response({
+        message: `Loaded ${mod.length} ${mod.length === 1 ? "block" : "blocks"} from ${!filePath ? "code anonymously" : filePath}`,
+        success: true,
+        value: filePath,
+      });
     } else {
       construct.load(mod, filePath);
-      return new Response({ message: `Loaded 1 block from ${!filePath ? "code anonymously" : `"${filePath}"`}`, success: true });
+      return new Response({
+        message: `Loaded 1 block from ${!filePath ? "code anonymously" : `"${filePath}"`}`,
+        success: true,
+        value: filePath,
+      });
     }
   }
 
@@ -159,6 +177,7 @@ class Handler {
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
     const resolvedPath = Handler.resolvePath(filePath);
     if (!resolvedPath.success || resolvedPath.error) return resolvedPath;
+    // you have to put the path in an array so that periods aren't interpreted as traversing the db
     if (!this.modules.has([resolvedPath.value]).value()) {
       this.modules.set([resolvedPath.value], true).write();
     } else if (respectDisabled && !this.modules.get([resolvedPath.value]).value()) {
@@ -190,12 +209,18 @@ class Handler {
     if (!construct || !filePaths) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (!filePaths.length) return new Response({ message: `Loaded 0/0 modules (No modules to require, skipped)`, success: true });
     let successes = 0, disabled = 0;
+    const resolvedPaths = [];
     for (const filePath of filePaths) {
       const result = this.requireModule(construct, filePath, respectDisabled);
       if (result.success && !result.error) ++successes;
       if (respectDisabled && result.code && result.code === "disabled") ++disabled;
+      if (result.value) resolvedPaths.push(result.value);
     }
-    return new Response({ message: `Loaded ${successes}/${filePaths.length - disabled} modules${disabled ? ` (${disabled} disabled)` : ""}${directoryPath ? ` in "${directoryPath}"` : ""}`, success: true });
+    return new Response({
+      message: `Loaded ${successes}/${filePaths.length - disabled} modules${disabled ? ` (${disabled} disabled)` : ""}${directoryPath ? ` in "${directoryPath}"` : ""}`,
+      success: true,
+      value: resolvedPaths,
+    });
   }
 
   /**
