@@ -70,4 +70,5 @@ module.exports.config = {
 module.exports.disabledModules = [
   "../bot/commands/example",
   "../bot/commands/templateMultiple",
+  "../bot/commands/eval",
 ];

@@ -17,6 +17,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
 - New modules.json lowdb database as a built in way to disable modules, which is optionally respected by `requireDirectory()`, `requireMultipleModules()`, or `requireModule()`. This is so disabling modules plays much nicer with git (no longer requiring file renames), and with the new approach, disabled modules not loaded on start up can still be easily loaded later if desired. Closes [#26](https://github.com/06000208/sandplate/issues/26)
   - Modules `./bot/commands/templateMultiple.js` and `./bot/commands/example.js` have been renamed back accordingly and disabled by default using the new method in `defaultData.js`
   - New commands `enable` and `disable` which act the same way as `load` and `unload` but also enable/disable the modules you target accordingly
+  - The `eval` command is now disabled by default
 
 - Fixed some syntax in the Client class
 

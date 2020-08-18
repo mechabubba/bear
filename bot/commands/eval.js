@@ -4,8 +4,13 @@ const { inspect } = require("util");
 const _ = require("lodash");
 
 /*
-A huge security hole/risk, but included for development purposes: arbitrary javascript evaluation
-It should only be allowed to those who already possess the bot's token!
+This command provides arbitrary javascript evaluation, and is disabled by default
+
+Edit ./data/modules.json after generation and set the path for this module to true
+or run the command "load command ./bot/commands/eval" if you want to use it
+
+Keep in mind that it should only be allowed to those who already
+possess your bot's token or have access to the computer running it
 */
 
 const clean = async function(input, token) {
@@ -24,7 +29,7 @@ const clean = async function(input, token) {
 module.exports = new CommandBlock({
   identity: ["eval", "evaluate", "js"],
   summary: "Evaluates arbitrary javascript",
-  description: "A huge security hole/risk for development purposes: arbitrary javascript evaluation. Should only be allowed to those who already possess the bot's token.",
+  description: "An enormous security risk for development purposes: [arbitrary javascript evaluation](https://en.wikipedia.org/wiki/Arbitrary_code_execution). Uses [`eval()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval) under the hood.",
   usage: "<code>",
   scope: ["dm", "text", "news"],
   nsfw: false,
