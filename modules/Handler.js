@@ -182,11 +182,7 @@ class Handler {
       this.modules.set([resolvedPath.value], true).write();
     } else if (respectDisabled && !this.modules.get([resolvedPath.value]).value()) {
       log.debug(`Skipping disabled module "${resolvedPath.value}"`);
-      return new Response({
-        message: `Module "${resolvedPath.value}" was disabled`,
-        success: false,
-        code: "disabled",
-      });
+      return new Response({ message: `Module "${resolvedPath.value}" was disabled`, success: true });
     }
     let mod;
     try {
@@ -212,9 +208,14 @@ class Handler {
     const resolvedPaths = [];
     for (const filePath of filePaths) {
       const result = this.requireModule(construct, filePath, respectDisabled);
-      if (result.success && !result.error) ++successes;
-      if (respectDisabled && result.code && result.code === "disabled") ++disabled;
-      if (result.value) resolvedPaths.push(result.value);
+      if (result.success && !result.error) {
+        if (!result.value) {
+          ++disabled;
+        } else {
+          ++successes;
+          resolvedPaths.push(result.value);
+        }
+      }
     }
     return new Response({
       message: `Loaded ${successes}/${filePaths.length - disabled} modules${disabled ? ` (${disabled} disabled)` : ""}${directoryPath ? ` in "${directoryPath}"` : ""}`,
