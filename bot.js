@@ -30,7 +30,7 @@ if (client.config.get("client.token").value() !== null) {
 
 // Token parsing (command line arguments)
 const argv = process.argv.slice(2);
-if (argv.length !== 0) {
+if (argv.length) {
   if (argv.length > 1) log.warn("Regarding command line arguments, the bot only supports using the first argument to pass in a token");
   if (tokenRegex.test(argv[0])) {
     log.info("Command line argument matched token pattern, will attempt to login with it");

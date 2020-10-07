@@ -125,7 +125,7 @@ class CommandConstruct extends BaseConstruct {
         if (!message.member.hasPermission(command.userPermissions, false, true, true)) return;
       }
     }
-    if (command.locked !== false) {
+    if (command.locked) {
       if (command.locked === true) return;
       if (_.isString(command.locked)) {
         if (command.locked !== message.author.id) {
