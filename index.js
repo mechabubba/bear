@@ -20,7 +20,7 @@ if (Number(process.version.slice(1).split(".")[0]) < 12) { // version < minVer
   log.fatal(`discord.js v12+ is required, currently v${version}`);
   process.exit(1);
 } else {
-  log.info(`Starting up running node.js ${process.version} and discord.js v${version}`);
+  log.info(`Starting up using node.js ${process.version} and discord.js v${version} on ${process.platform}`);
 }
 
 // Work in progress
