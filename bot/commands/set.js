@@ -66,7 +66,8 @@ const resolveActivity = function(client, content, args) {
       data.activity.type = "LISTENING";
     } else if (type === "streaming" || type === "twitch") {
       data.activity.type = "STREAMING";
-      data.activity.url = "https://twitch.tv/" + client.config.get("metadata.twitch").value();
+      const channel = client.config.get("metadata.twitch").value();
+      data.activity.url = channel ? "https://twitch.tv/" + channel : null;
     }
   }
   if (data.activity.name.length > 128) return null;
@@ -257,6 +258,10 @@ module.exports = [
     if (!data) {
       message.react(client.config.get("metadata.reactions.negative").value());
       return message.channel.send("Activity text must be 128 characters or shorter in length");
+    }
+    if (data.activity.type === "STREAMING" && !data.activity.url) {
+      message.react(client.config.get("metadata.reactions.negative").value());
+      return message.channel.send("To use the streaming activity, set `metadata.twitch` in the config to the username of the twitch channel you want to display");
     }
     try {
       await client.user.setPresence(data);

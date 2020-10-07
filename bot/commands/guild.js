@@ -40,8 +40,9 @@ module.exports = new CommandBlock({
         { name: "Region", value: `\`${guild.region}\``, inline: true },
       )
       .setFooter(guild.id)
-      .setTimestamp(guild.createdTimestamp)
-      .setColor(client.config.get("metadata.color").value());
+      .setTimestamp(guild.createdTimestamp);
+    const color = client.config.get("metadata.color").value();
+    if (color) embed.setColor(color);
     return message.channel.send(`<https://discordapp.com/channels/${guild.id}/>`, embed);
   }
 });

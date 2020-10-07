@@ -11,8 +11,8 @@
  * @property {Object} events - Config options concerning discord.js events
  * @property {string} events.directory - Path of a folder where modules are located
  * @property {Object} metadata - Metadata for the bot such as configurable visuals, links, and invites
- * @property {ColorResolvable} metadata.color - Embed color used throughout the bot. https://discord.js.org/#/docs/main/master/typedef/ColorResolvable
- * @property {string} metadata.twitch - Twitch account name used as part of the PresenceData activity.url for the streaming status https://discord.js.org/#/docs/main/stable/typedef/PresenceData
+ * @property {?ColorResolvable} metadata.color - Embed color used throughout the bot (no color will be used if null) https://discord.js.org/#/docs/main/master/typedef/ColorResolvable
+ * @property {?string} metadata.twitch - Twitch account name used as part of the PresenceData activity.url for the streaming status https://discord.js.org/#/docs/main/stable/typedef/PresenceData
  * @property {Object} metadata.reactions - Reactions used throughout the bot. https://discord.js.org/#/docs/main/master/typedef/EmojiIdentifierResolvable
  * @property {EmojiIdentifierResolvable} metadata.reactions.positive - Emoji representing something positive, yes, confirmation, acceptance
  * @property {EmojiIdentifierResolvable} metadata.reactions.negative - Emoji representing something negative, no, denial, refusal
@@ -42,8 +42,8 @@ module.exports.config = {
     "directory": "./bot/listeners/",
   },
   "metadata": {
-    "color": "#2F3136",
-    "twitch": "bobross",
+    "color": null,
+    "twitch": null,
     "reactions": {
       "positive": "✅",
       "negative": "❎",

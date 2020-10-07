@@ -26,9 +26,9 @@ module.exports = new CommandBlock({
   const response = await fetch(`http://commons.wikimedia.org/w/api.php?action=query${content ? "&pageids=" + content : "&generator=random&grnnamespace=6"}&prop=imageinfo&iiprop=url|timestamp&format=json`);
   const json = await response.json();
   const page = json.query.pages[Object.keys(json.query.pages)[0]];
-  const embed = new MessageEmbed()
-    .setColor(client.config.get("metadata.color").value())
-    .setFooter(`This has a 10s cool down. Page ID: ${page.pageid}`);
+  const embed = new MessageEmbed().setFooter(`This has a 10s cool down. Page ID: ${page.pageid}`);
+  const color = client.config.get("metadata.color").value();
+  if (color) embed.setColor(color);
   if (_.has(page, "missing")) {
     embed.setTitle("No page").setDescription("The queried page does not exist.");
     return message.channel.send(embed);

@@ -52,8 +52,9 @@ module.exports = new CommandBlock({
     if (text.length > 1900) return log.warn("[help] The command list has exceeded 1990 characters in length and is no longer usable!");
     const embed = new MessageEmbed()
       .setTitle("Command List")
-      .setColor(client.config.get("metadata.color").value())
       .setDescription(text);
+    const color = client.config.get("metadata.color").value();
+    if (color) embed.setColor(color);
     return message.channel.send(embed);
   } else {
     const name = content.toLowerCase();
@@ -67,9 +68,10 @@ module.exports = new CommandBlock({
     if (!validator(client, message, command)) return message.channel.send(`Command \`${content}\` not found`);
     const embed = new MessageEmbed()
       .setTitle(command.firstName)
-      .setColor(client.config.get("metadata.color").value())
       .setDescription(command.description || command.summary || "No description provided")
       .addField("Usage", `\`${command.firstName}${command.usage ? " " + command.usage : ""}\``, true);
+    const color = client.config.get("metadata.color").value();
+    if (color) embed.setColor(color);
     if (command.nsfw) embed.addField("NSFW", "True", true);
     return message.channel.send(embed);
   }
