@@ -27,8 +27,8 @@
     "fs-extra": "^9.0.1",
     "lodash": "^4.17.20",
     "lowdb": "^1.0.0",
-    "moment": "^2.27.0",
-    "node-fetch": "^2.6.0",
+    "moment": "^2.29.1",
+    "node-fetch": "^2.6.1",
     "slash": "^3.0.0",
     "utf-8-validate": "^5.0.2"
   }
