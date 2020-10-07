@@ -192,7 +192,8 @@ class Handler {
       return new Response({ message: "Error while requiring module", success: false, error: error });
     }
     if (_.isNil(mod)) return new Response({ message: `Something went wrong while requiring module "${resolvedPath.value}" but didn't result in an error`, success: false });
-    return this.loadModule(construct, mod, resolvedPath.value);
+    // The use of cloneDeep prevents the require.cache from being affected by changes to the module
+    return this.loadModule(construct, _.cloneDeep(mod), resolvedPath.value);
   }
 
   /**
