@@ -19,13 +19,15 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
   - New commands `enable` and `disable` which act the same way as `load` and `unload` but also enable/disable the modules you target accordingly
   - The `eval` command is now disabled by default
 
-- Fixed some syntax in the Client class
+- Deep cloning required modules rather than passing around a reference to the [require cache](https://nodejs.org/api/modules.html#modules_require_cache). Closes [#32](https://github.com/06000208/sandplate/issues/32)
 
-- Fixed mistakes in the guild command
+- Improved `metadata.color` and `metadata.twitch` to support being null and changed both their defaults to such. Closes [#27](https://github.com/06000208/sandplate/issues/27)
 
-- Removed some leftover log messages (although they might be added back later) and updated one in `./bot/listeners/logging.js`
+- Minor syntax improvements in `Client.js`, `CommandConstruct.js`, and `bot.js`
 
-- Minor updates to README.md
+- Removed some leftover log messages (although they may be added back later)
+
+- Minor updates/fixes to the guild command, some log messages across the bot, and README.md
 
 ## `0.0.6` / `2020-08-12`
 
