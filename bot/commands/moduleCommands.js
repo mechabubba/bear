@@ -121,7 +121,7 @@ module.exports = [
     const filePath = content.substring(choice.length).trim();
     if (!filePath.length) return message.channel.send(`A path is required\nUsage: \`${this.firstName} ${this.usage}\``);
     const loadResult = client.handler.requireModule(client[constructProperty], filePath, false);
-    // you have to put the path in an array so that periods aren't interpreted as traversing the db
+    // You have to put the path in an array so that periods aren't interpreted as traversing the db
     if (loadResult.value) client.handler.modules.set([loadResult.value], true).write();
     return message.channel.send(`\`\`\`\n${loadResult.message}\n${loadResult.value ? "Enabled the module in modules.json" : ""}\`\`\``);
   }),
@@ -143,7 +143,7 @@ module.exports = [
     const multipleModules = isArray(pathsResult.value);
     const unloadResult = multipleModules ? client.handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : client.handler.unloadModule(client[constructProperty], pathsResult.value);
     if (unloadResult.value) {
-      // you have to put the path in an array so that periods aren't interpreted as traversing the db
+      // You have to put the path in an array so that periods aren't interpreted as traversing the db
       if (multipleModules) {
         for (const resolvedPath of unloadResult.value) {
           client.handler.modules.set([resolvedPath], false).write();

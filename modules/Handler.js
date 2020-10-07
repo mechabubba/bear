@@ -41,7 +41,7 @@ class Handler {
       for (const filePath of disabledModules) {
         const resolvedPath = Handler.resolvePath(filePath);
         if (!resolvedPath.success) continue; // If a path fails to resolve, just skip it
-        // you have to put the path in an array so that the periods in it while using it as a key aren't interpreted as traversing the db
+        // You have to put the path in an array so that periods aren't interpreted as traversing the db
         if (!this.modules.has([resolvedPath.value]).value()) this.modules.set([resolvedPath.value], false).write();
       }
       log.info("A modules.json file has been generated in ./data/");
@@ -177,7 +177,7 @@ class Handler {
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
     const resolvedPath = Handler.resolvePath(filePath);
     if (!resolvedPath.success || resolvedPath.error) return resolvedPath;
-    // you have to put the path in an array so that periods aren't interpreted as traversing the db
+    // You have to put the path in an array so that periods aren't interpreted as traversing the db
     if (!this.modules.has([resolvedPath.value]).value()) {
       this.modules.set([resolvedPath.value], true).write();
     } else if (respectDisabled && !this.modules.get([resolvedPath.value]).value()) {
