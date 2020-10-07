@@ -17,26 +17,26 @@ const client = new Client({
 // Token validation (config)
 if (client.config.get("client.token").value() !== null) {
   if (tokenRegex.test(client.config.get("client.token").value())) {
-    log.info("Token stored at client.token successfully matched token pattern");
+    log.info("Token stored in the config successfully matched token pattern, will attempt to login using it");
   } else {
     const id = SnowflakeUtil.generate();
-    log.warn("Token stored at config.bot.token didn't match pattern!");
+    log.warn("Token stored in the config didn't match token pattern, won't try to use it");
     fse.ensureFileSync("./data/config.json");
     fse.copySync("./data/config.json", `./data/config.backup.${id}.json`);
     client.config.set("client.token", null).write();
-    log.warn(`client.token in config.json reset to null and invalid token backed up to config.backup.${id}.json`);
+    log.warn(`The token in config.json has been reset to null and a backup of the config with the invalid token has been created as config.backup.${id}.json`);
   }
 }
 
-// Token parsing (command line arguments)
+// Token parsing (command line argument)
 const argv = process.argv.slice(2);
 if (argv.length) {
-  if (argv.length > 1) log.warn("Regarding command line arguments, the bot only supports using the first argument to pass in a token");
+  if (argv.length > 1) log.warn("Regarding command line arguments, only using the first argument to pass in a token is supported. All further arguments are ignored.");
   if (tokenRegex.test(argv[0])) {
-    log.info("Command line argument matched token pattern, will attempt to login with it");
+    log.info("Command line argument matched token pattern, will attempt to login using it");
     client.cookies.set("token", argv[0]);
   } else {
-    log.warn("Command line argument didn't match token pattern, the bot won't try to use it");
+    log.warn("Command line argument didn't match token pattern, won't try to use it");
   }
 }
 
