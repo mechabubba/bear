@@ -22,5 +22,5 @@ module.exports = new CommandBlock({
     .setFooter(`Running on ${process.platform}`);
   const color = client.config.get("metadata.color").value();
   if (color) embed.setColor(color);
-  return message.channel.send("");
+  return message.channel.send(embed);
 });
