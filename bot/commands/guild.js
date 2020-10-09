@@ -35,7 +35,7 @@ module.exports = new CommandBlock({
       .setTitle(guild.name)
       .setThumbnail(guild.iconURL({ format: "png" }))
       .addFields(
-        { name: "Owner", value: `${guild.owner.user}`, inline: true },
+        { name: "Owner", value: guild.owner.user, inline: true },
         { name: "Members", value: guild.memberCount, inline: true },
         { name: "Region", value: `\`${guild.region}\``, inline: true },
       )
