@@ -1,5 +1,7 @@
 const log = require("./modules/log");
-const { version } = require("discord.js");
+const sandplate = require("./sandplate.json");
+const package = require("./package.json");
+const Discord = require("discord.js");
 
 // node.js process event listeners (if you can improve these, please contribute!)
 // https://nodejs.org/api/process.html (list is under Process Events)
@@ -16,11 +18,11 @@ process.on("exit", (code) => code === 0 ? log.info("Exiting peacefully") : log.w
 if (Number(process.version.slice(1).split(".")[0]) < 12) { // version < minVer
   log.fatal(`node.js v12+ is required, currently ${process.version}`);
   process.exit(1);
-} else if (Number(version.split(".")[0]) < 12) { // version < minVer
-  log.fatal(`discord.js v12+ is required, currently v${version}`);
+} else if (Number(Discord.version.split(".")[0]) < 12) { // version < minVer
+  log.fatal(`discord.js v12+ is required, currently v${Discord.version}`);
   process.exit(1);
 } else {
-  log.info(`Starting up using node.js ${process.version} and discord.js v${version} on ${process.platform}`);
+  log.info(`Starting ${package.name === "sandplate" ? `sandplate v${package.version} using node.js ${process.version} and discord.js v${Discord.version}` : `${package.name} v${package.version} using node.js ${process.version}, discord.js v${Discord.version}, and sandplate v${sandplate.version} on ${process.platform}`} on ${process.platform}`);
 }
 
 // Work in progress
