@@ -13,12 +13,7 @@ module.exports = new CommandBlock({
 }, function(client, message, content, args) {
   const embed = new MessageEmbed()
     .setTitle("Version Info")
-    .addFields(
-      { name: client.user.tag, value: `v${package.version}`, inline: true },
-      { name: "[node.js](https://nodejs.org/)", value: process.version, inline: true },
-      { name: "[discord.js](https://discord.js.org/)", value: `v${Discord.version}`, inline: true },
-      { name: "[sandplate](https://github.com/06000208/sandplate)", value: `v${sandplate.version}`, inline: true },
-    )
+    .setDescription(`\`${client.user.tag}\` v${package.version}\n[\`node.js\`](https://nodejs.org/) ${process.version}\n[\`discord.js\`](https://discord.js.org/) v${Discord.version}\n[\`sandplate\`](https://github.com/06000208/sandplate) v${sandplate.version}`)
     .setFooter(`Running on ${process.platform}`);
   const color = client.config.get("metadata.color").value();
   if (color) embed.setColor(color);
