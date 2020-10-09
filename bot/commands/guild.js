@@ -25,7 +25,7 @@ module.exports = new CommandBlock({
       }
     });
     log.info(`List of ${client.user.tag}'s ${client.guilds.cache.size} ${!client.guilds.cache.size ? "guild" : "guilds"}${unavailable ? ` (${unavailable} unavailable)` : ""}, requested by ${message.author.tag}${list}`);
-    return message.channel.send("Logged list to console");
+    return message.channel.send("Printed list to console");
   } else {
     if (!isNumeric(id)) return message.channel.send(`The id \`${id}\` was invalid`);
     if (!client.guilds.cache.has(id)) return message.channel.send(`The id \`${id}\` isn't mapped to a guild in the cache`);
