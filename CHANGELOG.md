@@ -21,7 +21,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
 
 - Deep cloning required modules rather than passing around a reference to the [require cache](https://nodejs.org/api/modules.html#modules_require_cache). Closes [#32](https://github.com/06000208/sandplate/issues/32)
 
-- Created a `sandplate.json` file in the root. This allows sandplate's version and a few other things to be referenced separately from what's in package.json
+- Created a `sandplate.json` file in the root. This allows sandplate's version and a few other things to be referenced separately from what's in package.json. Admittedly, I'm pretty unsure about it, but I don't think it's a half bad solution. I think it comes down to a compromise while sandplate isn't currently in the form of an NPM package.
 
 - Added a simple version command
 
