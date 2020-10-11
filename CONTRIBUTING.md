@@ -24,7 +24,7 @@ If you don't have something to specific in mind, but want to help out, these lab
 
 - [`good first issue`](https://github.com/06000208/sandplate/labels/good%20first%20issue) Issues that are aren't too complex and could be taken care of relatively easily.
 
-- [`help wanted`](https://github.com/06000208/sandplate/labels/help%20wanted) Highlights an issue as needing attention from other developers, such as a bug we can't figure out or something that needs worked on more urgently than other stuff. Usually more complex than the issues that you would find in the former label.
+- [`help wanted`](https://github.com/06000208/sandplate/labels/help%20wanted) Highlights an issue as needing attention from other developers, such as a bug we can't figure out or something that needs worked on more urgently than other stuff. Usually more complex than the issues that you would find in the other label.
 
 After you've found something to do and communicated with the rest of us, feel free to fork the repository and make a pull request.
 
@@ -52,7 +52,7 @@ npm install --global eslint
 
 ### Code Of Conduct
 
-This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating, you're expected to abide by its terms. Please report unacceptable behavior to [`a0600208@protonmail.com`](mailto:a0600208@protonmail.com).
+This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating, you're expected to abide by its terms. Please report unacceptable behavior to [`a06000208@protonmail.com`](mailto:a06000208@protonmail.com).
 
 ## Issue Labels <a id="labels"></a>
 
