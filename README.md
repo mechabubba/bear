@@ -1,6 +1,6 @@
 # Sandplate (Initial Development)
 
-Sandplate is a boilerplate/template [discord.js](https://discord.js.org) bot, and can be used as a base to expand upon.
+Sandplate is an opinionated boilerplate/template [discord.js](https://discord.js.org) bot, and can be used as a base to expand upon.
 
 It's purpose is to cover all the "basics" of a discord bot's internals, such as, but not limited to:
 
@@ -10,14 +10,14 @@ It's purpose is to cover all the "basics" of a discord bot's internals, such as,
 - Reloadable command and event modules
 - Command access control
 - Blocking users or guilds from interacting with the bot
-- Supporting any number of command prefixes alongside @mention prefix support
+- Supporting any number of command prefixes alongside @mention support
 - Improved console logging (timestamps and labels)
 - Batch script for running & automatically restarting the bot
 - A full set of default commands written in the framework
 
 This way, you don't need to write these things in full yourself, they'd be available to expand upon and use, whatever your purposes, and you could pull fixes and improvements from this repository as they occur.
 
-However, the idea is *not* to skip learning how to code what sandplate does for you. Rather, to make use of sandplate in any meaningful way, you'll need to know how these things are implemented and familiarize yourself with the internals.
+However, the idea is *not* to skip learning how to code what sandplate does for you. Rather, to make use of sandplate properly, you'll need to know how these things are implemented and familiarize yourself with the internals.
 
 Sandplate is currently in initial development, during which it isn't intended for any real use, and anything may change at any time.
 
