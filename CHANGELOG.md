@@ -18,12 +18,16 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
   - Modules `./bot/commands/templateMultiple.js` and `./bot/commands/example.js` have been renamed back accordingly and disabled by default using the new method in `defaultData.js`
   - New commands `enable` and `disable` which act the same way as `load` and `unload` but also enable/disable the modules you target accordingly
   - The `eval` command is now disabled by default
+  - The old way of tacking `.disabled` onto the end of module file names will still work, as it was caused by only `.js` files being detected.
 
 - Deep cloning required modules rather than passing around a reference to the [require cache](https://nodejs.org/api/modules.html#modules_require_cache). Closes [#32](https://github.com/06000208/sandplate/issues/32)
 
 - Created a `sandplate.json` file in the root. This allows sandplate's version and a few other things to be referenced separately from what's in package.json. Admittedly, I'm pretty unsure about it, but I don't think it's a half bad solution. I think it comes down to a compromise while sandplate isn't currently in the form of an NPM package.
 
-- Added a simple version command
+- `./modules/regexes.js`, A new module specifically for useful regular expressions
+
+- Removed the `isNumeric()` function from `./modules/miscellaneous.js` and updated usage, as there's little point compared to using [`RegExp.test()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test) directly
+
 - Added a simple info command for developers with versions and some other info. Some people get annoyed at these sorts of commands in bots, and the info given could be treated with a "need to know" basis, so it's locked to hosts.
 
 - Improved `metadata.color` and `metadata.twitch` to support being null and changed both their defaults to such. Closes [#27](https://github.com/06000208/sandplate/issues/27)
