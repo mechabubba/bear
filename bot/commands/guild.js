@@ -24,7 +24,7 @@ module.exports = new CommandBlock({
         ++unavailable;
       }
     });
-    const description = `list of ${client.user.tag}'s ${client.guilds.cache.size} ${!client.guilds.cache.size ? "guild" : "guilds"}${unavailable ? ` (${unavailable} unavailable)` : ""}`;
+    const description = `list of ${client.user.tag}'s ${client.guilds.cache.size} ${client.guilds.cache.size === 1 ? "guild" : "guilds"}${unavailable ? ` (${unavailable} unavailable)` : ""}`;
     log.info(`A ${description}, requested by ${message.author.tag}${list}`);
     return message.channel.send(`Printed a ${description} to the console`);
   } else {
