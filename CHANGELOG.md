@@ -34,7 +34,9 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
 
 - Minor syntax improvements in `Client.js`, `CommandConstruct.js`, and `bot.js`
 
-- Minor updates/fixes to the guild, help, and ping commands, as well as some log messages across the bot and README.md
+- Minor updates/fixes to the guild, help, and ping commands, as well as log messages across the bot, README.md, and CONTRIBUTING.md
+
+- The guild command now respects the privacy slightly more by omitting member count, region, server icon, etc. from the embed for guilds with widget disabled
 
 - Removed some leftover log messages (although they may be added back later)
 
