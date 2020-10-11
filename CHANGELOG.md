@@ -24,6 +24,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
 - Created a `sandplate.json` file in the root. This allows sandplate's version and a few other things to be referenced separately from what's in package.json. Admittedly, I'm pretty unsure about it, but I don't think it's a half bad solution. I think it comes down to a compromise while sandplate isn't currently in the form of an NPM package.
 
 - Added a simple version command
+- Added a simple info command for developers with versions and some other info. Some people get annoyed at these sorts of commands in bots, and the info given could be treated with a "need to know" basis, so it's locked to hosts.
 
 - Improved `metadata.color` and `metadata.twitch` to support being null and changed both their defaults to such. Closes [#27](https://github.com/06000208/sandplate/issues/27)
 
