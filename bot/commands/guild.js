@@ -1,6 +1,6 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const log = require("../../modules/log");
-const { isNumeric } = require("../../modules/miscellaneous");
+const { numeric } = require("../../modules/regexes");
 const { MessageEmbed } = require("discord.js");
 const chalk = require("chalk");
 
@@ -27,7 +27,7 @@ module.exports = new CommandBlock({
     log.info(`List of ${client.user.tag}'s ${client.guilds.cache.size} ${!client.guilds.cache.size ? "guild" : "guilds"}${unavailable ? ` (${unavailable} unavailable)` : ""}, requested by ${message.author.tag}${list}`);
     return message.channel.send("Printed list to console");
   } else {
-    if (!isNumeric(id)) return message.channel.send(`The id \`${id}\` was invalid`);
+    if (!numeric.test(id)) return message.channel.send(`The id \`${id}\` was invalid`);
     if (!client.guilds.cache.has(id)) return message.channel.send(`The id \`${id}\` isn't mapped to a guild in the cache`);
     const guild = client.guilds.cache.get(id);
     if (!guild.available) return message.channel.send("The guild was unavailable and could not be interacted with. This is indicative of a server outage.");

@@ -1,5 +1,5 @@
 const CommandBlock = require("../../modules/CommandBlock");
-const { isNumeric } = require("../../modules/miscellaneous");
+const { numeric } = require("../../modules/regexes");
 const log = require("../../modules/log");
 const { startCase } = require("lodash");
 const { inspect } = require("util");
@@ -45,7 +45,7 @@ module.exports = [
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const group = determineType(type);
     if (!group) return message.channel.send(`Unrecognized type\nUsage: \`${this.firstName} ${this.usage}\``);
-    if (!isNumeric(id)) return message.channel.send(`An id is required\nUsage: \`${this.firstName} ${this.usage}\``);
+    if (!numeric.test(id)) return message.channel.send(`An id is required\nUsage: \`${this.firstName} ${this.usage}\``);
     if (client.config.get(group.path).value() === null) {
       client.config.set(group.path, []).write();
     } else if (client.config.get(group.path).includes(id).value()) {
@@ -69,7 +69,7 @@ module.exports = [
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const group = determineType(type);
     if (!group) return message.channel.send(`Unrecognized type\nUsage: \`${this.firstName} ${this.usage}\``);
-    if (!isNumeric(id)) return message.channel.send(`An id is required\nUsage: \`${this.firstName} ${this.usage}\``);
+    if (!numeric.test(id)) return message.channel.send(`An id is required\nUsage: \`${this.firstName} ${this.usage}\``);
     if (client.config.get(group.path).value() === null || !client.config.get(group.path).includes(id).value()) {
       return message.channel.send(`${startCase(group.type)} \`${id}\` isn't blocked`);
     }
@@ -112,7 +112,7 @@ module.exports = [
     }
     // regardless of the above, if there's no id, we're done
     if (!id) return message.channel.send(reply);
-    if (!isNumeric(id)) {
+    if (!numeric.test(id)) {
       reply += `\nThe id \`${id}\` was invalid`;
       return message.channel.send(reply);
     }
