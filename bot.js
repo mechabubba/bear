@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 const Client = require("./modules/Client");
 const log = require("./modules/log");
 const fse = require("fs-extra");

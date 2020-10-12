@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 const BaseConstruct = require("./BaseConstruct");
 const Response = require("./Response");
 const { disabledModules } = require("./defaultData");
