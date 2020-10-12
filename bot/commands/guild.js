@@ -47,9 +47,11 @@ module.exports = new CommandBlock({
     if (color) embed.setColor(color);
     // Respect guild privacy when widget is disabled
     // Checked using node-fetch so the Manage Server permission isn't required
-    const response = await fetch(`https://discordapp.com/api/guilds/${guild.id}/widget.json`);
+    const widget = `https://discordapp.com/api/guilds/${guild.id}/widget.json`;
+    const response = await fetch(widget);
     const json = await response.json();
     if (!has(json, "code")) {
+      log.debug(`Fetched "${widget}" for ${message.author.tag}`);
       embed.addFields(
         { name: "Members", value: guild.memberCount, inline: true },
         { name: "Region", value: `\`${guild.region}\``, inline: true },
