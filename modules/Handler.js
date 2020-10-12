@@ -3,7 +3,7 @@ const BaseConstruct = require("./BaseConstruct");
 const Response = require("./Response");
 const { disabledModules } = require("./defaultData");
 const log = require("./log");
-const _ = require("lodash");
+const { has, isString, isArray, isNil, cloneDeep } = require("lodash");
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const fse = require("fs-extra");
@@ -68,10 +68,10 @@ class Handler {
         log.error("[resolvePath]", error);
       }
     }
-    if (_.has(obj, "value") && _.isString(obj.value)) {
+    if (has(obj, "value") && isString(obj.value)) {
       obj.success = true;
       obj.message = "Path successfully resolved";
-    } else if (!_.has(obj, "error")) {
+    } else if (!has(obj, "error")) {
       obj.success = false;
       obj.message = "Something went wrong while resolving path, but didn't result in an error";
     }
@@ -90,7 +90,7 @@ class Handler {
       const resolvedPath = Handler.resolvePath(filePath);
       if (resolvedPath.success && !resolvedPath.error) {
         target = resolvedPath.value;
-        if (_.has(require.cache, target)) {
+        if (has(require.cache, target)) {
           delete require.cache[target];
           cache = true;
         }
@@ -148,7 +148,7 @@ class Handler {
   loadModule(construct, mod, filePath = null) {
     if (!construct || !mod) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
-    if (_.isArray(mod)) {
+    if (isArray(mod)) {
       for (const block of mod) {
         construct.load(block, filePath);
       }
@@ -191,9 +191,9 @@ class Handler {
       log.error("[requireModule]", error);
       return new Response({ message: "Error while requiring module", success: false, error: error });
     }
-    if (_.isNil(mod)) return new Response({ message: `Something went wrong while requiring module "${resolvedPath.value}" but didn't result in an error`, success: false });
+    if (isNil(mod)) return new Response({ message: `Something went wrong while requiring module "${resolvedPath.value}" but didn't result in an error`, success: false });
     // The use of cloneDeep prevents the require.cache from being affected by changes to the module
-    return this.loadModule(construct, _.cloneDeep(mod), resolvedPath.value);
+    return this.loadModule(construct, cloneDeep(mod), resolvedPath.value);
   }
 
   /**
@@ -234,7 +234,7 @@ class Handler {
       log.error(error);
       return new Response({ message: "Error while attempting to search directory", success: false, error: error });
     });
-    if (_.isNil(filePaths)) return new Response({ message: "Something went wrong while searching directory but didn't result in an error", success: false });
+    if (isNil(filePaths)) return new Response({ message: "Something went wrong while searching directory but didn't result in an error", success: false });
     if (!filePaths.length) return new Response({ message: `No files found in "${directoryPath}", skipping`, success: true, value: null });
     return new Response({
       message: `Found ${filePaths.length} ${!filePaths.length ? "file" : "files"} under "${directoryPath}"`,

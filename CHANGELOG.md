@@ -32,7 +32,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
 
 - Improved `metadata.color` and `metadata.twitch` to support being null and changed both their defaults to such. Closes [#27](https://github.com/06000208/sandplate/issues/27)
 
-- Minor syntax improvements in `Client.js`, `CommandConstruct.js`, and `bot.js`
+- Minor syntax improvements in `Client.js`, `CommandConstruct.js`, and `bot.js`, as well as most places lodash was being used
 
 - Minor updates/fixes to the guild, help, and ping commands, as well as log messages across the bot, README.md, and CONTRIBUTING.md
 

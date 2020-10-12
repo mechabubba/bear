@@ -1,7 +1,7 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const log = require("../../modules/log");
 const { inspect } = require("util");
-const _ = require("lodash");
+const { isNil, isString } = require("lodash");
 
 /*
 This command provides arbitrary javascript evaluation, and is disabled by default
@@ -15,11 +15,11 @@ possess your bot's token or have access to the computer running it
 
 const clean = async function(input, token) {
   let value = input;
-  if (_.isNil(value)) return null;
+  if (isNil(value)) return null;
   if (value && value instanceof Promise) {
     value = await value;
   }
-  if (!_.isString(value)) value = inspect(value);
+  if (!isString(value)) value = inspect(value);
   // This next line is just a basic precaution to prevent the bot from accidentally posting it
   // It **does not** make eval safe!
   value = value.replace(token, "password123");

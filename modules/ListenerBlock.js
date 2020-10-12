@@ -1,5 +1,5 @@
 const BaseBlock = require("./BaseBlock");
-const _ = require("lodash");
+const { has, isPlainObject, isFunction, isString, isNil, isBoolean } = require("lodash");
 
 /**
  * @typedef {Object} ListenerData
@@ -59,10 +59,10 @@ class ListenerBlock extends BaseBlock {
    * @todo May be worth looking into schema based validation
    */
   static validateParameters(data, run) {
-    if (!_.isPlainObject(data)) throw new TypeError("Listener data parameter must be an Object.");
-    if (!_.isFunction(run)) throw new TypeError("Listener run parameter must be a function.");
-    if (!_.isString(data.event)) throw new TypeError("Listener data.event must be a string.");
-    if (_.has(data, "once") && !_.isNil(data.once)) if (!_.isBoolean(data.once)) throw new TypeError("Listener data.once name must be a boolean if included.");
+    if (!isPlainObject(data)) throw new TypeError("Listener data parameter must be an Object.");
+    if (!isFunction(run)) throw new TypeError("Listener run parameter must be a function.");
+    if (!isString(data.event)) throw new TypeError("Listener data.event must be a string.");
+    if (has(data, "once") && !isNil(data.once)) if (!isBoolean(data.once)) throw new TypeError("Listener data.once name must be a boolean if included.");
   }
 
 }

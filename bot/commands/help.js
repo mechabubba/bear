@@ -1,7 +1,7 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const { MessageEmbed } = require("discord.js");
 const log = require("../../modules/log");
-const _ = require("lodash");
+const { isString, isArray } = require("lodash");
 
 const validator = function(client, message, command) {
   // permissions
@@ -13,13 +13,13 @@ const validator = function(client, message, command) {
   // access control
   if (command.locked !== false) {
     if (command.locked === true) return;
-    if (_.isString(command.locked)) {
+    if (isString(command.locked)) {
       if (command.locked !== message.author.id) {
         if (!client.config.has(["users", command.locked]).value()) return false;
         if (client.config.isNil(["users", command.locked]).value()) return false;
         if (!client.config.get(["users", command.locked]).includes(message.author.id).value()) return false;
       }
-    } else if (_.isArray(command.locked)) {
+    } else if (isArray(command.locked)) {
       if (!command.locked.includes(message.author.id)) {
         if (command.locked.some((group) => {
           if (!client.config.has(["users", group]).value()) return false;

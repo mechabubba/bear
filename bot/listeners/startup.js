@@ -1,6 +1,6 @@
 const ListenerBlock = require("../../modules/ListenerBlock");
 const log = require("../../modules/log");
-const _ = require("lodash");
+const { has } = require("lodash");
 
 module.exports = new ListenerBlock({
   event: "ready",
@@ -12,7 +12,7 @@ module.exports = new ListenerBlock({
   // Add bot owner to hosts user group
   if (client.config.get("users.hosts").value() === null) {
     const application = await client.fetchApplication();
-    const owner = _.has(application, "owner.members") ? application.owner.ownerID : application.owner.id;
+    const owner = has(application, "owner.members") ? application.owner.ownerID : application.owner.id;
     client.config.set("users.hosts", [owner]).write();
   }
 

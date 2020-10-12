@@ -1,5 +1,5 @@
 const ListenerBlock = require("../../modules/ListenerBlock");
-const _ = require("lodash"); // Used by forAny and resultFromAny
+const { isArray } = require("lodash"); // Used by forAny and resultFromAny
 
 module.exports = new ListenerBlock({
   event: "message",
@@ -21,7 +21,7 @@ module.exports = new ListenerBlock({
   input.parsed = message.content.trim();
   input.lowercase = input.parsed.toLowerCase();
   if (config.prefix) {
-    if (_.isArray(config.prefix)) {
+    if (isArray(config.prefix)) {
       for (const prefix of config.prefix) {
         if (input.lowercase.startsWith(prefix)) {
           input.prefixed = true;

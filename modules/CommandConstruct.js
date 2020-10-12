@@ -4,7 +4,7 @@ const CommandBlock = require("./CommandBlock");
 const { forAny } = require("./miscellaneous");
 const log = require("./log");
 const chalk = require("chalk");
-const _ = require("lodash");
+const { isString, isArray } = require("lodash");
 
 /**
  * Command framework
@@ -53,7 +53,7 @@ class CommandConstruct extends BaseConstruct {
     const prefix = this.client.config.get("commands.prefix").value();
     const mentions = this.client.config.get("commands.mentions").value();
     if (prefix) {
-      if (_.isArray(prefix)) {
+      if (isArray(prefix)) {
         return prefix[0];
       } else {
         return prefix;
@@ -127,13 +127,13 @@ class CommandConstruct extends BaseConstruct {
     }
     if (command.locked) {
       if (command.locked === true) return;
-      if (_.isString(command.locked)) {
+      if (isString(command.locked)) {
         if (command.locked !== message.author.id) {
           if (!this.client.config.has(["users", command.locked]).value()) return;
           if (this.client.config.isNil(["users", command.locked]).value()) return;
           if (!this.client.config.get(["users", command.locked]).includes(message.author.id).value()) return;
         }
-      } else if (_.isArray(command.locked)) {
+      } else if (isArray(command.locked)) {
         if (!command.locked.includes(message.author.id)) {
           if (command.locked.some((group) => {
             if (!this.client.config.has(["users", group]).value()) return false;

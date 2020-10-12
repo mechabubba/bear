@@ -3,7 +3,7 @@ const { MessageEmbed } = require("discord.js");
 const moment = require("moment");
 const fetch = require("node-fetch");
 const fileTypes = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
-const _ = require("lodash");
+const { has } = require("lodash");
 
 module.exports = new CommandBlock({
   identity: ["file", "wm", "wikimedia", "commons", "cc"],
@@ -29,12 +29,12 @@ module.exports = new CommandBlock({
   const embed = new MessageEmbed().setFooter(`This has a 10s cool down. Page ID: ${page.pageid}`);
   const color = client.config.get("metadata.color").value();
   if (color) embed.setColor(color);
-  if (_.has(page, "missing")) {
+  if (has(page, "missing")) {
     embed.setTitle("No page").setDescription("The queried page does not exist.");
     return message.channel.send(embed);
   }
   embed.setURL(`https://commons.wikimedia.org/w/index.php?curid=${page.pageid}`);
-  if (!_.has(page, "imageinfo")) {
+  if (!has(page, "imageinfo")) {
     embed.setTitle(page.title).setDescription("The queried page is not a file.");
     return message.channel.send(embed);
   }

@@ -1,6 +1,6 @@
 const BaseBlock = require("./BaseBlock");
 const { isArrayOfStrings, isPermissionResolvable } = require("./miscellaneous");
-const _ = require("lodash");
+const { has, isNil, isArray, isPlainObject, isFunction, isString, isBoolean } = require("lodash");
 
 /**
  * Data regarding the command such as it's names and metadata
@@ -50,42 +50,42 @@ class CommandBlock extends BaseBlock {
     /**
      * @type {?string}
      */
-    this.summary = _.has(data, "summary") && !_.isNil(data.summary) ? data.summary : null;
+    this.summary = has(data, "summary") && !isNil(data.summary) ? data.summary : null;
 
     /**
      * @type {?string}
      */
-    this.description = _.has(data, "description") && !_.isNil(data.description) ? data.description : null;
+    this.description = has(data, "description") && !isNil(data.description) ? data.description : null;
 
     /**
      * @type {?string}
      */
-    this.usage = _.has(data, "usage") && !_.isNil(data.usage) ? data.usage : null;
+    this.usage = has(data, "usage") && !isNil(data.usage) ? data.usage : null;
 
     /**
      * @type {[string]}
      */
-    this.scope = _.has(data, "scope") && !_.isNil(data.scope) ? data.scope : ["dm", "text", "news"];
+    this.scope = has(data, "scope") && !isNil(data.scope) ? data.scope : ["dm", "text", "news"];
 
     /**
      * @type {boolean}
      */
-    this.nsfw = _.has(data, "nsfw") && !_.isNil(data.nsfw) ? data.nsfw : false;
+    this.nsfw = has(data, "nsfw") && !isNil(data.nsfw) ? data.nsfw : false;
 
     /**
      * @type {(boolean|string|[string])}
      */
-    this.locked = _.has(data, "locked") && !_.isNil(data.locked) ? data.locked : false;
+    this.locked = has(data, "locked") && !isNil(data.locked) ? data.locked : false;
 
     /**
      * @type {?PermissionResolvable}
      */
-    this.clientPermissions = _.has(data, "clientPermissions") && !_.isNil(data.clientPermissions) ? data.clientPermissions : null;
+    this.clientPermissions = has(data, "clientPermissions") && !isNil(data.clientPermissions) ? data.clientPermissions : null;
 
     /**
      * @type {?PermissionResolvable}
      */
-    this.userPermissions = _.has(data, "userPermissions") && !_.isNil(data.userPermissions) ? data.userPermissions : null;
+    this.userPermissions = has(data, "userPermissions") && !isNil(data.userPermissions) ? data.userPermissions : null;
 
     // Methods
     // Note that bind() isn't used here in favor of doing it in CommandConstruct's load method, so that it can bind parameters as well
@@ -101,7 +101,7 @@ class CommandBlock extends BaseBlock {
    * @readonly
    */
   get firstName() {
-    if (_.isArray(this.identity)) {
+    if (isArray(this.identity)) {
       return this.identity[0];
     } else {
       return this.identity;
@@ -113,7 +113,7 @@ class CommandBlock extends BaseBlock {
    * @readonly
    */
   get shortestName() {
-    if (_.isArray(this.identity)) {
+    if (isArray(this.identity)) {
       return this.identity.reduce((acc, cur) => acc.length <= cur.length ? acc : cur);
     } else {
       return this.identity;
@@ -125,7 +125,7 @@ class CommandBlock extends BaseBlock {
    * @readonly
    */
   get longestName() {
-    if (_.isArray(this.identity)) {
+    if (isArray(this.identity)) {
       return this.identity.reduce((acc, cur) => acc.length < cur.length ? cur : acc);
     } else {
       return this.identity;
@@ -139,17 +139,17 @@ class CommandBlock extends BaseBlock {
    * @todo May be worth looking into schema based validation
    */
   static validateParameters(data, run) {
-    if (!_.isPlainObject(data)) throw new TypeError("Command data parameter must be an Object.");
-    if (!_.isFunction(run)) throw new TypeError("Command run parameter must be a function.");
-    if (!_.isString(data.identity) && !isArrayOfStrings(data.identity)) throw new TypeError("Command data.identity must be a string or an Array of strings.");
-    if (_.has(data, "summary") && !_.isNil(data.summary)) if (!_.isString(data.summary)) throw new TypeError("Command data.summary must be a string.");
-    if (_.has(data, "description") && !_.isNil(data.description)) if (!_.isString(data.description)) throw new TypeError("Command data.description must be a string.");
-    if (_.has(data, "usage") && !_.isNil(data.usage)) if (!_.isString(data.usage)) throw new TypeError("Command data.usage must be a string.");
-    if (_.has(data, "scope") && !_.isNil(data.scope)) if (!isArrayOfStrings(data.scope)) throw new TypeError("Command data.scope must be an Array of strings.");
-    if (_.has(data, "nsfw") && !_.isNil(data.nsfw)) if (!_.isBoolean(data.nsfw)) throw new TypeError("Command data.nsfw must be a boolean.");
-    if (_.has(data, "locked") && !_.isNil(data.locked)) if (!_.isBoolean(data.locked) && !_.isString(data.locked) && !isArrayOfStrings(data.locked)) throw new TypeError("Command data.locked must be a boolean, string, or an Array of strings.");
-    if (_.has(data, "clientPermissions") && !_.isNil(data.clientPermissions)) {
-      if (_.isArray(data.clientPermissions)) {
+    if (!isPlainObject(data)) throw new TypeError("Command data parameter must be an Object.");
+    if (!isFunction(run)) throw new TypeError("Command run parameter must be a function.");
+    if (!isString(data.identity) && !isArrayOfStrings(data.identity)) throw new TypeError("Command data.identity must be a string or an Array of strings.");
+    if (has(data, "summary") && !isNil(data.summary)) if (!isString(data.summary)) throw new TypeError("Command data.summary must be a string.");
+    if (has(data, "description") && !isNil(data.description)) if (!isString(data.description)) throw new TypeError("Command data.description must be a string.");
+    if (has(data, "usage") && !isNil(data.usage)) if (!isString(data.usage)) throw new TypeError("Command data.usage must be a string.");
+    if (has(data, "scope") && !isNil(data.scope)) if (!isArrayOfStrings(data.scope)) throw new TypeError("Command data.scope must be an Array of strings.");
+    if (has(data, "nsfw") && !isNil(data.nsfw)) if (!isBoolean(data.nsfw)) throw new TypeError("Command data.nsfw must be a boolean.");
+    if (has(data, "locked") && !isNil(data.locked)) if (!isBoolean(data.locked) && !isString(data.locked) && !isArrayOfStrings(data.locked)) throw new TypeError("Command data.locked must be a boolean, string, or an Array of strings.");
+    if (has(data, "clientPermissions") && !isNil(data.clientPermissions)) {
+      if (isArray(data.clientPermissions)) {
         for (const value of data.clientPermissions) {
           if (!isPermissionResolvable(value)) throw new TypeError("Command data.clientPermissions Array must only contain PermissionResolvable");
         }
@@ -157,8 +157,8 @@ class CommandBlock extends BaseBlock {
         throw new TypeError("Command data.clientPermissions must be a PermissionResolvable");
       }
     }
-    if (_.has(data, "userPermissions") && !_.isNil(data.userPermissions)) {
-      if (_.isArray(data.userPermissions)) {
+    if (has(data, "userPermissions") && !isNil(data.userPermissions)) {
+      if (isArray(data.userPermissions)) {
         for (const value of data.userPermissions) {
           if (!isPermissionResolvable(value)) throw new TypeError("Command data.userPermissions Array must only contain PermissionResolvable");
         }
