@@ -25,8 +25,8 @@
  * @property {?[Snowflake]} users.blocked - Used by command internals, acts as a "block list" where user ids in the group are not allowed to run commands
  * @property {?[Snowflake]} users.allowed - Used by command internals, acts as an "allow list" where only user ids in the group are allowed to run commands
  * @property {Object} guilds - Guild groups, arrays that contain guild ids. Null means that group and by extension feature it's for is disabled
- * @property {?[Snowflake]} guilds.blocked - Used by bot access control, acts as a "block list" where the bot will auto leave guilds on the list (id based)
- * @property {?[Snowflake]} guilds.allowed - Used by bot access control, acts as an "allow list" where the bot will auto leave guilds not on the list (id based)
+ * @property {?[Snowflake]} guilds.blocked - Used by guild access control, acts as a "block list" where the bot will auto leave guilds on the list
+ * @property {?[Snowflake]} guilds.allowed - Used by guild access control, acts as an "allow list" where the bot will auto leave guilds not on the list
  */
 module.exports.config = {
   "client": {

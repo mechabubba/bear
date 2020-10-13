@@ -4,9 +4,9 @@ const log = require("../../modules/log");
 const { startCase } = require("lodash");
 const { inspect } = require("util");
 
-// There isn't a command for controlling users.allowed and guilds.allowed due to the potential for mishaps and misuse.
-// You wouldn't want to prevent all command use or cause the bot to leave all of it's guilds by accident, right?
-// If you want to make use of them, do it manually.
+// There isn't a command for controlling users.allowed and guilds.allowed due to the potential for mishaps and misuse
+// You wouldn't want to prevent all command use or cause your bot to leave all of it's guilds by accident, right?
+// If you want to make use of them, add ids manually or make your own command
 
 const types = {
   user: ["u", "user", "users", "account", "accounts"],
@@ -52,6 +52,7 @@ module.exports = [
       return message.channel.send(`${startCase(group.type)} \`${id}\` is already blocked`);
     }
     client.config.get(group.path).push(id).write();
+    if (group.type === "guild" && client.guilds.cache.has(id)) await client.guilds.leaveBlocked(client.guilds.cache.get(id));
     log.info(`${message.author.tag} blocked ${group.type} "${id}" from accessing ${client.user.tag}`);
     return message.channel.send(`Blocked ${group.type} \`${id}\``);
   }),
@@ -65,7 +66,7 @@ module.exports = [
     locked: "hosts",
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     userPermissions: null,
-  }, async function(client, message, content, [type, id, ...args]) {
+  }, function(client, message, content, [type, id, ...args]) {
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const group = determineType(type);
     if (!group) return message.channel.send(`Unrecognized type\nUsage: \`${this.firstName} ${this.usage}\``);
@@ -90,11 +91,12 @@ module.exports = [
     locked: "hosts",
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     userPermissions: null,
-  }, async function(client, message, content, args) {
+  }, function(client, message, content, args) {
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const name = args[0].toLowerCase();
     if (name === "allowed") return message.channel.send("Interacting with that group is forbidden");
-    const group = ["users", name]; // not using an object like the block/unblock commands because this only interacts with user groups
+    // not using an object like the block/unblock commands because this only interacts with user groups
+    const group = ["users", name];
     let reply = "";
     const id = args.length > 1 ? args[1] : null;
     if (!client.config.has(group).value()) {
