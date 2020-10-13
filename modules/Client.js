@@ -1,3 +1,4 @@
+const GuildManager = require("./GuildManager");
 const CommandConstruct = require("./CommandConstruct");
 const EventConstruct = require("./EventConstruct");
 const Handler = require("./Handler");
@@ -20,6 +21,11 @@ class Client extends Discord.Client {
    */
   constructor(options) {
     super(options);
+
+    /**
+     * Replace this.guilds with our extended GuildManager
+     */
+    this.guilds = new GuildManager(this);
 
     // Log to the console if config.json will be created
     if (!fse.pathExistsSync(configPath)) log.info("A default config.json file will be generated in ./data/");
@@ -57,3 +63,15 @@ class Client extends Discord.Client {
 }
 
 module.exports = Client;
+
+/**
+ * Emitted whenever a blocked guild is detected by the client and left
+ * @event Client#blockedGuild
+ * @param {Discord.Guild} guild The guild that was left
+ */
+
+/**
+ * Emitted whenever an unknown guild is detected by the client and left
+ * @event Client#unknownGuild
+ * @param {Discord.Guild} guild The guild that was left
+ */
