@@ -1,6 +1,21 @@
 ## `0.0.7` / `2020-XX-XX`
 
-_The changelog for this version is incomplete/w.i.p and currently being written_
+_The changelog for this version is incomplete/w.i.p and currently being written in tandem with development of this version_
+
+- Refactoring for various components, all changes made are described below. Closes [#21](https://github.com/06000208/sandplate/issues/21)
+
+- Custom events, closes [#22](https://github.com/06000208/sandplate/issues/22)
+  - `./bot/listeners/customEvents.js` A module which resembles & serves the same purpose as logging.js but for every custom event implemented in sandplate, and a temporary solution in lieu of online documentation, although all custom events have been documented inline using jsdoc
+  - `blockedGuild` and `unknownGuild` events for guild access control, emitted when guilds are detected and left.
+
+- Guild access control has been refactored from `guildAccess.js` into methods of an extended GuildManager class (`./modules/GuildManager.js`), which replaces discord.js's GuildManager in our extended `./modules/Client.js`. The modules `accessControl.js`, `customEvents.js`, and `defaultData.js` have been updated as part of this.
+  - `client.guilds.leaveBlocked()` Checks & leaves blocked guilds in the cache, or a specific guild if supplied.
+  - `client.guilds.leaveUnknown()` Checks & leaves unknown guilds in the cache, or a specific guild if supplied.
+  - Blocking guilds via command will now prompt the bot to leave them as soon as possible
+  - The `guild.js` and `leave.js` command modules have had a bunch of minor improvements/fixes (as they were related to guilds), the former now respecting privacy slightly more by omitting member count, region, server icon, etc. from the embed for guilds with widget disabled
+
+- `./modules/regexes.js`, A new module specifically for useful regular expressions
+  - Removed the `isNumeric()` function from `./modules/miscellaneous.js` and updated usage, as there's little point compared to using [`RegExp.test()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test) directly
 
 - A new class, `BaseEventEmitter`, which is the same as [Base](https://github.com/06000208/sandplate/blob/master/modules/Base.js) but extends [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter). Closes [#20](https://github.com/06000208/sandplate/issues/20)
 
@@ -20,25 +35,18 @@ _The changelog for this version is incomplete/w.i.p and currently being written_
   - The `eval` command is now disabled by default
   - The old way of tacking `.disabled` onto the end of module file names will still work, as it was caused by only `.js` files being detected.
 
-- Deep cloning required modules rather than passing around a reference to the [require cache](https://nodejs.org/api/modules.html#modules_require_cache). Closes [#32](https://github.com/06000208/sandplate/issues/32)
+- Deep cloning required modules rather than passing around a reference to the [require cache](https://nodejs.org/api/modules.html#modules_require_cache) to avoid changing it. Closes [#32](https://github.com/06000208/sandplate/issues/32)
 
 - Created a `sandplate.json` file in the root. This allows sandplate's version and a few other things to be referenced separately from what's in package.json. Admittedly, I'm pretty unsure about it, but I don't think it's a half bad solution. I think it comes down to a compromise while sandplate isn't currently in the form of an NPM package.
 
-- `./modules/regexes.js`, A new module specifically for useful regular expressions
-
-- Removed the `isNumeric()` function from `./modules/miscellaneous.js` and updated usage, as there's little point compared to using [`RegExp.test()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test) directly
-
-- Added a simple info command for developers with versions and some other info. Some people get annoyed at these sorts of commands in bots, and the info given could be treated with a "need to know" basis, so it's locked to hosts.
+- Added a simple info command for developers with versions, platform, etc. Some people get annoyed at these sorts of commands in bots, and the info it provides is easily "need to know" basis, so it's locked to hosts by default.
 
 - Improved `metadata.color` and `metadata.twitch` to support being null and changed both their defaults to such. Closes [#27](https://github.com/06000208/sandplate/issues/27)
 
-- Minor syntax improvements in `Client.js`, `CommandConstruct.js`, and `bot.js`, as well as most places lodash was being used
-
-- Minor updates/fixes to the guild, help, and ping commands, as well as log messages across the bot, README.md, and CONTRIBUTING.md
-
-- The guild command now respects the privacy slightly more by omitting member count, region, server icon, etc. from the embed for guilds with widget disabled
-
-- Removed some leftover log messages (although they may be added back later)
+- Minor updates/fixes/syntax improvements to the guild, leave, help, set, and ping commands, the `Handler.js`, `Client.js`, and `CommandConstruct.js` classes, as well `bot.js`, log messages across the bot, `README.md`, and `CONTRIBUTING.md`. Additionally:
+  - Everywhere lodash was being used as `const _ = require("lodash")` has been updated to use object destructuring
+  - Some async functions didn't need to be asynchronous
+  - A few leftover debug log messages have been removed (although they may be added back later)
 
 ## `0.0.6` / `2020-08-12`
 
