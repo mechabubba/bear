@@ -25,7 +25,7 @@ if (client.config.get("client.token").value() !== null) {
   }
 }
 
-// Token parsing (command line argument)
+// Token validation (command line argument)
 const argv = process.argv.slice(2);
 if (argv.length) {
   if (argv.length > 1) log.warn("Regarding command line arguments, only using the first argument to pass in a token is supported. All further arguments are ignored.");

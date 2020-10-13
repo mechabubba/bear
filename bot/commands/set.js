@@ -85,7 +85,7 @@ module.exports = [
     locked: "hosts",
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     userPermissions: null,
-  }, async function(client, message, content, args) {
+  }, function(client, message, content, args) {
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const action = args[0].toLowerCase();
     const input = {

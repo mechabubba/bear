@@ -40,7 +40,7 @@ module.exports = new CommandBlock({
   description: "Provides a list of commands or info about individual commands when queried.",
   usage: "[command]",
   clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-}, async function(client, message, content, args) {
+}, function(client, message, content, args) {
   if (!content) {
     const commands = client.commands.cache.filter(command => validator(client, message, command));
     const names = commands.map(command => command.firstName);
