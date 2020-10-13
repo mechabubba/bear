@@ -15,11 +15,11 @@ It's purpose is to cover all the "basics" of a discord bot's internals, such as,
 - Batch script for running & automatically restarting the bot
 - A full set of default commands written in the framework
 
-This way, you don't need to write these things in full yourself, they'd be available to expand upon and use, whatever your purposes, and you could pull fixes and improvements from this repository as they occur.
+This way, you don't need to write these things in full yourself, they're available to expand upon and use, whatever your purpose, and you can merge fixes/improvements from this repository into your project as they occur.
 
-However, the idea is *not* to skip learning how to code what sandplate does for you. Rather, to make use of sandplate properly, you'll need to know how these things are implemented and familiarize yourself with the internals.
+However, the idea is *not* to skip learning how to code what sandplate does for you. Rather, to make use of sandplate properly, you'll need to know how things are implemented and familiarize yourself with the internals.
 
-Sandplate is currently in initial development, during which it isn't intended for any real use, and anything may change at any time.
+Sandplate is currently in initial development, during which anything may change at any time, and releases are not being utilized.
 
 ## Contributing
 
