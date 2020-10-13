@@ -21,7 +21,10 @@ module.exports = [
     event: "guildCreate",
     once: false,
   }, async function(client, guild) {
-    if (!guild.available || guild.deleted || client.user.id === guild.ownerID) return;
+    // It's alright to just ignore this event for the purposes of access control
+    // if the guild isn't available or deleted. Owning the guild on the other
+    // hand goes through as that will prompt a warn down the line
+    if (!guild.available || guild.deleted) return;
     // Block list
     await client.guilds.leaveBlocked(guild);
     // Allow list
