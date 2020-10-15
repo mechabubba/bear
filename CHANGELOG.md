@@ -1,6 +1,6 @@
 ## `0.0.7` / `2020-XX-XX`
 
-_The changelog for this version is incomplete/w.i.p and currently being written in tandem with development of this version_
+_The changelog for this version is incomplete/w.i.p and currently being written in tandem with the development of this version_
 
 - Refactoring for various components, all changes made are described below. Closes [#21](https://github.com/06000208/sandplate/issues/21)
 
@@ -8,7 +8,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
   - `./bot/listeners/customEvents.js` A module which resembles & serves the same purpose as logging.js but for every custom event implemented in sandplate, and a temporary solution in lieu of online documentation, although all custom events have been documented inline using jsdoc
   - `blockedGuild` and `unknownGuild` events for guild access control, emitted when guilds are detected and left.
 
-- Guild access control has been refactored from `guildAccess.js` into methods of an extended GuildManager class (`./modules/GuildManager.js`), which replaces discord.js's GuildManager in our extended `./modules/Client.js`. The modules `accessControl.js`, `customEvents.js`, and `defaultData.js` have been updated as part of this.
+- Guild access control has been refactored from `guildAccess.js` into methods of an extended GuildManager class (`./modules/GuildManager.js`), which replaces discord.js's GuildManager in our extended client (`./modules/Client.js`). The modules `accessControl.js`, `customEvents.js`, and `defaultData.js` have been updated as part of this.
   - `client.guilds.leaveBlocked()` Checks & leaves blocked guilds in the cache, or a specific guild if supplied.
   - `client.guilds.leaveUnknown()` Checks & leaves unknown guilds in the cache, or a specific guild if supplied.
   - Blocking guilds via command will now prompt the bot to leave them as soon as possible
@@ -23,19 +23,23 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
   - Moved most of `requireDirectory()`'s logic to it's own function, `searchDirectory()`, and improved it
   - A new handler function, `unloadDirectory()`, which does the exact opposite of `requireDirectory()`
   - `unloadModule()`, `unloadMultipleModules()`, `loadModule()`, `requireModule()`, and `requireMultipleModules()` now return the resolved paths they've successfully performed their tasks with, if any
+  - The Handler class isn't Client class specific, and as far as I'm aware there's no point in making it's parent accessible like the constructs do, at least for now. Custom events such as module load, unload, reload, etc. might be one use case in the future.
 
 - Changed `defaultConfig.js` into `defaultData.js` and updated usage accordingly
   - Updated old references here in CHANGELOG.md and elsewhere so people won't go looking for a file that doesn't exist
 
-- Added the capacity for codes to the Response class, similar to the [Error.code](https://nodejs.org/api/errors.html#errors_error_code) property
+- Added the capacity for codes to the Response class, similar to the [Error.code](https://nodejs.org/api/errors.html#errors_error_code) property. Nothing uses this at the moment, and it may be removed in the future.
 
-- New modules.json lowdb database as a built in way to disable modules, which is optionally respected by `requireDirectory()`, `requireMultipleModules()`, or `requireModule()`. This is so disabling modules plays much nicer with git (no longer requiring file renames), and with the new approach, disabled modules not loaded on start up can still be easily loaded later if desired. Closes [#26](https://github.com/06000208/sandplate/issues/26)
+- New modules lowdb database as a built in way to disable modules, which is optionally respected by `requireDirectory()`, `requireMultipleModules()`, or `requireModule()`. This is so disabling modules plays much nicer with git (no longer requiring file renames), and with the new approach, disabled modules not loaded on start up can still be easily loaded later if desired. Closes [#26](https://github.com/06000208/sandplate/issues/26)
+  - 
   - Modules `./bot/commands/templateMultiple.js` and `./bot/commands/example.js` have been renamed back accordingly and disabled by default using the new method in `defaultData.js`
   - New commands `enable` and `disable` which act the same way as `load` and `unload` but also enable/disable the modules you target accordingly
   - The `eval` command is now disabled by default
   - The old way of tacking `.disabled` onto the end of module file names will still work, as it was caused by only `.js` files being detected.
 
-- Deep cloning required modules rather than passing around a reference to the [require cache](https://nodejs.org/api/modules.html#modules_require_cache) to avoid changing it. Closes [#32](https://github.com/06000208/sandplate/issues/32)
+- Made how paths are used with lowdb more consistent (Client and Handler classes) and introduced a `.dbPath` property to both. This isn't enough to solve the notable issue with overlapping lowdb databases, but it's a step in the right direction.
+
+- The handler now deep clones required modules rather than passing around a reference to the [require cache](https://nodejs.org/api/modules.html#modules_require_cache) in order to avoid changing it. Closes [#32](https://github.com/06000208/sandplate/issues/32)
 
 - Created a `sandplate.json` file in the root. This allows sandplate's version and a few other things to be referenced separately from what's in package.json. Admittedly, I'm pretty unsure about it, but I don't think it's a half bad solution. I think it comes down to a compromise while sandplate isn't currently in the form of an NPM package.
 
