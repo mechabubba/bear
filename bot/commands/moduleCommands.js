@@ -123,7 +123,7 @@ module.exports = [
     const loadResult = client.handler.requireModule(client[constructProperty], filePath, false);
     // You have to put the path in an array so that periods aren't interpreted as traversing the db
     if (loadResult.value) client.handler.modules.set([loadResult.value], true).write();
-    return message.channel.send(`\`\`\`\n${loadResult.message}\n${loadResult.value ? "Enabled the module in modules.json" : ""}\`\`\``);
+    return message.channel.send(`\`\`\`\n${loadResult.message}\n${loadResult.value ? "Enabled the module" : ""}\n\`\`\``);
   }),
   new CommandBlock({
     identity: "disable",
@@ -152,6 +152,6 @@ module.exports = [
         client.handler.modules.set([unloadResult.value], false).write();
       }
     }
-    return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${unloadResult.value ? `Disabled the ${multipleModules ? "modules" : "module"} in modules.json` : ""}\`\`\``);
+    return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${unloadResult.value ? `Disabled ${multipleModules ? `${unloadResult.value.length} modules` : "1 module"}` : ""}\n\`\`\``);
   }),
 ];
