@@ -14,14 +14,14 @@ const client = new Client({
 // Token validation (config)
 if (client.config.get("client.token").value() !== null) {
   if (token.test(client.config.get("client.token").value())) {
-    log.info("Token stored in the config successfully matched token pattern, will attempt to login using it");
+    log.info("Token stored in the config successfully matched token pattern, will attempt to login");
   } else {
     const id = SnowflakeUtil.generate();
     log.warn("Token stored in the config didn't match token pattern, won't try to use it");
-    fse.ensureFileSync("./data/config.json");
-    fse.copySync("./data/config.json", `./data/config.backup.${id}.json`);
+    fse.ensureFileSync(client.dbPath);
+    fse.copySync(client.dbPath, `./data/config.backup.${id}.json`);
     client.config.set("client.token", null).write();
-    log.warn(`The token in config.json has been reset to null and a backup of the config with the invalid token has been created as config.backup.${id}.json`);
+    log.warn(`The token in the config has been reset to null and a backup of the config with the invalid token has been created at ./data/config.backup.${id}.json`);
   }
 }
 
@@ -30,7 +30,7 @@ const argv = process.argv.slice(2);
 if (argv.length) {
   if (argv.length > 1) log.warn("Regarding command line arguments, only using the first argument to pass in a token is supported. All further arguments are ignored.");
   if (token.test(argv[0])) {
-    log.info("Command line argument matched token pattern, will attempt to login using it");
+    log.info("Command line argument matched token pattern, will attempt to login");
     client.cookies.set("token", argv[0]);
   } else {
     log.warn("Command line argument didn't match token pattern, won't try to use it");
@@ -47,7 +47,7 @@ const init = async function() {
   if (client.cookies.has("token") || client.config.get("client.token").value() !== null) {
     client.login(client.cookies.has("token") ? client.cookies.get("token") : client.config.get("client.token").value());
   } else {
-    log.warn("No token available to login with! Please set one in config.json or pass one in as an argument");
+    log.warn("No token available to login with! Please set one in the config or pass one in as an argument");
     process.exit(0);
   }
 };
