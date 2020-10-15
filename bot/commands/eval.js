@@ -6,11 +6,13 @@ const { isNil, isString } = require("lodash");
 /*
 This command provides arbitrary javascript evaluation, and is disabled by default
 
-Edit ./data/modules.json after generation and set the path for this module to true
-or run the command "load command ./bot/commands/eval" if you want to use it
+If you want to use this command, pick one of the following:
 
-Keep in mind that it should only be allowed to those who already
-possess your bot's token or have access to the computer running it
+- Editing ./data/modules.json after generation and setting the path for this module to true
+- Running the command "load command ../bot/commands/eval" (wont persist through restarts)
+- Running the command "enable command ../bot/commands/eval"
+
+Keep in mind that it should only be allowed to those who already possess your bot's token
 */
 
 const clean = async function(input, token) {
