@@ -8,7 +8,6 @@ const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const fse = require("fs-extra");
 const path = require("path");
-const configPath = path.join(__dirname, "../data/config.json");
 const { config } = require("./defaultData");
 
 /**
@@ -27,13 +26,20 @@ class Client extends Discord.Client {
      */
     this.guilds = new GuildManager(this);
 
-    // Log to the console if config.json will be created
-    if (!fse.pathExistsSync(configPath)) log.info("A default config.json file will be generated in ./data/");
+    /**
+     * Full file path used for the configuration file
+     * @type {string}
+     * @readonly
+     */
+    this.dbPath = path.join(__dirname, "../data/config.json");
+
+    // Log to the console if the config will be created
+    if (!fse.pathExistsSync(this.dbPath)) log.info(`A default config file will be generated at ./data/config.json`);
 
     /**
      * Config database via lowdb
      */
-    this.config = low(new FileSync(configPath));
+    this.config = low(new FileSync(this.dbPath));
     this.config.defaultsDeep(config).write();
 
     /**
@@ -46,7 +52,7 @@ class Client extends Discord.Client {
      * Handler framework
      * @type {Handler}
      */
-    this.handler = new Handler(this);
+    this.handler = new Handler();
 
     /**
      * Commands
