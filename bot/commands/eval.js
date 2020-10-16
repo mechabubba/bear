@@ -8,8 +8,8 @@ This command provides arbitrary javascript evaluation, and is disabled by defaul
 
 If you want to use this command, pick one of the following:
 
-- Editing ./data/modules.json after generation and setting the path for this module to true
-- Running the command "load command ../bot/commands/eval" (wont persist through restarts)
+- Editing ./data/modules.json after generation and setting the path for this module to true followed by a restart
+- Running the command "load command ../bot/commands/eval" (this wont persist through restarts)
 - Running the command "enable command ../bot/commands/eval"
 
 Keep in mind that it should only be allowed to those who already possess your bot's token
