@@ -63,6 +63,8 @@ const resolveActivity = function(client, content, args) {
     if (type === "watching" || type === "video") {
       data.activity.type = "WATCHING";
     } else if (type === "listening" || type === "music") {
+      if (data.activity.name.toLowerCase().startsWith("to")) data.activity.name = data.activity.name.substring(2).trim();
+      if (!data.activity.name.length) return data;
       data.activity.type = "LISTENING";
     } else if (type === "streaming" || type === "twitch") {
       data.activity.type = "STREAMING";
