@@ -46,8 +46,10 @@ const init = async function() {
   log.debug("init");
   const commandLoadResult = await Handler.requireDirectory(client.commands, client.config.get("commands.directory").value());
   const eventLoadResult = await Handler.requireDirectory(client.events, client.config.get("events.directory").value());
+  const remindersLoadResult = Handler.requireModule(client.reminders.events, "./bot/reminderCall.js");
   log.info(commandLoadResult.message);
   log.info(eventLoadResult.message);
+  log.info(remindersLoadResult.message);
   // Ground control to major tom
   if (client.cookies.has("token") || client.config.get("client.token").value() !== null) {
     client.login(client.cookies.has("token") ? client.cookies.get("token") : client.config.get("client.token").value());

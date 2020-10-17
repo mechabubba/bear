@@ -10,10 +10,10 @@ module.exports = new ListenerBlock({
   // but it'll only run once, so it's safe to use for things such as scheduling tasks, cron jobs, etc
 
   // Add bot owner to hosts user group
-  if (client.config.get("users.hosts").value() === null) {
+  if (client.storage.get("users.hosts").value() === null) {
     const application = await client.fetchApplication();
     const owner = _.has(application, "owner.members") ? application.owner.ownerID : application.owner.id;
-    client.config.set("users.hosts", [owner]).write();
+    client.storage.set("users.hosts", [owner]).write();
   }
 
   log.info(`App is now fully functional`);

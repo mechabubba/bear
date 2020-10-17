@@ -47,6 +47,6 @@ module.exports = new CommandBlock({
     return message.channel.send(`Failed to evaluate javascript, an error occurred: \`${error.message}\``);
   }
   if (cleaned && cleaned.length <= 1500) {
-    message.channel.send(`\`\`\`\n${cleaned}\n\`\`\``);
+    message.channel.send(`${cleaned}`);
   }
 });

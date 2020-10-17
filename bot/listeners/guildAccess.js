@@ -13,7 +13,7 @@ module.exports = [
     once: false,
   }, function(client) {
     // block list
-    const blocked = client.config.get("guilds.blocked").value();
+    const blocked = client.storage.get("guilds.blocked").value();
     if (blocked !== null) {
       const blockedGuilds = client.guilds.cache.array().filter(guild => blocked.includes(guild.id));
       log.debug(blockedGuilds);
@@ -26,7 +26,7 @@ module.exports = [
       }
     }
     // allow list
-    const allowed = client.config.get("guilds.allowed").value();
+    const allowed = client.storage.get("guilds.allowed").value();
     if (allowed !== null) {
       const unknownGuilds = client.guilds.cache.array().filter(guild => !allowed.includes(guild.id));
       if (unknownGuilds.length) {
@@ -44,7 +44,7 @@ module.exports = [
   }, function(client, guild) {
     if (!guild.available) return;
     // block list
-    const blocked = client.config.get("guilds.blocked").value();
+    const blocked = client.storage.get("guilds.blocked").value();
     if (blocked !== null) {
       if (blocked.includes(guild.id)) {
         log.info(`${chalk.gray("[blocked guild]")} Automatically leaving ${guild.name} (${guild.id})`);
@@ -52,7 +52,7 @@ module.exports = [
       }
     }
     // allow list
-    const allowed = client.config.get("guilds.allowed").value();
+    const allowed = client.storage.get("guilds.allowed").value();
     if (allowed !== null) {
       if (!allowed.includes(guild.id)) {
         log.info(`${chalk.gray("[unknown guild")} Automatically leaving ${guild.name} (${guild.id})`);

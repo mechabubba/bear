@@ -140,7 +140,7 @@ module.exports = [
     }
     log.info(`${client.user.tag}'s avatar has been changed by ${message.author.tag}`);
     message.react(client.config.get("metadata.reactions.positive").value());
-    return message.channel.send(`Changed avatar to \`${url}\``);
+    return;
   }),
   new CommandBlock({
     identity: ["setname", "setusername"],
@@ -172,7 +172,7 @@ module.exports = [
     }
     log.info(`${tag}'s username has been changed to ${client.user.tag} by ${message.author.tag}`);
     message.react(client.config.get("metadata.reactions.positive").value());
-    return message.channel.send(`Changed username from \`${tag}\` to \`${client.user.tag}\``);
+    return;
   }),
   new CommandBlock({
     identity: ["presence", "setpresence"],
@@ -207,7 +207,7 @@ module.exports = [
     }
     log.info(`${client.user.tag}'s presence has been updated by ${message.author.tag}`);
     message.react(client.config.get("metadata.reactions.positive").value());
-    return message.channel.send(`Updated presence`);
+    return;
   }),
   new CommandBlock({
     identity: ["status", "setstatus"],
@@ -240,7 +240,7 @@ module.exports = [
     }
     log.info(`${client.user.tag}'s status has been updated to ${status} by ${message.author.tag}`);
     message.react(client.config.get("metadata.reactions.positive").value());
-    return message.channel.send(`${!content ? "Reset" : "Updated"} status`);
+    return;
   }),
   new CommandBlock({
     identity: ["activity", "setactivity"],
@@ -267,6 +267,6 @@ module.exports = [
     }
     log.info(`${client.user.tag}'s activity has been updated by ${message.author.tag}`);
     message.react(client.config.get("metadata.reactions.positive").value());
-    return message.channel.send(`${!data.activity.name.length ? "Cleared" : "Updated"} activity`);
+    return;
   }),
 ];

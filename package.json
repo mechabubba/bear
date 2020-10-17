@@ -22,6 +22,8 @@
   "dependencies": {
     "bufferutil": "^4.0.1",
     "chalk": "^4.1.0",
+    "chrono-node": "^2.1.8",
+    "cron": "^1.8.2",
     "discord.js": "^12.2.0",
     "filehound": "^1.17.4",
     "fs-extra": "^9.0.1",

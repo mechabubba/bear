@@ -123,3 +123,12 @@ module.exports.isNumeric = function(value) {
   if (!value || !isString(value) || !value.length) return false;
   return /^\d+$/.test(value);
 };
+
+/**
+ * Generates a random hexadecimal color - padded with zeroes.
+ * @returns {String}
+ */
+module.exports.randomColor = function(w = 6) {
+  let col = Math.floor(Math.random() * ((256 ** 3) - 1)).toString(16);
+  return new Array(w + 1 - (col + "").length).join("0") + col;
+};

@@ -1,13 +1,18 @@
 const CommandConstruct = require("./CommandConstruct");
 const EventConstruct = require("./EventConstruct");
+const ReminderEmitter = require("./ReminderEmitter");
+const Handler = require("./Handler");
 const log = require("./log");
+
 const Discord = require("discord.js");
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const fse = require("fs-extra");
 const path = require("path");
+
 const configPath = path.join(__dirname, "../data/config.json");
-const defaultConfig = require("./defaultConfig");
+const storagePath = path.join(__dirname, "../data/storage.json");
+const { defaultConfig, defaultStorage } = require("./defaults");
 
 /**
  * Extension of the discord.js client
@@ -31,6 +36,12 @@ class Client extends Discord.Client {
     this.config.defaultsDeep(defaultConfig).write();
 
     /**
+     * Storage database via lowdb
+     */
+    this.storage = low(new FileSync(storagePath));
+    this.storage.defaultsDeep(defaultStorage).write()
+
+    /**
      * Arbitrary Collection
      * @type {Discord.Collection<*, *>}
      */
@@ -47,6 +58,12 @@ class Client extends Discord.Client {
      * @type {EventConstruct}
      */
     this.events = new EventConstruct(this, "discord.js event construct");
+
+    /**
+     * Reminders
+     * @type {ReminderEmitter}
+     */
+    this.reminders = new ReminderEmitter(this);
   }
 }
 
