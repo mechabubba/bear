@@ -2,7 +2,7 @@
 
 # bear
 
-*"the best discord bot"* -everyone
+*"the best discord bot"* -everyone, including you
 
 bear [stylized accordingly] is my Discord bot. Invite the bot [here;](https://discord.com/oauth2/authorize?client_id=435224030459723776&scope=bot&permissions=8) this link will automatically give it the "administrator" permission.
 
