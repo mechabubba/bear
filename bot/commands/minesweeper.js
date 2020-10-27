@@ -96,7 +96,7 @@ module.exports = new CommandBlock({
       .setTitle("Minesweeper")
       .setDescription(tab)
       .attachFiles(["assets/mine.png"])
-      .setFooter(`${length}x${width} • ${maxmines} mines${hasseed ? ` • ${args.join(" ")}` : ``}`, "attachment://mine.png");
+      .setFooter(`${length}x${width} • ${maxmines} mines${seed ? ` • ${seed}` : ``}`, "attachment://mine.png");
     return message.channel.send(embed);
   }
 );
