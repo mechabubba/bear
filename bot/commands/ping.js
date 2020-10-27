@@ -1,3 +1,5 @@
+/* todo: handle deletion when the bot cant delete. since this is such a simple command, i just barred it via clientPermissions, but i want the user to still be able to do it in a channel where the bot'd otherwise be unable to delete their message, you feel me bro */
+
 const CommandBlock = require("../../modules/CommandBlock");
 
 module.exports = [

@@ -1,4 +1,4 @@
-/* todo: unhandl */
+/* todo: "remove all", handle reactions when the bot cannot react */
 
 const CommandBlock = require("../../modules/CommandBlock");
 const Reminder = require("../../modules/Reminder");

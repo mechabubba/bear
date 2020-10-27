@@ -17,7 +17,7 @@ const clean = async function(input, token) {
   if (!_.isString(value)) value = inspect(value);
   // This next line is just a basic precaution to prevent the bot from accidentally posting it
   // It **does not** make eval safe!
-  value = value.replace(token, "password123");
+  value = value.replace(token, "[token]");
   return value;
 };
 

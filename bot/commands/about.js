@@ -5,7 +5,7 @@ const djsver = require("discord.js").version
 const moment = require("moment");
 
 const desc = `I'm a bot. You can see my abilities by performing the \`help\` command.
-Invite the bot **[here;](https://discord.com/oauth2/authorize?client_id=435224030459723776&scope=bot&permissions=8)** the permissions are automatically set to give it administator. rawr..... am polar bear x3
+Invite the bot **[here;](https://discord.com/oauth2/authorize?client_id=435224030459723776&scope=bot&permissions=8)** this link will automatically give it the "administator" permission. rawr..... am polar bear x3
 Powered by **[node.js](https://nodejs.org/en/) v${process.versions["node"]}**, **[discord.js](https://discord.js.org) v${djsver}**, and **[sandplate](https://github.com/06000208/sandplate)**.`;
 
 module.exports = new CommandBlock({
