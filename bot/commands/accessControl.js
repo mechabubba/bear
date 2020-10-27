@@ -46,12 +46,12 @@ module.exports = [
     const group = determineType(type);
     if (!group) return message.channel.send(`Unrecognized type\nUsage: \`${this.firstName} ${this.usage}\``);
     if (!isNumeric(id)) return message.channel.send(`An id is required\nUsage: \`${this.firstName} ${this.usage}\``);
-    if (client.config.get(group.path).value() === null) {
-      client.config.set(group.path, []).write();
-    } else if (client.config.get(group.path).includes(id).value()) {
+    if (client.storage.get(group.path).value() === null) {
+      client.storage.set(group.path, []).write();
+    } else if (client.storage.get(group.path).includes(id).value()) {
       return message.channel.send(`${startCase(group.type)} \`${id}\` is already blocked`);
     }
-    client.config.get(group.path).push(id).write();
+    client.storage.get(group.path).push(id).write();
     log.info(`${message.author.tag} blocked ${group.type} "${id}" from accessing ${client.user.tag}`);
     return message.channel.send(`Blocked ${group.type} \`${id}\``);
   }),
@@ -70,13 +70,13 @@ module.exports = [
     const group = determineType(type);
     if (!group) return message.channel.send(`Unrecognized type\nUsage: \`${this.firstName} ${this.usage}\``);
     if (!isNumeric(id)) return message.channel.send(`An id is required\nUsage: \`${this.firstName} ${this.usage}\``);
-    if (client.config.get(group.path).value() === null || !client.config.get(group.path).includes(id).value()) {
+    if (client.storage.get(group.path).value() === null || !client.storage.get(group.path).includes(id).value()) {
       return message.channel.send(`${startCase(group.type)} \`${id}\` isn't blocked`);
     }
-    client.config.get(group.path).pull(id).write();
+    client.storage.get(group.path).pull(id).write();
     log.info(`${message.author.tag} unblocked ${group.type} "${id}"`);
-    if (!client.config.get(group.path).value().length) {
-      client.config.set(group.path, null).write();
+    if (!client.storage.get(group.path).value().length) {
+      client.storage.set(group.path, null).write();
     }
     return message.channel.send(`Unblocked ${group.type} \`${id}\``);
   }),
@@ -97,13 +97,13 @@ module.exports = [
     const group = ["users", name]; // not using an object like the block/unblock commands because this only interacts with user groups
     let reply = "";
     const id = args.length > 1 ? args[1] : null;
-    if (!client.config.has(group).value()) {
+    if (!client.storage.has(group).value()) {
       // group does not exist
-      client.config.set(group, null).write();
+      client.storage.set(group, null).write();
       reply = `Created group \`${name}\``;
     } else if (!id) {
       // if group does exist & no id
-      const array = client.config.get(group).value();
+      const array = client.storage.get(group).value();
       if (!array || !array.length) {
         reply = `The group \`${name}\` is empty`;
       } else {
@@ -117,17 +117,17 @@ module.exports = [
       return message.channel.send(reply);
     }
     // if the group is disabled, prepare it
-    if (client.config.get(group).value() === null) {
-      client.config.set(group, []).write();
-    } else if (client.config.get(group).includes(id).value()) {
+    if (client.storage.get(group).value() === null) {
+      client.storage.set(group, []).write();
+    } else if (client.storage.get(group).includes(id).value()) {
       // only need to check if the group already has the id & if we need to disable if it's not disabled
-      client.config.get(group).pull(id).write();
+      client.storage.get(group).pull(id).write();
       reply += `\nRemoved id \`${id}\` from group \`${name}\``;
-      if (!client.config.get(group).value().length) client.config.set(group, null).write();
+      if (!client.storage.get(group).value().length) client.storage.set(group, null).write();
       return message.channel.send(reply);
     }
     // if this code is reached it's safe to assume we have an id, the group is ready, and the id doesn't already exist in the group
-    client.config.get(group).push(id).write();
+    client.storage.get(group).push(id).write();
     reply += `\nAdded id \`${id}\` to group \`${name}\``;
     return message.channel.send(reply);
   }),

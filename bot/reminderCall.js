@@ -1,23 +1,25 @@
-const ListenerBlock = require("../../modules/ListenerBlock");
-const log = require("../../modules/log");
+const ListenerBlock = require("../modules/ListenerBlock");
 const moment = require("moment");
 
-module.exports = new ListenerBlock({ event: "reminderCall" }, (client, reminder) => {
-  log.debug("we have entered.... the listener:tm:");
-  log.debug(JSON.stringify(client));
-
+module.exports = new ListenerBlock({ event: "reminderCall" }, ({ client }, reminder) => {
   const reminderalert = `<:_:${client.config.get("metadata.reactions.reminderalert").value()}>`;
 
-  if(!client.guilds.cache.has(reminder.guildID)) return client.reminders.stop(reminder.id);
-  if(!reminder.private && !client.guilds.cache.get(reminder.guildID).channels.cache.has(reminder.channelID)) return client.reminders.stop(reminder.id);
-  if(!client.guilds.cache.get(reminder.guildID).members.cache.has(reminder.userID)) return client.reminders.stop(reminder.id);
+  const start = moment(reminder.start).format("dddd, MMMM Do YYYY, h:mm a");
+  const alert = `${reminderalert} <@${reminder.userID}>, you set a reminder on **${start}**;\n"${reminder.message}"`;
 
-  const start = moment(reminder.start).format("dddd, MMMM Do YYYY, h:mm:ss a");
-  const alert = `${reminderalert} **<@${reminder.user}>,** you set a reminder on **${start}**;\n"${reminder.message}"`;
-  
-  if(reminder.private == true) {
-      client.users.cache.get(reminder.userID).send(alert);
+  if(reminder.isDM) {
+    if(!client.users.cache.has(reminder.userID)) return client.reminders.stop(reminder.id);
+    
+    let user = client.users.cache.get(reminder.userID);
+    user.send(alert);
   } else {
-      client.guilds.cache.get(reminder.guildID).channels.cache.get(reminder.channelID).send(alert);
+    if(!client.guilds.cache.has(reminder.guildID)) return client.reminders.stop(reminder.id);
+    
+    let guild = client.guilds.cache.get(reminder.guildID);
+    if(!guild.members.cache.has(reminder.userID)) return client.reminders.stop(reminder.id);
+    if(!guild.channels.cache.has(reminder.channelID)) return client.reminders.stop(reminder.id);
+
+    let channel = client.guilds.cache.get(reminder.guildID).channels.cache.get(reminder.channelID);
+    channel.send(alert);
   }
 });

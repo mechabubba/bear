@@ -8,6 +8,11 @@
  * @property {[string]} commands.scope - An array of channel types where commands are allowed. https://discord.js.org/#/docs/main/stable/class/Channel?scrollTo=type
  * @property {?(string|[string])} commands.prefix - Command prefixes. Supports any amount of them, including none (null), one (string), or any (array)
  * @property {boolean} commands.mentions - Whether mentioning the bot as a prefix is enabled
+ * @property {Object} commands.channellogging - An object with information relating to sending command usage to a channel.
+ * @property {boolean} commands.channellogging.enabled - Boolean determining if channel logging is enabled or not.
+ * @property {string} commands.channellogging.guild - The guild ID the logging channel belongs to.
+ * @property {string} commands.channellogging.channel - The channel ID of the logging channel.
+ * @property {string} commands.channellogging.color - The embed color of the logs.
  * @property {Object} events - Config options concerning discord.js events
  * @property {string} events.directory - Path of a folder where modules are located
  * @property {Object} metadata - Metadata for the bot such as configurable visuals, links, and invites
@@ -29,6 +34,12 @@ const defaultConfig = {
     "scope": ["dm", "text", "news"],
     "prefix": null,
     "mentions": true,
+    "channellogging": {
+      "enabled": false,
+      "guild": null,
+      "channel": null,
+      "color": "#141414"
+    }
   },
   "events": {
     "directory": "./bot/listeners/",

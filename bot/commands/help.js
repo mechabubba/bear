@@ -15,16 +15,16 @@ const validator = function(client, message, command) {
     if (command.locked === true) return;
     if (_.isString(command.locked)) {
       if (command.locked !== message.author.id) {
-        if (!client.config.has(["users", command.locked]).value()) return false;
-        if (client.config.isNil(["users", command.locked]).value()) return false;
-        if (!client.config.get(["users", command.locked]).includes(message.author.id).value()) return false;
+        if (!client.storage.has(["users", command.locked]).value()) return false;
+        if (client.storage.isNil(["users", command.locked]).value()) return false;
+        if (!client.storage.get(["users", command.locked]).includes(message.author.id).value()) return false;
       }
     } else if (_.isArray(command.locked)) {
       if (!command.locked.includes(message.author.id)) {
         if (command.locked.some((group) => {
-          if (!client.config.has(["users", group]).value()) return false;
-          if (client.config.isNil(["users", group]).value()) return false;
-          if (!client.config.get(["users", group]).includes(message.author.id).value()) return false;
+          if (!client.storage.has(["users", group]).value()) return false;
+          if (client.storage.isNil(["users", group]).value()) return false;
+          if (!client.storage.get(["users", group]).includes(message.author.id).value()) return false;
           return true;
         }) === false) return false;
       }
@@ -48,12 +48,13 @@ module.exports = new CommandBlock({
   if (!content) {
     const commands = client.commands.cache.filter(command => validator(client, message, command));
     const names = commands.map(command => command.firstName);
-    const text = `🔍 To query command info, use \`${this.firstName} ${this.usage}\`\n\`\`\`\n${names.join(", ")}\n\`\`\``;
+    const text = `\`\`\`\n${names.join(", ")}\n\`\`\``;
     if (text.length > 1900) return log.warn("[help] The command list has exceeded 1990 characters in length and is no longer usable!");
     const embed = new MessageEmbed()
       .setTitle("Command List")
       .setColor(client.config.get("metadata.color").value())
-      .setDescription(text);
+      .setDescription(text)
+      .setFooter(`\uD83D\uDD0D To query command info, perform "${this.firstName} ${this.usage}".`);
     return message.channel.send(embed);
   } else {
     const name = content.toLowerCase();

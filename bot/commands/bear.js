@@ -17,11 +17,11 @@ module.exports = new CommandBlock({
     bearpoints++;
 
     const embed = new MessageEmbed()
-      .setColor("fefefe")
+      .setColor("#FEFEFE")
       .setTitle("he's here...")
       .attachFiles(["assets/bear.gif"])
       .setImage("attachment://bear.gif")
-      .setFooter(`total bears: ${bearpoints}`);
+      .setFooter(`\uD83D\uDC3B ${bearpoints}`);
     message.channel.send(embed);
 
     client.storage.set("local.bear.points", bearpoints).write();

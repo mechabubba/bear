@@ -133,16 +133,16 @@ class CommandConstruct extends BaseConstruct {
       if (command.locked === true) return;
       if (_.isString(command.locked)) {
         if (command.locked !== message.author.id) {
-          if (!this.client.config.has(["users", command.locked]).value()) return;
-          if (this.client.config.isNil(["users", command.locked]).value()) return;
-          if (!this.client.config.get(["users", command.locked]).includes(message.author.id).value()) return;
+          if (!this.client.storage.has(["users", command.locked]).value()) return;
+          if (this.client.storage.isNil(["users", command.locked]).value()) return;
+          if (!this.client.storage.get(["users", command.locked]).includes(message.author.id).value()) return;
         }
       } else if (_.isArray(command.locked)) {
         if (!command.locked.includes(message.author.id)) {
           if (command.locked.some((group) => {
-            if (!this.client.config.has(["users", group]).value()) return false;
-            if (this.client.config.isNil(["users", group]).value()) return false;
-            if (!this.client.config.get(["users", group]).includes(message.author.id).value()) return false;
+            if (!this.client.storage.has(["users", group]).value()) return false;
+            if (this.client.storage.isNil(["users", group]).value()) return false;
+            if (!this.client.storage.get(["users", group]).includes(message.author.id).value()) return false;
             return true;
           }) === false) return;
         }

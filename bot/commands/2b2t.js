@@ -5,7 +5,7 @@ const https = require("https");
 module.exports = new CommandBlock({
     identity: "2b2t",
     summary: "Gets the current queue length of 2b2t.",
-    description: "Gets the current queue length of 2b2t. Information fetched from [2b2t.io](https://2b2t.io/).",
+    description: "Gets the current queue length of 2b2t. Queue length fetched from [2b2t.io](https://2b2t.io/), tab image fetched from [2b2t.dev](https://2b2t.dev).",
     scope: ["dm", "text", "news"],
     nsfw: false,
     locked: false,
@@ -18,8 +18,9 @@ module.exports = new CommandBlock({
       resp.on("end", () => {
         let len = JSON.parse(data)[0][1];
         const embed = new MessageEmbed()
-          .setColor("FFAA00")
-          .setTitle(`The 2b2t queue is \`${len}\` users long.`);
+          .setColor("#FFAA00")
+          .setTitle(`The 2b2t queue is \`${len}\` users long.`)
+          .setImage("https://tab.2b2t.dev/");
         message.channel.send(embed);
       });
     }).on("error", (e) => {

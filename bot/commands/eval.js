@@ -28,23 +28,26 @@ module.exports = new CommandBlock({
   usage: "<code>",
   scope: ["dm", "text", "news"],
   nsfw: false,
-  locked: "hosts",
+  locked: ["hosts", "trusted"],
   clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"],
   userPermissions: null,
 }, async function(client, message, code, args) {
+  const positive = client.config.get("metadata.reactions.positive").value();
+  const negative = client.config.get("metadata.reactions.negative").value();
+
   if (!code) return message.react(client.config.get("metadata.reactions.negative").value());
   log.debug(`Code provided to eval from ${message.author.tag}:`, "\n" + code);
   let cleaned = null;
   try {
     const result = eval(code);
     cleaned = await clean(result, client.token);
-    message.react(client.config.get("metadata.reactions.positive").value());
+    message.react(positive);
     log.debug(`Eval from ${message.author.tag} resulted in:`, result);
-  } catch (error) {
-    cleaned = await clean(error, client.token);
-    message.react(client.config.get("metadata.reactions.negative").value());
-    log.error(`Eval from ${message.author.tag} caused an error:`, error);
-    return message.channel.send(`Failed to evaluate javascript, an error occurred: \`${error.message}\``);
+  } catch (e) {
+    cleaned = await clean(e, client.token);
+    message.react(negative);
+    log.error(`Eval from ${message.author.tag} caused an error:`, e);
+    return message.channel.send(`<:_:${negative}> An evaluation error occurred;\`\`\`\n${e.stack}\`\`\``);
   }
   if (cleaned && cleaned.length <= 1500) {
     message.channel.send(`${cleaned}`);

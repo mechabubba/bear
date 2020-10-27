@@ -2,7 +2,6 @@ const { CronJob } = require("cron");
 const Reminder = require("./Reminder");
 const EventConstruct = require("./EventConstruct");
 const EventEmitter = require("events");
-//const log = require("./log");
 
 /**
  * ReminderEmitter class for the reminder command.
@@ -24,30 +23,25 @@ class ReminderEmitter extends EventEmitter {
   start(reminder) {
     if(!reminder instanceof Reminder) throw new Error(`Reminder object expected; got ${typeof reminder}`);
     
-    let user = reminder.user;
-    if(!this.reminders.has(user)) this.reminders.set(user, {});
+    if(!this.reminders.has(reminder.userID)) this.reminders.set(reminder.userID, new Map());
 
-    let id;
     if(!reminder.id) {
-      id = this.generateID(user);
-      reminder.id = id;
-    } else {
-      id = reminder.id;
+      reminder.id = this.generateID(reminder.userID);
     }
 
     let job = new CronJob(reminder.end, function() {
       this.emit("reminderCall", reminder);
-      if(!reminder.isCron) {
-        this.stop(reminder.user, reminder.id);
+      if(!reminder.iscron) {
+        this.stop(reminder.userID, reminder.id);
       }
     }, null, true, "America/Chicago", this);
 
-    this.reminders.get(user)[id] = {
+    this.reminders.get(reminder.userID).set(reminder.id, {
       "job": job,
       "reminder": reminder
-    };
+    });
 
-    return id;
+    return reminder.id;
   }
 
   /**
@@ -56,13 +50,12 @@ class ReminderEmitter extends EventEmitter {
    * @param {String} reminderID 
    */
   stop(userID, reminderID) {
-    if(!this.reminders.has(userID)) this.reminders.set(userID, {});
-    let rs = this.reminders.get(userID);
+    if(!this.reminders.has(userID)) this.reminders.set(userID, new Map());
+    let rs = this.reminders.get(userID).get(reminderID);
+    if(!rs) throw new Error("The reminder wasn't found, or doesn't exist.");
 
-    if(!rs[reminderID]) throw new Error("The reminder wasn't found, or doesn't exist.");
-    
-    rs[reminderID].job.stop();
-    delete rs[reminderID];
+    rs.job.stop();
+    this.reminders.get(userID).delete(reminderID);
     
     return;
   }
@@ -73,9 +66,8 @@ class ReminderEmitter extends EventEmitter {
    * @returns {Object} An object of all active jobs.
    */
   activeReminders(userID) { // unfinished
-    if(!this.reminders.has(userID)) this.reminders.set(userID, {});
+    if(!this.reminders.has(userID)) this.reminders.set(userID, new Map());
     let rs = this.reminders.get(userID);
-
     return rs;
   }
 
@@ -83,14 +75,14 @@ class ReminderEmitter extends EventEmitter {
    * Generates a random ID.
    * @returns {String} A user ID.
    */
-  generateID(user) { // maybe finished idunnolol
-    const id = require("crypto").randomBytes(2).toString('hex');
-    const rs = this.reminders.get(user);
-    for(let key in rs) {
-      if(rs[key].id == id) return this.generateID(user);
+  generateID(userID) {
+    const id = require("crypto").randomBytes(2).toString("hex");
+    const rs = this.reminders.get(userID);
+    for(const key in rs.keys()) {
+      if(key == id) return this.generateID(userID);
     }
     return id;
   }
-}
+};
 
 module.exports = ReminderEmitter;

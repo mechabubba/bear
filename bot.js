@@ -10,7 +10,7 @@ const tokenRegex = RegExp(/^[\w]{24}\.[\w-]{6}\.[\w-]{27}$/);
 
 // Instantiate client
 const client = new Client({
-  disableMentions: "all",
+  disableMentions: "everyone",
   // This changes the default value for the equivalent message option, good practice imo
   // https://discord.js.org/#/docs/main/stable/typedef/MessageOptions?scrollTo=disableMentions
 });
@@ -46,7 +46,7 @@ const init = async function() {
   log.debug("init");
   const commandLoadResult = await Handler.requireDirectory(client.commands, client.config.get("commands.directory").value());
   const eventLoadResult = await Handler.requireDirectory(client.events, client.config.get("events.directory").value());
-  const remindersLoadResult = Handler.requireModule(client.reminders.events, "./bot/reminderCall.js");
+  const remindersLoadResult = Handler.requireModule(client.reminders.events, "../bot/reminderCall.js");
   log.info(commandLoadResult.message);
   log.info(eventLoadResult.message);
   log.info(remindersLoadResult.message);

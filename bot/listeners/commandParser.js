@@ -45,5 +45,6 @@ module.exports = new ListenerBlock({
   const name = args.shift().toLowerCase();
   input.parsed = input.parsed.slice(name.length).trim();
   if (!input.parsed.length) input.parsed = null;
+  client.emit("command", message);
   client.commands.run(name, message, input.parsed, args);
 });
