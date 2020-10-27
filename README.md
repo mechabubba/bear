@@ -1,4 +1,4 @@
-<img align="right" src="assets/bear.gif">
+<img align="right" src="assets/bear_static_small.png">
 
 # bear
 
