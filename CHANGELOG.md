@@ -46,7 +46,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
 
 - Improved `metadata.color` and `metadata.twitch` to support being null and changed both their defaults to such. Closes [#27](https://github.com/06000208/sandplate/issues/27)
 
-- Minor updates/fixes/syntax improvements to the guild, leave, help, set, and ping commands, the `Handler.js`, `Client.js`, and `CommandConstruct.js` classes, the `startup.js` listener, as well as `bot.js`, log messages across the bot, `README.md`, and `CONTRIBUTING.md`. Additionally:
+- Minor updates/fixes/syntax improvements to the guild, leave, help, set, and ping commands, the `Handler.js`, `Client.js`, and `CommandConstruct.js` classes, the `startup.js` and `logging.js` listeners, as well as `bot.js`, log messages across the bot, `README.md`, and `CONTRIBUTING.md`. Additionally:
   - Everywhere lodash was being used as `const _ = require("lodash")` has been updated to use object destructuring
   - Some async functions didn't need to be asynchronous
   - A few leftover debug log messages have been removed (although they may be added back later)

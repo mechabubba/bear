@@ -13,9 +13,9 @@ module.exports = [
   new ListenerBlock({ event: "shardReady" }, (client, id, unavailableGuilds) => log.info(`${chalk.green("[READY]")} [Shard ${id}] Shard is ready and serving ${client.user.tag}`)),
   new ListenerBlock({ event: "shardDisconnect" }, (client, event, id) => { // Only emits when websocket won't try to reconnect
     if (event.code === 1000) {
-      client.log.info(`[Shard ${id}] Websocket disconnected normally, ${event.reason} (${event.code})`);
+      log.info(`[Shard ${id}] Websocket disconnected normally, ${event.reason} (${event.code})`);
     } else {
-      client.log.error(`[Shard ${id}] Websocket disconnected abnormally, ${event.reason} (${event.code})`);
+      log.error(`[Shard ${id}] Websocket disconnected abnormally, ${event.reason} (${event.code})`);
     }
   }),
   new ListenerBlock({ event: "shardReconnecting" }, (client, id) => log.warn(`[Shard ${id}] Websocket currently closed, attempting to reconnect...`)),
