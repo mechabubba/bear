@@ -4,9 +4,9 @@ const { fork } = require("child_process");
 module.exports = new CommandBlock({
     identity: "brainfuck",
     summary: "Evaluates brainfuck code.",
-    description: "Evaluates code for the esoteric programming language [brainfuck](https://esolangs.org/wiki/Brainfuck), created by Urban Müller.\n• Memory is limited to 30,000 unsigned byte cells.\n• You must split input with a pipe `|` character.",
+    description: "Evaluates code for the esoteric programming language [brainfuck](https://esolangs.org/wiki/Brainfuck), created by Urban Müller.\n• Memory is limited to 30,000 unsigned byte cells.",
     scope: ["dm", "text", "news"],
-    usage: "(input text) [bf code]",
+    usage: "[bf code] or [(input text) | (bf code)]",
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, function(client, message, content, args) {
     const positive = client.config.get("metadata.reactions.positive").value();
