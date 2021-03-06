@@ -33,14 +33,11 @@ const determineType = function(input) {
 module.exports = [
   new CommandBlock({
     identity: ["block", "deny"],
-    summary: "Deny access to the bot",
     description: "Prohibits a user or guild from interacting with the bot.",
-    usage: "user/guild <id>",
+    usage: "user/guild [id]",
     scope: ["dm", "text", "news"],
-    nsfw: false,
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
   }, async function(client, message, content, [type, id, ...args]) {
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const group = determineType(type);
@@ -57,14 +54,11 @@ module.exports = [
   }),
   new CommandBlock({
     identity: ["unblock", "allow"],
-    summary: "Restore access to the bot",
     description: "Restore a user or guild's access to the bot.",
-    usage: "user/guild <id>",
+    usage: "user/guild [id]",
     scope: ["dm", "text", "news"],
-    nsfw: false,
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
   }, async function(client, message, content, [type, id, ...args]) {
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const group = determineType(type);
@@ -82,14 +76,11 @@ module.exports = [
   }),
   new CommandBlock({
     identity: ["group", "usergroup", "usergroups"],
-    summary: "Modify user groups",
-    description: "Create user groups and toggle ids in/out of them.",
-    usage: "<group> [id]",
+    description: "Creates user groups and toggles given IDs in and out of them.",
+    usage: "[group] (user ID)",
     scope: ["dm", "text", "news"],
-    nsfw: false,
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
   }, async function(client, message, content, args) {
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const name = args[0].toLowerCase();

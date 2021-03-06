@@ -5,10 +5,7 @@ module.exports = new CommandBlock({
     identity: "bear",
     description: "the man can run",
     scope: ["dm", "text", "news"],
-    nsfw: false,
-    locked: false,
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
   }, function(client, message, content, args) {
     if(!client.storage.has("local.bear").value()) {
       client.storage.set("local.bear", { points: 0 }).write()

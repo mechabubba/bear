@@ -1,20 +1,15 @@
-/*
-todo: i kinda wanna write my own srcds server querier... that'd be kinda Neat.
-*/
 const { query } = require("gamedig");
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, Util } = require("discord.js");
 const CommandBlock = require("../../modules/CommandBlock");
-//const log = require("../../modules/log");
+const log = require("../../modules/log");
 
 module.exports = new CommandBlock({
     identity: ["query", "q"],
+    summary: "Querys a source engine server.",
     description: "Querys a source engine server. The port is optional and defaults to \`27015\`.",
     usage: "ip:port",
     scope: ["dm", "text", "news"],
-    nsfw: false,
-    locked: false,
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
   }, async function(client, message, content, [ip, port]) {
     const online = client.config.get("metadata.reactions.online").value();
     const offline = client.config.get("metadata.reactions.offline").value();
@@ -46,6 +41,7 @@ module.exports = new CommandBlock({
       return message.channel.send(embed);
     }
 
+    log.debug(info);
     //let rules = "";
     //for(let [key, value] of Object.entries(info.raw.rules)) rules += `${key} ${value}\n`;
     //log.debug(rules);
@@ -58,13 +54,14 @@ module.exports = new CommandBlock({
     embed.addField(`Basic Info`, `IP: \`${vanity}\`\nConnect: steam://connect/${vanity}`);
 
     let players = "";
+    info.players.sort((a, b) => (a.score < b.score) ? 1 : -1);
     for(i = 0; i < info.players.length; i++) {
       let ply = info.players[i];
       players += `${i + 1}. ${ply.name ? `${ply.name} (${ply.score})` : "Joining in..."}\n`;
     }
-    if(!players) {
-      players = "Dead server. :(";
-    }
+    if(!players) players = "Dead server. :(";
+    players = Util.escapeMarkdown(players);
+
     embed.addField(`Current Players (${info.players.length} / ${info.maxplayers}${info.players.length >= info.maxplayers ? " - full!" : ``})`, players);
     embed.addField(`Current Map`, `\`${info.map}\``);
 

@@ -6,15 +6,16 @@ const chalk = require("chalk");
 
 module.exports = new CommandBlock({
   identity: ["guild", "guilds"],
-  summary: "List guilds & provides guild info",
+  summary: "Lists guilds and provides guild info.",
   description: "Logs a list of guilds to the console or provides info about individual guilds when queried.",
-  usage: "[guild id]",
+  usage: "(guild ID)",
   scope: ["dm", "text", "news"],
-  nsfw: false,
   locked: "hosts",
-  clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-  userPermissions: null,
+  clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
 }, async function(client, message, content, [id, ...args]) {
+  const positive = client.config.get("metadata.reactions.positive").value();
+  const negative = client.config.get("metadata.reactions.negative").value();
+
   if (!content) {
     let list = "", unavailable = 0;
     client.guilds.cache.each(guild => {
@@ -25,7 +26,7 @@ module.exports = new CommandBlock({
       }
     });
     log.info(`List of ${client.user.tag}'s ${client.guilds.cache.size} ${!unavailable.length ? "guilds" : `guilds (${unavailable} unavailable)`}, requested by ${message.author.tag}${list}`);
-    return message.channel.send("Logged list to console");
+    return message.channel.send(`<:_:${positive}> Logged ${client.guilds.cache.size} guilds to console.`);
   } else {
     if (!isNumeric(id)) return message.channel.send(`The id \`${id}\` was invalid`);
     if (!client.guilds.cache.has(id)) return message.channel.send(`The id \`${id}\` isn't mapped to a guild in the cache`);
@@ -33,7 +34,8 @@ module.exports = new CommandBlock({
     if (!guild.available) return message.channel.send("The guild was unavailable and could not be interacted with. This is indicative of a server outage.");
     const embed = new MessageEmbed()
       .setTitle(guild.name)
-      .setThumbnail(guild.iconURL({ format: "png" }))
+      .setURL(`https://discordapp.com/channels/${guild.id}/`)
+      .setThumbnail(guild.iconURL({ format: "png", dynamic: true }))
       .addFields(
         { name: "Owner", value: `${guild.owner.user}`, inline: true },
         { name: "Members", value: guild.memberCount, inline: true },
@@ -42,6 +44,6 @@ module.exports = new CommandBlock({
       .setFooter(guild.id)
       .setTimestamp(guild.createdTimestamp)
       .setColor(client.config.get("metadata.color").value());
-    return message.channel.send(`<https://discordapp.com/channels/${guild.id}/>`, embed);
+    return message.channel.send(embed);
   }
 });

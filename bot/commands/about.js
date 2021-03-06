@@ -4,7 +4,7 @@ const { MessageEmbed } = require("discord.js");
 const djsver = require("discord.js").version
 const moment = require("moment");
 
-const desc = `I'm a bot. You can see my abilities by performing the \`help\` command.
+const desc = `I'm a bot made by <@183740622484668416>. You can see my abilities by performing the \`help\` command.
 Invite the bot **[here;](https://discord.com/oauth2/authorize?client_id=435224030459723776&scope=bot&permissions=8)** this link will automatically give it the "administator" permission. rawr..... am polar bear x3
 Powered by **[node.js](https://nodejs.org/en/) v${process.versions["node"]}**, **[discord.js](https://discord.js.org) v${djsver}**, and **[sandplate](https://github.com/06000208/sandplate)**.`;
 
@@ -12,10 +12,7 @@ module.exports = new CommandBlock({
     identity: "about",
     description: "Displays information about the bot.",
     scope: ["dm", "text", "news"],
-    nsfw: false,
-    locked: false,
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
   }, function(client, message, content, args) {
     const col = randomColor();
     const embed = new MessageEmbed()

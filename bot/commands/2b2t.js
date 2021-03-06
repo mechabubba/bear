@@ -5,26 +5,23 @@ const https = require("https");
 module.exports = new CommandBlock({
     identity: "2b2t",
     summary: "Gets the current queue length of 2b2t.",
-    description: "Gets the current queue length of 2b2t. Queue length fetched from [2b2t.io](https://2b2t.io/), tab image fetched from [2b2t.dev](https://2b2t.dev).",
+    description: "Gets the current queue length of 2b2t. Data fetched from [2b2t.io](https://2b2t.io/).",
     scope: ["dm", "text", "news"],
-    nsfw: false,
-    locked: false,
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
   }, function(client, message, content, args) {
     https.get("https://2b2t.io/api/queue?last=true", (resp) => {
+      const negative = client.config.get("metadata.reactions.negative").value();
       let data = "";
       resp.on("data", (chunk) => data += chunk);
       resp.on("end", () => {
         let len = JSON.parse(data)[0][1];
         const embed = new MessageEmbed()
           .setColor("#FFAA00")
-          .setTitle(`The 2b2t queue is \`${len}\` users long.`)
-          .setImage("https://tab.2b2t.dev/");
+          .setTitle(`The 2b2t queue is \`${len}\` users long.`);
         message.channel.send(embed);
       });
     }).on("error", (e) => {
-      message.channel.send(`\`\`\`\n${e}\`\`\``);
+      message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e}\`\`\``);
     });
   }
 );

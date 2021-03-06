@@ -5,13 +5,11 @@ const mineemoji = "\uD83D\uDCA5";
 
 module.exports = new CommandBlock({
     identity: ["minesweeper", "ms", "minesweep"],
-    description: "Generates a playable minesweeper board, using spoiler tags.",
-    usage: "[length] [width] [mines] <-seed [...values]>",
+    summary: "Generates a Minesweeper board.",
+    description: "Generates a playable Minesweeper board, using spoiler tags. The seed is optional and is random by default.",
+    usage: "[length] [width] [mines] (-seed [...values])",
     scope: ["dm", "text", "news"],
-    nsfw: false,
-    locked: false,
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
   }, function(client, message, content, [length, width, maxmines, hasseed, ...args]) {
     const positive = client.config.get("metadata.reactions.positive").value();
     const negative = client.config.get("metadata.reactions.negative").value();

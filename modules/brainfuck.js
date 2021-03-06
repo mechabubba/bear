@@ -1,9 +1,9 @@
 /*
 Launched as a fork from /bot/commands/brainfuck.js.
 Used as such;
-```js
-const child = fork("./Brainfuck.js", ["input text", "<program>"]);
-```
+
+   const child = fork("./Brainfuck.js", ["input text", "<program>"]);
+
 Every message sent to the parent process will be an object with property "result".
 */
 const args = process.argv.splice(2);
@@ -18,19 +18,17 @@ let memory = new Uint8Array(30000).fill(0),
   done = false;
 
 /*
-execute() returns an object with the following possible properties, in the context of the command itself;
-  - result:  The current output result. Will always send in its own message and code block, even if its empty.
-  - error:   Displays an error in a code block.
-  - warning: Displays warning text by itself.
+execute() returns an object with the following properties;
+  - level: The log level. info > warning > error
+  - log: The log itself.
+  - output: The output.
 */
 const execute = (program) => {
   let output = "";
   let ops = 0;
   while(true) {
     if(ops > oplimit) {
-      // For whatever reason, we cant send() an error to the parent process (it shows up as an empty object).
-      // This *works*, but its kind of a shitty way of doing things.
-      return { warning: `The program exceeded the maximum operation count ${oplimit}. Current output is as follows.`, result: output };
+      return { level: "warning", log: `The program exceeded the maximum operation count ${oplimit}. Current output is as follows.`, output: output };
     }
     switch(program[pprog]) {
       case "+":
@@ -63,7 +61,7 @@ const execute = (program) => {
         break;
 
       case "[":
-        if(memory[pmem]) { // we enter if its nonzero
+        if(memory[pmem]) { // check if its nonzero
           stack.push(pprog);
         } else {
           let istack = 0;
@@ -91,7 +89,7 @@ const execute = (program) => {
     pprog++;
     ops++;
   }
-  return { result: output };
+  return { level: "info", log: `Evaluated successfully with ${ops} operations.`, output: output };
 }
 
 const value = execute(program);

@@ -1,7 +1,6 @@
 const CommandConstruct = require("./CommandConstruct");
 const EventConstruct = require("./EventConstruct");
 const ReminderEmitter = require("./ReminderEmitter");
-const Handler = require("./Handler");
 const log = require("./log");
 
 const Discord = require("discord.js");

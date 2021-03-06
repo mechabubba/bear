@@ -1,4 +1,3 @@
-// shibes <3
 const CommandBlock = require("../../modules/CommandBlock");
 const http = require("http");
 
@@ -7,10 +6,7 @@ module.exports = new CommandBlock({
     summary: "Gets a shibe.",
     description: "Gets a shibe. Images fetched from [shibe.online](https://shibe.online/).",
     scope: ["dm", "text", "news"],
-    nsfw: false,
-    locked: false,
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"],
-    userPermissions: null,
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"]
   }, function(client, message, content, args) {
     const negative = client.config.get("metadata.reactions.negative").value();
     http.get('http://shibe.online/api/shibes?count=1&urls=true&httpsUrls=true', (resp) => {

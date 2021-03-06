@@ -4,12 +4,10 @@ const { fork } = require("child_process");
 module.exports = new CommandBlock({
     identity: "brainfuck",
     summary: "Evaluates brainfuck code.",
-    description: "Evaluates code for the esoteric programming language [brainfuck](https://esolangs.org/wiki/Brainfuck), created by Urban Müller.\n• Memory is limited to 30,000 unsigned byte cells.",
+    description: "Evaluates code for the esoteric programming language [brainfuck](https://esolangs.org/wiki/Brainfuck), created by Urban Müller.\n• Memory is limited to 30,000 unsigned byte cells.\n• You must split input with a pipe `|` character.",
     scope: ["dm", "text", "news"],
-    locked: false,
-    usage: "[bf_code] or [(any input text) | (bf_code)]",
+    usage: "(input text) [bf code]",
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
   }, function(client, message, content, args) {
     const positive = client.config.get("metadata.reactions.positive").value();
     const negative = client.config.get("metadata.reactions.negative").value();
@@ -22,20 +20,18 @@ module.exports = new CommandBlock({
     code = code.replace(/[^\+\-\[\].,<>]+/g, ""); // Sanitizes the code of any text other than the specified opcodes.
 
     const child = fork("./modules/brainfuck", [input, code], { cwd: process.cwd() });
-    child.on("message", (msg) => {
-      let result = msg.result;
-      if(result.length > 1993) result = msg.result.substring(0, 1990) + "...";
+    child.on("message", (data) => {
+      let output = data.output;
+      if(output.length > 1993) output = output.substring(0, 1990) + "...";
 
-      if(msg.warning) {
-        message.channel.send(`<:_:${alert}> ${msg.warning}`);
-      } else if(msg.error) {
-        message.react(negative);
-        message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${msg.error}\`\`\``);
-      } else {
-        message.react(positive);
-      }
+      let reaction;
+      if(data.level == "warning") reaction = alert
+      else if(data.level == "error") reaction = negative
+      else reaction = positive
 
-      return message.channel.send(`\`\`\`\n${result}\`\`\``);
+      message.react(reaction);
+      message.channel.send(`<:_:${reaction}> ${data.log}`);
+      return message.channel.send(`\`\`\`\n${output}\`\`\``);
     });
   }
 );

@@ -3,14 +3,11 @@ const log = require("../../modules/log");
 
 module.exports = new CommandBlock({
   identity: "leave",
-  summary: "Leave a guild",
-  description: "Instruct the bot to leave a specific guild.",
-  usage: "<guild id>",
+  description: "Instructs the bot to leave a specific guild.",
+  usage: "[guild ID]",
   scope: ["dm", "text", "news"],
-  nsfw: false,
   locked: "hosts",
-  clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-  userPermissions: null,
+  clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
 }, async function(client, message, content, args) {
   if (!content) return message.channel.send(`Arguments are required\nUsage: \`${this.firstName} ${this.usage}\``);
   if (!client.guilds.cache.has(content)) return message.channel.send(`${client.user.tag} did not have \`${content}\` mapped to a guild in the guilds cache`);

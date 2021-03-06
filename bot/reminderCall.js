@@ -20,6 +20,8 @@ module.exports = new ListenerBlock({ event: "reminderCall" }, ({ client }, remin
     if(!guild.channels.cache.has(reminder.channelID)) return client.reminders.stop(reminder.id);
 
     let channel = client.guilds.cache.get(reminder.guildID).channels.cache.get(reminder.channelID);
+
+    console.log("sending reminder");
     channel.send(alert);
   }
 });

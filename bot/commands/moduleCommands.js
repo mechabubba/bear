@@ -50,14 +50,12 @@ const resolveInputToPaths = function(client, constructProperty, content, choice)
 module.exports = [
   new CommandBlock({
     identity: "load",
-    summary: "Load modules by path",
-    description: "Load command or event modules by file path. Note that the /modules/ folder is treated as the working directory.",
-    usage: "command/event <path>",
+    summary: "Loads modules by path.",
+    description: "Loads command or event modules by file path. Note that the /modules/ folder is treated as the working directory.",
+    usage: "command/event [path]",
     scope: ["dm", "text", "news"],
-    nsfw: false,
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
   }, function(client, message, content, [choice, args]) {
     if (!choice) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const constructProperty = determineConstruct(choice);
@@ -69,14 +67,12 @@ module.exports = [
   }),
   new CommandBlock({
     identity: "unload",
-    summary: "Unload modules by name/path",
-    description: "Unload command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory.",
+    summary: "Unloads modules by name/path",
+    description: "Unloads command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory.",
     usage: "command/event [name/path]",
     scope: ["dm", "text", "news"],
-    nsfw: false,
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
   }, function(client, message, content, [choice, args]) {
     if (!choice) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const constructProperty = determineConstruct(choice);
@@ -87,14 +83,12 @@ module.exports = [
   }),
   new CommandBlock({
     identity: "reload",
-    summary: "Reload modules by name/path",
-    description: "Reloading command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory.",
-    usage: "command/event <name/path>",
+    summary: "Reloads modules by name/path.",
+    description: "Reloads command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory.",
+    usage: "command/event [name/path]",
     scope: ["dm", "text", "news"],
-    nsfw: false,
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
   }, function(client, message, content, [choice, args]) {
     if (!choice) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const constructProperty = determineConstruct(choice);
