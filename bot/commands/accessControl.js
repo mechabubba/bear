@@ -52,7 +52,7 @@ module.exports = [
       return message.channel.send(`${startCase(group.type)} \`${id}\` is already blocked`);
     }
     client.config.get(group.path).push(id).write();
-    if (group.type === "guild" && client.guilds.cache.has(id)) await client.guilds.leaveBlocked(client.guilds.cache.get(id));
+    if (group.type === "guild" && client.guilds.cache.has(id)) await client.guilds.leaveGuild(client.guilds.cache.get(id), "blockedGuild");
     log.info(`${message.author.tag} blocked ${group.type} "${id}" from accessing ${client.user.tag}`);
     return message.channel.send(`Blocked ${group.type} \`${id}\``);
   }),

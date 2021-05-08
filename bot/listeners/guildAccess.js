@@ -1,6 +1,4 @@
 const ListenerBlock = require("../../modules/ListenerBlock");
-const log = require("../../modules/log");
-const chalk = require("chalk");
 
 // The block list automatically leaves guilds on the list (referred to as blocked guilds)
 // The allow list automatically leaves guilds not on the list (referred to as unknown guilds)
@@ -13,9 +11,9 @@ module.exports = [
     once: false,
   }, async function(client) {
     // Block list
-    await client.guilds.leaveBlocked();
+    await client.guilds.checkBlocked();
     // Allow list
-    await client.guilds.leaveUnknown();
+    await client.guilds.checkUnknown();
   }),
   new ListenerBlock({
     event: "guildCreate",
@@ -26,8 +24,8 @@ module.exports = [
     // hand goes through as that will prompt a warn down the line
     if (!guild.available || guild.deleted) return;
     // Block list
-    await client.guilds.leaveBlocked(guild);
+    await client.guilds.checkBlocked(guild);
     // Allow list
-    await client.guilds.leaveUnknown(guild);
+    await client.guilds.checkUnknown(guild);
   }),
 ];

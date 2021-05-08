@@ -16,11 +16,10 @@ class GuildManager extends Discord.GuildManager {
    * Used by guild access control internally to leave a specific guild if available & not owned by the bot while optionally emitting a custom event
    * @param {Discord.Guild} guild
    * @param {?string} event
-   * @private
    */
   async leaveGuild(guild, event = null) {
-    if (!guild.available || guild.deleted) return;
     if (this.client.user.id === guild.ownerID) return log.warn(`${event ? chalk.gray(`[${event}]`) : ""} Failed to leave guild "${guild.name}" (${guild.id}) as I own it and cannot leave without first transferring ownership`);
+    if (!guild || !guild.available || guild.deleted) return;
     try {
       await guild.leave();
     } catch (error) {
@@ -65,12 +64,12 @@ class GuildManager extends Discord.GuildManager {
    * You can refer to the documentation in `./modules/defaultData.js` for info about guild groups and access control.
    * @param {?Discord.Guild} [guild]
    */
-  async leaveBlocked(guild = null) {
+  checkBlocked(guild = null) {
     const blocked = this.getGuildGroup("blocked");
     if (!blocked) return;
     const predicate = (value) => blocked.includes(value.id);
     if (guild) {
-      if (predicate(guild)) await this.leaveGuild(guild, "blockedGuild");
+      if (predicate(guild)) this.leaveGuild(guild, "blockedGuild");
     } else {
       this.filterGuilds(this.cache, predicate, "blockedGuild");
     }
@@ -82,14 +81,14 @@ class GuildManager extends Discord.GuildManager {
    * You can refer to the documentation in `./modules/defaultData.js` for info about guild groups and access control.
    * @param {?Discord.Guild} [guild]
    */
-  async leaveUnknown(guild = null) {
+  checkUnknown(guild = null) {
     const allowed = this.getGuildGroup("allowed");
     if (!allowed) return;
     const predicate = (value) => !allowed.includes(value.id);
     if (guild) {
-      if (predicate(guild)) await this.leaveGuild(guild, "unknownGuild");
+      if (predicate(guild)) this.leaveGuild(guild, "unknownGuild");
     } else {
-      await this.filterGuilds(this.cache, predicate, "unknownGuild");
+      this.filterGuilds(this.cache, predicate, "unknownGuild");
     }
   }
 
