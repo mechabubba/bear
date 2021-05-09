@@ -10,5 +10,5 @@ module.exports = new CommandBlock({
   }, async function(client, message, content, args) {
     const negative = client.config.get("metadata.reactions.negative").value();
     if(!content) return message.channel.send(`<:_:${negative}> You need to ask it something.`);
-    return message.channel.send(`\uD83C\uDFB1 ${responses[Math.floor(Math.random() * responses.length)]}`);
+    return message.channel.send(`\uD83C\uDFB1 ${responses[Math.floor(Math.random() * responses.length)]}`); // if you're reading this, im sorry for ruining the magic
 });

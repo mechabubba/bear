@@ -31,9 +31,10 @@
     "lodash": "^4.17.19",
     "lowdb": "^1.0.0",
     "moment": "^2.27.0",
-    "node-fetch": "^2.6.0",
+    "node-fetch": "^2.6.1",
     "seedrandom": "^3.0.5",
     "slash": "^3.0.0",
-    "utf-8-validate": "^5.0.2"
+    "utf-8-validate": "^5.0.2",
+    "yahoo-finance": "^0.3.7"
   }
 }

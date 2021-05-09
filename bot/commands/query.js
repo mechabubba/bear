@@ -18,6 +18,7 @@ module.exports = new CommandBlock({
     if(!ip) return message.channel.send(`<:_:${negative}> You must input a server IP. Perform \`help ${this.firstName}\` for more information.`);
     ip = ip.toLowerCase();
 
+    message.channel.startTyping();
     if(ip.match(/:/g)) {
       let split = ip.split(":");
       ip = split[0];
@@ -41,7 +42,7 @@ module.exports = new CommandBlock({
       return message.channel.send(embed);
     }
 
-    log.debug(info);
+    //log.debug(info);
     //let rules = "";
     //for(let [key, value] of Object.entries(info.raw.rules)) rules += `${key} ${value}\n`;
     //log.debug(rules);
@@ -65,6 +66,7 @@ module.exports = new CommandBlock({
     embed.addField(`Current Players (${info.players.length} / ${info.maxplayers}${info.players.length >= info.maxplayers ? " - full!" : ``})`, players);
     embed.addField(`Current Map`, `\`${info.map}\``);
 
+    message.channel.stopTyping(true);
     return message.channel.send(embed);
   }
 );

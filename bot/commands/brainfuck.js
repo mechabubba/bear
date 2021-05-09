@@ -19,17 +19,18 @@ module.exports = new CommandBlock({
     if(!code) return message.channel.send(`<:_:${negative}> You didn't send any code! Perform \`help ${this.firstName}\` for more information.`);
     code = code.replace(/[^\+\-\[\].,<>]+/g, ""); // Sanitizes the code of any text other than the specified opcodes.
 
+    message.channel.startTyping();
     const child = fork("./modules/brainfuck", [input, code], { cwd: process.cwd() });
     child.on("message", (data) => {
+      message.channel.stopTyping(true);
       let output = data.output;
       if(output.length > 1993) output = output.substring(0, 1990) + "...";
 
       let reaction;
-      if(data.level == "warning") reaction = alert
-      else if(data.level == "error") reaction = negative
-      else reaction = positive
+      if(data.level == "warning") message.react(alert);
+      else if(data.level == "error") message.react(negative);
+      else message.react(positive);
 
-      message.react(reaction);
       message.channel.send(`<:_:${reaction}> ${data.log}`);
       return message.channel.send(`\`\`\`\n${output}\`\`\``);
     });
