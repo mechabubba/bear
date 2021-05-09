@@ -11,7 +11,7 @@ const validator = function(client, message, command) {
     }
   }
   // access control
-  if (command.locked !== false) {
+  if (command.locked) {
     if (command.locked === true) return;
     if (isString(command.locked)) {
       if (command.locked !== message.author.id) {

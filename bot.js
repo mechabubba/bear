@@ -14,10 +14,10 @@ const client = new Client({
 // Token validation (config)
 if (client.config.get("client.token").value() !== null) {
   if (token.test(client.config.get("client.token").value())) {
-    log.info("Token stored in the config successfully matched token pattern, will attempt to login");
+    log.info("Token stored in the config successfully matched token regex, will attempt to login");
   } else {
     const id = SnowflakeUtil.generate();
-    log.warn("Token stored in the config didn't match token pattern, won't try to use it");
+    log.warn("Token stored in the config didn't match token regex, won't try to use it");
     fse.ensureFileSync(client.dbPath);
     fse.copySync(client.dbPath, `./data/config.backup.${id}.json`);
     client.config.set("client.token", null).write();
@@ -30,10 +30,10 @@ const argv = process.argv.slice(2);
 if (argv.length) {
   if (argv.length > 1) log.warn("Regarding command line arguments, only using the first argument to pass in a token is supported. All further arguments are ignored.");
   if (token.test(argv[0])) {
-    log.info("Command line argument matched token pattern, will attempt to login");
+    log.info("Command line argument matched token regex, will attempt to login");
     client.cookies.set("token", argv[0]);
   } else {
-    log.warn("Command line argument didn't match token pattern, won't try to use it");
+    log.warn("Command line argument didn't match token regex, won't try to use it");
   }
 }
 
@@ -47,7 +47,7 @@ const init = async function() {
   if (client.cookies.has("token") || client.config.get("client.token").value() !== null) {
     client.login(client.cookies.has("token") ? client.cookies.get("token") : client.config.get("client.token").value());
   } else {
-    log.warn("No token available to login with! Please set one in the config or pass one in as an argument");
+    log.warn("No token available! Set one in the config or pass one in as a cli argument");
     process.exit(0);
   }
 };

@@ -5,7 +5,7 @@ const { startCase } = require("lodash");
 const { inspect } = require("util");
 
 // There isn't a command for controlling users.allowed and guilds.allowed due to the potential for mishaps and misuse
-// You wouldn't want to prevent all command use or cause your bot to leave all of it's guilds by accident, right?
+// Such as preventing all command use or causing your bot to leave all of it's guilds
 // If you want to make use of them, add ids manually or make your own command
 
 const types = {

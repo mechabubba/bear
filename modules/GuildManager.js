@@ -13,17 +13,17 @@ class GuildManager extends Discord.GuildManager {
   }
 
   /**
-   * Used by guild access control internally to leave a specific guild if available & not owned by the bot while optionally emitting a custom event
+   * Leaves a specific guild if available & not owned by the bot while optionally emitting a custom event
    * @param {Discord.Guild} guild
    * @param {?string} event
    */
   async leaveGuild(guild, event = null) {
-    if (this.client.user.id === guild.ownerID) return log.warn(`${event ? chalk.gray(`[${event}]`) : ""} Failed to leave guild "${guild.name}" (${guild.id}) as I own it and cannot leave without first transferring ownership`);
     if (!guild || !guild.available || guild.deleted) return;
+    if (this.client.user.id === guild.ownerID) return log.warn(`${event ? chalk.gray(`[${event}]`) : ""} ${this.client.user.tag} failed to leave guild "${guild.name}" (${guild.id}) as it owns the guild and must first transfer ownership`);
     try {
       await guild.leave();
     } catch (error) {
-      log.error(`Failed to leave guild "${guild.name}" (${guild.id}) due to an error:`, error);
+      log.error(`${this.client.user.tag} failed to leave guild "${guild.name}" (${guild.id}) due to an error:`, error);
       return;
     }
     if (event) this.client.emit(event, guild);
@@ -39,7 +39,7 @@ class GuildManager extends Discord.GuildManager {
   async filterGuilds(collection, predicate, event = null) {
     const guilds = collection.filter(predicate);
     if (!guilds.size) return;
-    // This is scary but valid JS: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Ignoring_some_returned_values
+    // This is how you ignore returned values from array destructuring: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#Ignoring_some_returned_values
     for (const [, guild] of guilds) {
       await this.leaveGuild(guild, event);
     }
@@ -59,7 +59,7 @@ class GuildManager extends Discord.GuildManager {
   }
 
   /**
-   * Checks & leaves blocked guilds in the cache, or a specific guild if supplied.
+   * Checks & leaves blocked guilds in the cache, or a specific guild if supplied
    * Note that if the associated guild group (`guilds.blocked`) is null or empty, no guilds will be left.
    * You can refer to the documentation in `./modules/defaultData.js` for info about guild groups and access control.
    * @param {?Discord.Guild} [guild]
@@ -76,7 +76,7 @@ class GuildManager extends Discord.GuildManager {
   }
 
   /**
-   * Checks & leaves guilds missing from the allow list in the cache, or a specific guild if supplied.
+   * Checks & leaves guilds missing from the allow list in the cache, or a specific guild if supplied
    * Note that if the associated guild group (`guilds.allowed`) is null or empty, no guilds will be left.
    * You can refer to the documentation in `./modules/defaultData.js` for info about guild groups and access control.
    * @param {?Discord.Guild} [guild]

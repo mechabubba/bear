@@ -32,20 +32,20 @@ module.exports = new CommandBlock({
   } else {
     if (!numeric.test(id)) return message.channel.send(`The id \`${id}\` was invalid`);
     if (!client.guilds.cache.has(id)) return message.channel.send(`The id \`${id}\` isn't mapped to a guild in the cache`);
-    let guild = client.guilds.cache.get(id);
-    guild = await guild.fetch();
-    if (!guild.available) return message.channel.send("The guild was unavailable and could not be interacted with. This is indicative of a server outage.");
+    const guild = client.guilds.cache.get(id);
+    // guild = await guild.fetch();
+    if (!guild.available) return message.channel.send("The guild was unavailable. This is indicative of a server outage.");
     const embed = new MessageEmbed()
       .setTitle(guild.name)
       .addFields(
         { name: "Link", value: `[Jump](https://discordapp.com/channels/${guild.id}/)`, inline: true },
-        { name: "Owner", value: guild.owner.user, inline: true },
+        { name: "Owner", value: `<@${guild.ownerID}>`, inline: true },
       )
       .setFooter(guild.id)
       .setTimestamp(guild.createdTimestamp);
     const color = client.config.get("metadata.color").value();
     if (color) embed.setColor(color);
-    // Respect guild privacy when widget is disabled
+    // Attempt to respect guild privacy when widget is disabled
     // Checked using node-fetch so the Manage Server permission isn't required
     const widget = `https://discordapp.com/api/guilds/${guild.id}/widget.json`;
     const response = await fetch(widget);
