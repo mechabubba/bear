@@ -29,7 +29,6 @@
     "lowdb": "^1.0.0",
     "moment": "^2.29.1",
     "node-fetch": "^2.6.1",
-    "slash": "^4.0.0",
     "utf-8-validate": "^5.0.4"
   }
 }
