@@ -17,11 +17,11 @@ const filehound = require("filehound");
 class Handler {
   constructor() {
     /**
-     * Full file path used for the modules database
+     * Absolute path used for the modules database
      * @type {string}
      * @readonly
      */
-    this.dbPath = path.join(__dirname, "../data/modules.json");
+    this.dbPath = path.join(__dirname, "..", "data", "modules.json");
 
     // Determine whether the modules database exists prior to using low()
     const generating = !fse.pathExistsSync(this.dbPath);
@@ -235,7 +235,7 @@ class Handler {
     return new Response({
       message: `Found ${filePaths.length} ${!filePaths.length ? "file" : "files"} under "${directoryPath}"`,
       success: true,
-      value: filePaths.map(filePath => path.join("../", filePath)),
+      value: filePaths.map(filePath => path.join("..", filePath)),
     });
   }
 

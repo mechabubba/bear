@@ -31,7 +31,7 @@ class Client extends Discord.Client {
      * @type {string}
      * @readonly
      */
-    this.dbPath = path.join(__dirname, "../data/config.json");
+    this.dbPath = path.join(__dirname, "..", "data", "config.json");
 
     // Log to the console if the config will be created
     if (!fse.pathExistsSync(this.dbPath)) log.info(`A default config file will be generated at ./data/config.json`);
