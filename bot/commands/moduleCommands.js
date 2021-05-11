@@ -107,7 +107,7 @@ module.exports = [
   new CommandBlock({
     identity: "enable",
     summary: "Enable modules by path",
-    description: "Enable command or event modules by file path. Note that the /modules/ folder is treated as the working directory.",
+    description: "Enable command or event modules by file path. Note that paths should be written relative to the /modules/ folder (for example, navigating to `/bot/commands/` should be `../bot/commands`)",
     usage: "command/event <path>",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -121,14 +121,14 @@ module.exports = [
     const filePath = content.substring(choice.length).trim();
     if (!filePath.length) return message.channel.send(`A path is required\nUsage: \`${this.firstName} ${this.usage}\``);
     const loadResult = client.handler.requireModule(client[constructProperty], filePath, false);
-    // You have to put the path in an array so that periods aren't interpreted as traversing the db
-    if (loadResult.value) client.handler.modules.set([loadResult.value], true).write();
+    // Putting the path in an array prevents periods from being interpreted as traversing the db
+    if (loadResult.value) client.handler.modules.set([client.handler.trimPath(loadResult.value)], true).write();
     return message.channel.send(`\`\`\`\n${loadResult.message}\n${loadResult.value ? "Enabled the module" : ""}\n\`\`\``);
   }),
   new CommandBlock({
     identity: "disable",
     summary: "Disable modules by name/path",
-    description: "Disable command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory. Be careful about which modules you disable and ",
+    description: "Disable command or event modules by command name, event name, or file path. Note that paths should be written relative to the /modules/ folder (for example, navigating to `/bot/commands/` should be `../bot/commands`)",
     usage: "command/event <name/path>",
     scope: ["dm", "text", "news"],
     nsfw: false,
@@ -142,16 +142,10 @@ module.exports = [
     const pathsResult = resolveInputToPaths(client, constructProperty, content, choice);
     const multipleModules = isArray(pathsResult.value);
     const unloadResult = multipleModules ? client.handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : client.handler.unloadModule(client[constructProperty], pathsResult.value);
-    if (unloadResult.value) {
-      // You have to put the path in an array so that periods aren't interpreted as traversing the db
-      if (multipleModules) {
-        for (const resolvedPath of unloadResult.value) {
-          client.handler.modules.set([resolvedPath], false).write();
-        }
-      } else {
-        client.handler.modules.set([unloadResult.value], false).write();
-      }
-    }
+    forAny((resolvedPath) => {
+      // Putting the path in an array prevents periods from being interpreted as traversing the db
+      client.handler.modules.set([client.handler.trimPath(resolvedPath)], false).write();
+    }, unloadResult.value);
     return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${unloadResult.value ? `Disabled ${multipleModules ? `${unloadResult.value.length} modules` : "1 module"}` : ""}\n\`\`\``);
   }),
 ];

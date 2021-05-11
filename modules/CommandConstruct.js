@@ -68,12 +68,13 @@ class CommandConstruct extends BaseConstruct {
   /**
    * @param {CommandBlock} command
    * @param {?string} [filePath]
+   * @param {?string} [trimmedPath]
    */
-  load(command, filePath) {
+  load(command, filePath = null, trimmedPath = null) {
     // validation
     if (command instanceof CommandBlock === false) return;
     // parent
-    super.load(command, filePath);
+    super.load(command, filePath, trimmedPath);
     // bind correct this value & prefix the client as the first parameter
     command.run = command.run.bind(command, this.client);
     // collections

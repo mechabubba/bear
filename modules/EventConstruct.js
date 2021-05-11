@@ -51,12 +51,13 @@ class EventConstruct extends BaseConstruct {
   /**
    * @param {ListenerBlock} block
    * @param {?string} [filePath]
+   * @param {?string} [trimmedPath]
    */
-  load(block, filePath) {
+  load(block, filePath = null, trimmedPath = null) {
     // validation
     if (block instanceof ListenerBlock === false) return;
     // parent
-    super.load(block, filePath);
+    super.load(block, filePath, trimmedPath);
     // bind correct this value & prefix the emitter as the first parameter
     block.run = block.run.bind(block, this.emitter);
     // .once() or .on()

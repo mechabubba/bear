@@ -36,12 +36,15 @@ class BaseConstruct extends Base {
   /**
    * @param {BaseBlock} block
    * @param {?string} [filePath=null]
+   * @param {?string} [trimmedPath=null]
    */
-  load(block, filePath = null) {
+  load(block, filePath = null, trimmedPath = null) {
     // validation
     if (block instanceof BaseBlock === false) return;
     // file path
     block.filePath = filePath;
+    // trimmed path
+    block.trimmedPath = trimmedPath;
     // collections
     this.cache.set(block.id, block);
     collectionArrayPush(this.idsByPath, block.filePath, block.id);

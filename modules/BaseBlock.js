@@ -12,6 +12,11 @@ class BaseBlock extends Base {
      * @type {?string}
      */
     this.filePath = null;
+
+    /**
+     * @type {?string}
+     */
+    this.trimmedPath = null;
   }
 }
 

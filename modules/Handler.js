@@ -8,6 +8,7 @@ const FileSync = require("lowdb/adapters/FileSync");
 const fse = require("fs-extra");
 const path = require("path");
 const filehound = require("filehound");
+const { drop } = require("lodash");
 
 /**
  * Handler framework
@@ -23,6 +24,20 @@ class Handler {
      */
     this.dbPath = path.join(__dirname, "..", "data", "modules.json");
 
+    /**
+     * Absolute path to the presumed working directory
+     * @type {string}
+     * @readonly
+     */
+    this.workingDirectory = path.join(__dirname, "..");
+
+    /**
+     * The amount of subfolders to trim from the beginning of paths
+     * @type {string}
+     * @readonly
+     */
+    this.folderLevels = this.workingDirectory.split(path.sep).length;
+
     // Determine whether the modules database exists prior to using low()
     const generating = !fse.pathExistsSync(this.dbPath);
 
@@ -31,16 +46,16 @@ class Handler {
      */
     this.modules = low(new FileSync(this.dbPath));
 
-    // Handle modules configured to be disabled by default
+    // Handle modules that were configured to be disabled by default
     // All modules not present in the modules database are implicitly enabled (and will be added upon load)
     if (generating) {
-      for (const filePath of disabledModules) {
-        const resolvedPath = Handler.resolvePath(filePath);
-        if (!resolvedPath.success) continue; // If a path fails to resolve, just skip it
-        // You have to put the path in an array so that periods aren't interpreted as traversing the db
-        if (!this.modules.has([resolvedPath.value]).value()) this.modules.set([resolvedPath.value], false).write();
+      for (const trimmedPath of disabledModules) {
+        const resolvedPath = Handler.resolvePath(path.join(this.workingDirectory, trimmedPath));
+        if (!resolvedPath.success) continue;
+        // Putting the path in an array prevents periods from being interpreted as traversing the db
+        if (!this.modules.has([trimmedPath]).value()) this.modules.set([trimmedPath], false).write();
       }
-      log.info("A modules database has been generated at ./data/modules.json");
+      log.info("A database of enabled modules has been generated at ./data/modules.json");
     }
   }
 
@@ -72,6 +87,16 @@ class Handler {
       obj.message = "Something went wrong while resolving path, but didn't result in an error";
     }
     return new Response(obj);
+  }
+
+  /**
+   * @param {string} filePath
+   */
+  trimPath(filePath) {
+    if (!filePath) return "";
+    const splitPath = filePath.split(path.sep);
+    if (!filePath.startsWith(this.workingDirectory)) return splitPath.join(path.posix.sep);
+    return drop(splitPath, this.folderLevels).join(path.posix.sep);
   }
 
   /**
@@ -140,13 +165,14 @@ class Handler {
    * @param {BaseConstruct} construct
    * @param {BaseBlock|[BaseBlock]} mod
    * @param {?string} [filePath=null]
+   * @param {?string} [trimmedPath=null]
    */
-  loadModule(construct, mod, filePath = null) {
+  loadModule(construct, mod, filePath = null, trimmedPath = null) {
     if (!construct || !mod) return new Response({ message: "Required parameters weren't supplied", success: false });
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
     if (isArray(mod)) {
       for (const block of mod) {
-        construct.load(block, filePath);
+        construct.load(block, filePath, trimmedPath);
       }
       return new Response({
         message: `Loaded ${mod.length} ${mod.length === 1 ? "block" : "blocks"} from ${!filePath ? "code anonymously" : filePath}`,
@@ -154,7 +180,7 @@ class Handler {
         value: filePath,
       });
     } else {
-      construct.load(mod, filePath);
+      construct.load(mod, filePath, trimmedPath);
       return new Response({
         message: `Loaded 1 block from ${!filePath ? "code anonymously" : `"${filePath}"`}`,
         success: true,
@@ -173,10 +199,11 @@ class Handler {
     if (construct instanceof BaseConstruct === false) return new Response({ message: "Construct provided wasn't a construct", success: false });
     const resolvedPath = Handler.resolvePath(filePath);
     if (!resolvedPath.success || resolvedPath.error) return resolvedPath;
-    // You have to put the path in an array so that periods aren't interpreted as traversing the db
-    if (!this.modules.has([resolvedPath.value]).value()) {
-      this.modules.set([resolvedPath.value], true).write();
-    } else if (respectDisabled && !this.modules.get([resolvedPath.value]).value()) {
+    const trimmedPath = this.trimPath(resolvedPath.value);
+    // Putting the path in an array prevents periods from being interpreted as traversing the db
+    if (!this.modules.has([trimmedPath]).value()) {
+      this.modules.set([trimmedPath], true).write();
+    } else if (respectDisabled && !this.modules.get([trimmedPath]).value()) {
       log.debug(`Skipping disabled module "${resolvedPath.value}"`);
       return new Response({ message: `Module "${resolvedPath.value}" was disabled`, success: true });
     }
@@ -189,7 +216,7 @@ class Handler {
     }
     if (isNil(mod)) return new Response({ message: `Something went wrong while requiring module "${resolvedPath.value}" but didn't result in an error`, success: false });
     // The use of cloneDeep prevents the require.cache from being affected by changes to the module
-    return this.loadModule(construct, cloneDeep(mod), resolvedPath.value);
+    return this.loadModule(construct, cloneDeep(mod), resolvedPath.value, trimmedPath);
   }
 
   /**
