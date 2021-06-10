@@ -14,7 +14,8 @@ module.exports = new CommandBlock({
   locked: false,
   clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   userPermissions: null,
-}, async function(client, message, content, args) {
-  const reply = await message.channel.send(`hello world, ${message.author.tag}!`);
-  log.trace(reply.content);
+}, function(client, message, content, args) {
+  const text = `hello world, ${message.author.tag}!`;
+  log.trace(text);
+  message.channel.send(text);
 });
