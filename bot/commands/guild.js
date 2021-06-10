@@ -13,7 +13,7 @@ module.exports = new CommandBlock({
   clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   userPermissions: null,
 }, async function(client, message, content, [id, ...args]) {
-  if (message.channel.type == "dm" && !content) return message.channel.send("An id is required as input in direct messages");
+  if (message.channel.type === "dm" && !content) return message.channel.send("An id is required as input in direct messages");
   let guild = null;
   if (!content) {
     guild = message.guild;
