@@ -6,7 +6,7 @@ const log = require("../../modules/log");
 
 module.exports = [
   new CommandBlock({
-    identity: "template_a",
+    identity: ["template_a"],
     summary: null,
     description: null,
     usage: null,
@@ -20,7 +20,7 @@ module.exports = [
     log.trace(reply.content);
   }),
   new CommandBlock({
-    identity: "template_b",
+    identity: ["template_b"],
     summary: null,
     description: null,
     usage: null,

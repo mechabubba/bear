@@ -47,7 +47,7 @@ const resolveInputToPaths = function(client, constructProperty, content, choice)
 
 module.exports = [
   new CommandBlock({
-    identity: "load",
+    identity: ["load"],
     summary: "Load modules by path",
     description: "Load command or event modules by file path. Note that the /modules/ folder is treated as the working directory.",
     usage: "command/event <path>",
@@ -66,7 +66,7 @@ module.exports = [
     return message.channel.send(`\`\`\`\n${loadResult.message}\n\`\`\``);
   }),
   new CommandBlock({
-    identity: "unload",
+    identity: ["unload"],
     summary: "Unload modules by name/path",
     description: "Unload command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory.",
     usage: "command/event [name/path]",
@@ -84,7 +84,7 @@ module.exports = [
     return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n\`\`\``);
   }),
   new CommandBlock({
-    identity: "reload",
+    identity: ["reload"],
     summary: "Reload modules by name/path",
     description: "Reloading command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory.",
     usage: "command/event <name/path>",
@@ -105,7 +105,7 @@ module.exports = [
     return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${loadResult.message}\n\`\`\``);
   }),
   new CommandBlock({
-    identity: "enable",
+    identity: ["enable"],
     summary: "Enable modules by path",
     description: "Enable command or event modules by file path. Note that paths should be written relative to the /modules/ folder (for example, navigating to `/bot/commands/` should be `../bot/commands`)",
     usage: "command/event <path>",
@@ -126,7 +126,7 @@ module.exports = [
     return message.channel.send(`\`\`\`\n${loadResult.message}\n${loadResult.value ? "Enabled the module" : ""}\n\`\`\``);
   }),
   new CommandBlock({
-    identity: "disable",
+    identity: ["disable"],
     summary: "Disable modules by name/path",
     description: "Disable command or event modules by command name, event name, or file path. Note that paths should be written relative to the /modules/ folder (for example, navigating to `/bot/commands/` should be `../bot/commands`)",
     usage: "command/event <name/path>",

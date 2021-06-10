@@ -5,7 +5,7 @@ const log = require("../../modules/log");
 // refer to CommandBlock.js for documentation
 
 module.exports = new CommandBlock({
-  identity: "template",
+  identity: ["template"],
   summary: "An example command",
   description: null,
   usage: null,

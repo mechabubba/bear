@@ -78,7 +78,7 @@ const resolveActivity = function(client, content, args) {
 
 module.exports = [
   new CommandBlock({
-    identity: "set",
+    identity: ["set"],
     summary: "Control various parts of the bot",
     description: "Acts as an advanced shortcut to the `setavatar`, `setname`, `presence`, `status`, and `activity` commands.",
     usage: "[action] [input]",

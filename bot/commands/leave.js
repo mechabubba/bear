@@ -3,7 +3,7 @@ const log = require("../../modules/log");
 const { numeric } = require("../../modules/regexes");
 
 module.exports = new CommandBlock({
-  identity: "leave",
+  identity: ["leave"],
   summary: "Leave a guild",
   description: "Instruct the bot to leave a specific guild.",
   usage: "<id>",
