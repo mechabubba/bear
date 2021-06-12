@@ -48,6 +48,7 @@ class ListenerBlock extends BaseBlock {
     /**
      * Callback function called when the event named by the ListenerBlock.event property is emitted
      * @type {listener}
+     * @abstract
      */
     this.run = run;
   }

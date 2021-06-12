@@ -91,7 +91,9 @@ class CommandBlock extends BaseBlock {
     // Note that bind() isn't used here in favor of doing it in CommandConstruct's load method, so that it can bind parameters as well
 
     /**
+     * Function used as a command's run method
      * @type {run}
+     * @abstract
      */
     this.run = run;
   }
