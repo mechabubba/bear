@@ -6,6 +6,7 @@ const sandplate = require("../../sandplate.json");
 const package = require("../../package.json");
 const Discord = require("discord.js");
 const { randomBytes } = require("crypto");
+const moment = require("moment");
 
 const snippets = {
   guilds: function(client, message, content, args) {
@@ -40,6 +41,9 @@ const snippets = {
   },
   coin: function(client, message, content, args) {
     message.channel.send((randomBytes(1)[0] & 1) == 1 ? "Heads" : "Tails");
+  },
+  time: function(client, message, content, args) {
+    message.channel.send(`${moment().format("MMMM Do[,] dddd[,] h:mm a")}`);
   },
 };
 
