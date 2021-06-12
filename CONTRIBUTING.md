@@ -6,7 +6,7 @@ Aside from sandplate's issue tracker, for real time communication, the preferred
 
 <a href="https://discord.gg/xErQY6M"><img src="https://discordapp.com/api/guilds/273550655673860106/embed.png" alt="Discord Server" /></a>
 
-If you're interested, at the [bottom of this page](#labels), you can see a list of all our issue labels and how they're used.
+If you're interested, at the [bottom of this page](#labels) there's a list of our issue labels and how they're used.
 
 ## Contributing Code
 
@@ -14,17 +14,17 @@ if you want to contribute code and help out directly, that's great! All contribu
 
 If you have something specific you want to do, the first step is to find the appropriate issue or open one if it doesn't exist, followed by sharing your intentions to work on it so that others know.
 
-However, If it's an enhancement or new feature that hasn't had any prior discussion, i.e. you opened the issue, it would be best to wait for a response before starting on it.
+For enhancements or new features that haven't had any prior discussion, i.e. you opened the issue, it's best to wait for a response before starting on it.
 
 For everything else, you can generally tell from context when something has been approved and needs doing, but doesn't have anyone working on it at the moment, such as having no one assigned.
 
-When someone's already assigned to the issue, that generally means that they're working on it already, but if you have something to say or want to help, leave a comment!
+When someone's already assigned to the issue, that generally means that they're working on it already, but if you have something to say or want to help, feel free to leave a comment.
 
 If you don't have something to specific in mind, but want to help out, these labels are a good place to start:
 
 - [`good first issue`](https://github.com/06000208/sandplate/labels/good%20first%20issue) Issues that are aren't too complex and could be taken care of relatively easily.
 
-- [`help wanted`](https://github.com/06000208/sandplate/labels/help%20wanted) Highlights an issue as needing attention from other developers, such as a bug we can't figure out or something that needs worked on more urgently than other stuff. Usually more complex than the issues that you would find in the other label.
+- [`help wanted`](https://github.com/06000208/sandplate/labels/help%20wanted) Highlights an issue as needing attention from other developers, such as a bug we can't figure out or something that needs worked on more urgently than other stuff. Usually more complex than the issues in the other label.
 
 After you've found something to do and communicated with the rest of us, feel free to fork the repository and make a pull request.
 
@@ -32,7 +32,7 @@ After you've found something to do and communicated with the rest of us, feel fr
 
 The `master` branch is treated as the latest stable version. Future versions have their own "in development" branches, awaiting their completion and merge into `master`.
 
-While sandplate is undergoing initial development, [releases](https://github.com/06000208/sandplate/releases/) for each version aren't being published, but they will be in the future.
+While sandplate is undergoing initial development, [releases](https://github.com/06000208/sandplate/releases/) for each version aren't being published, but they may be in the future.
 
 ### ESLint
 
@@ -54,7 +54,7 @@ npm install --global eslint
 
 This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating, you're expected to abide by its terms. Please report unacceptable behavior to [`a06000208@protonmail.com`](mailto:a06000208@protonmail.com).
 
-## Issue Labels <a id="labels"></a>
+## [Issue Labels](https://github.com/06000208/sandplate/labels) <a id="labels"></a>
 
 | Color | Label | Description |
 | ----- | ----- | ----------- |
