@@ -20,7 +20,7 @@ const snippets = {
     });
     const description = `list of ${client.user.tag}'s ${client.guilds.cache.size} ${client.guilds.cache.size === 1 ? "guild" : "guilds"}${unavailable ? ` (${unavailable} unavailable)` : ""}`;
     log.info(`A ${description}, requested by ${message.author.tag}${list}`);
-    return message.channel.send(`Printed a ${description} to the console`);
+    message.channel.send(`Printed a ${description} to the console`);
   },
   info: function(client, message, content, args) {
     const embed = new MessageEmbed()
@@ -28,7 +28,7 @@ const snippets = {
       .setDescription(`${client.user} v${package.version}\n[node.js](https://nodejs.org/) ${process.version}\n[discord.js](https://discord.js.org/) v${Discord.version}\n[sandplate](https://github.com/06000208/sandplate) v${sandplate.version}\n[platform](https://nodejs.org/api/process.html#process_process_platform) ${process.platform}`);
     const color = client.config.get("metadata.color").value();
     if (color) embed.setColor(color);
-    return message.channel.send(embed);
+    message.channel.send(embed);
   },
   emoji: function(client, message, content, args) {
     if (message.channel.type === "dm") return message.channel.send("No custom emojis for direct messages");
