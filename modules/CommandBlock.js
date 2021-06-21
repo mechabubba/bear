@@ -9,11 +9,11 @@ const { has, isNil, isArray, isPlainObject, isFunction, isString, isBoolean } = 
  * @property {?string} [summary=null] - A sentence about what the command does, should be kept relatively short
  * @property {?string} [description=null] - Description about what the command does and it's usage, should be kept below 1800 characters
  * @property {?string} [usage=null] - String containing argument usage descriptors
- * @property {?[string]} [scope=["dm", "text", "news"]] - An array of channel types where the command is allowed https://discord.js.org/#/docs/main/stable/class/Channel?scrollTo=type
  * @property {?boolean} [nsfw=false] - Whether or not the command is nsfw
  * @property {?(boolean|string|[string])} [locked=false] - Powerful command access control. `false` command is not locked, `true` command is locked, `string` command is locked to a user group name or an account id, `Array` command is locked to any number of group names or account ids
  * @property {?PermissionResolvable} [clientPermissions=null] - PermissionResolvable the client must have in guilds for the command to work
  * @property {?PermissionResolvable} [userPermissions=null] - PermissionResolvable the user of the command must have in guilds to use the command
+ * @property {?[string]} [channelTypes=["dm", "text", "news"]] An array of channel types where the command is allowed https://discord.js.org/#/docs/main/stable/class/Channel?scrollTo=type
  */
 
 /**
@@ -64,7 +64,7 @@ class CommandBlock extends BaseBlock {
     /**
      * @type {[string]}
      */
-    this.scope = has(data, "scope") && !isNil(data.scope) ? data.scope : ["dm", "text", "news"];
+    this.channelTypes = has(data, "channelTypes") && !isNil(data.channelTypes) ? data.channelTypes : ["dm", "text", "news"];
 
     /**
      * @type {boolean}
@@ -138,6 +138,7 @@ class CommandBlock extends BaseBlock {
    * @param {run} run
    * @private
    * @todo May be worth looking into schema based validation
+   * @todo Parameter scope is now depreciated, remove warning in one of the next versions
    */
   static validateParameters(data, run) {
     if (!isPlainObject(data)) throw new TypeError("Command data parameter must be an Object.");
@@ -146,7 +147,8 @@ class CommandBlock extends BaseBlock {
     if (has(data, "summary") && !isNil(data.summary)) if (!isString(data.summary)) throw new TypeError("Command data.summary must be a string.");
     if (has(data, "description") && !isNil(data.description)) if (!isString(data.description)) throw new TypeError("Command data.description must be a string.");
     if (has(data, "usage") && !isNil(data.usage)) if (!isString(data.usage)) throw new TypeError("Command data.usage must be a string.");
-    if (has(data, "scope") && !isNil(data.scope)) if (!isArrayOfStrings(data.scope)) throw new TypeError("Command data.scope must be an Array of strings.");
+    if (has(data, "scope")) log.warn("Depreciation Warning: Command parameter \"scope\" was renamed to \"channelTypes\" and now does nothing, new parameter retains same usage. This warning will be removed in a future version.");
+    if (has(data, "channelTypes") && !isNil(data.channelTypes)) if (!isArrayOfStrings(data.channelTypes)) throw new TypeError("Command data.channelTypes must be an Array of strings.");
     if (has(data, "nsfw") && !isNil(data.nsfw)) if (!isBoolean(data.nsfw)) throw new TypeError("Command data.nsfw must be a boolean.");
     if (has(data, "locked") && !isNil(data.locked)) if (!isBoolean(data.locked) && !isString(data.locked) && !isArrayOfStrings(data.locked)) throw new TypeError("Command data.locked must be a boolean, string, or an Array of strings.");
     if (has(data, "clientPermissions") && !isNil(data.clientPermissions)) {

@@ -9,7 +9,7 @@ module.exports = new CommandBlock({
   summary: "An example command",
   description: null,
   usage: null,
-  scope: ["dm", "text", "news"],
+  channelTypes: ["dm", "text", "news"],
   nsfw: false,
   locked: false,
   clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],

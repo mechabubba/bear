@@ -7,7 +7,7 @@ module.exports = new ListenerBlock({
 }, function(client, message) {
   if (message.author.bot) return;
   const config = client.config.get("commands").value();
-  if (!config.scope.includes(message.channel.type)) return;
+  if (!config.channelTypes.includes(message.channel.type)) return;
   const users = client.config.get("users").value();
   if (users.allowed !== null) {
     if (!users.allowed.includes(message.author.id)) return;

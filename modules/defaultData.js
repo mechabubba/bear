@@ -34,7 +34,7 @@ module.exports.config = {
   },
   "commands": {
     "directory": "./bot/commands/",
-    "scope": ["dm", "text", "news"],
+    "channelTypes": ["dm", "text", "news"],
     "prefix": null,
     "mentions": true,
   },
