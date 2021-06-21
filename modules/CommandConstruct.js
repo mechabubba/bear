@@ -3,8 +3,7 @@ const BaseConstruct = require("./BaseConstruct");
 const CommandBlock = require("./CommandBlock");
 const { forAny } = require("./miscellaneous");
 const log = require("./log");
-const chalk = require("chalk");
-const { isString, isArray } = require("lodash");
+const { isArray } = require("lodash");
 
 /**
  * Command framework
@@ -106,54 +105,93 @@ class CommandConstruct extends BaseConstruct {
    * @param {?string} [content=null] Note that content should never be an empty string. A lack of content is represented by null, see how commandParser runs this function
    * @param {[string]} [args=[]]
    * @param {...*} [passThrough]
-   * @todo This function needs to be fixed up
    */
-  run(name, message, content = null, args = [], ...passThrough) {
+  run(id, message, content = null, args = [], ...passThrough) {
+    if (!this.cache.has(id)) return log.warn(`Command id "${id}" isn't mapped to a command in the cache, cannot run`);
+    const command = this.cache.get(id);
+    if (!command.checkChannelType(message)) {
+      this.client.emit("channelTypeRejection", command, message);
+      return;
+    }
+    if (!command.checkNotSafeForWork(message)) {
+      this.client.emit("nsfwRejection", command, message);
+      return;
+    }
+    if (!command.checkPermissions(message, message.guild.me, command.clientPermissions)) {
+      this.client.emit("permissionRejection", command, message, message.guild.me, command.clientPermissions);
+      return;
+    }
+    if (!command.checkPermissions(message, message.member, command.userPermissions)) {
+      this.client.emit("permissionRejection", command, message, message.member, command.userPermissions);
+      return;
+    }
+    if (!command.checkLocked(message)) {
+      this.client.emit("lockedRejection", command, message);
+      return;
+    }
+    // all good
+    this.client.emit("commandUsed", command, message, content, args, ...passThrough);
+    command.run(message, content, args, ...passThrough);
+  }
+
+  /**
+   * Run commands easily by name rather than id
+   * @param {string} name
+   * @param {Discord.Message} message
+   * @param {...*} [passThrough]
+   */
+  runByName(name, message, ...passThrough) {
     if (!name || !message) return;
     if (!this.index.has(name)) return;
     const id = this.index.get(name);
-    if (!this.cache.has(id)) return log.warn(`Command name "${name}" was mapped in command index but corresponding id "${id}" isn't mapped in command cache`);
-    const command = this.cache.get(id);
-    if (!command.scope.includes(message.channel.type)) return;
-    if (message.channel.type !== "dm") {
-      if (command.nsfw) {
-        if (message.channel.nsfw === false) return;
-      }
-      if (command.clientPermissions) {
-        if (!message.guild.me.hasPermission(command.clientPermissions, false, true, true)) return;
-      }
-      if (command.userPermissions) {
-        if (!message.member.hasPermission(command.userPermissions, false, true, true)) return;
-      }
-    }
-    if (command.locked) {
-      if (command.locked === true) return;
-      if (isString(command.locked)) {
-        if (command.locked !== message.author.id) {
-          if (!this.client.config.has(["users", command.locked]).value()) return;
-          if (this.client.config.isNil(["users", command.locked]).value()) return;
-          if (!this.client.config.get(["users", command.locked]).includes(message.author.id).value()) return;
-        }
-      } else if (isArray(command.locked)) {
-        if (!command.locked.includes(message.author.id)) {
-          if (command.locked.some((group) => {
-            if (!this.client.config.has(["users", group]).value()) return false;
-            if (this.client.config.isNil(["users", group]).value()) return false;
-            if (!this.client.config.get(["users", group]).includes(message.author.id).value()) return false;
-            return true;
-          }) === false) return;
-        }
-      }
-    }
-    // Correct content to null if it's an empty string (this behavior may be changed in the future)
-    if (content) {
-      if (!content.trim().length) {
-        content = null;
-      }
-    }
-    log.debug(`${chalk.gray("[command]")} ${message.author.tag} ran "${name}${(!content ? "\"" : `" with "${content}"`)}`);
-    command.run(message, content, args, ...passThrough);
+    if (!this.cache.has(id)) return log.warn(`Command name "${name}" was mapped to id "${id}" but no corresponding command block found in the cache`);
+    this.run(id, message, ...passThrough);
   }
 }
 
 module.exports = CommandConstruct;
+
+/**
+ * Emitted whenever a command is successfully ran
+ * @event Client#commandUsed
+ * @param {Client} client Bound as the first parameter by EventConstruct.load()
+ * @param {CommandBlock} command
+ * @param {Discord.Message} message
+ * @param {?string} [content=null]
+ * @param {[string]} [args=[]]
+ * @param {...*} [passThrough]
+ */
+
+/**
+ * Emitted when someone attempts to use a command somewhere it cannot be used, based upon [channel type](https://discord.js.org/#/docs/main/stable/class/TextChannel?scrollTo=type)
+ * @event Client#channelTypeRejection
+ * @param {Client} client Bound as the first parameter by EventConstruct.load()
+ * @param {CommandBlock} command
+ * @param {Discord.Message} message
+ */
+
+/**
+ * Emitted when someone attempts to use a nsfw command in a non-nsfw channel
+ * @event Client#nsfwRejection
+ * @param {Client} client Bound as the first parameter by EventConstruct.load()
+ * @param {CommandBlock} command
+ * @param {Discord.Message} message
+ */
+
+/**
+ * Emitted when a command cannot be run due to missing permissions or someone is denied access based on their permissions
+ * @event Client#permissionRejection
+ * @param {Client} client Bound as the first parameter by EventConstruct.load()
+ * @param {CommandBlock} command
+ * @param {Discord.Message} message
+ * @param {Discord.GuildMember} member
+ * @param {PermissionResolvable} permissions
+ */
+
+/**
+ * Emitted when someone is denied access to a locked command
+ * @event Client#lockedRejection
+ * @param {Client} client Bound as the first parameter by EventConstruct.load()
+ * @param {CommandBlock} command
+ * @param {Discord.Message} message
+ */
