@@ -1,7 +1,7 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const log = require("../../modules/log");
 const chalk = require("chalk");
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, Permissions } = require("discord.js");
 const sandplate = require("../../sandplate.json");
 const package = require("../../package.json");
 const Discord = require("discord.js");
@@ -44,6 +44,21 @@ const snippets = {
   },
   time: function(client, message, content, args) {
     message.channel.send(`${moment().format("MMMM Do[,] dddd[,] h:mm a")}`);
+  },
+  permissions: function(client, message, content, args) {
+    const perms = message.channel.permissionsFor(message.guild.me);
+    const has = perms.toArray().join("\n").toLowerCase();
+    const missing = perms.missing(Permissions.ALL).join("\n").toLowerCase();
+    const embed = new MessageEmbed()
+      .setTitle("Permissions")
+      .addFields(
+        { name: "Has", value: has.length ? has : "none", inline: true },
+        { name: "Missing", value: missing.length ? missing : "none", inline: true },
+      );
+    if (perms.bitfield.toString().length) embed.setFooter(perms.bitfield.toString());
+    const color = client.config.get("metadata.color").value();
+    if (color) embed.setColor(color);
+    message.channel.send(embed);
   },
 };
 
