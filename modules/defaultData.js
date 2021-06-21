@@ -68,7 +68,7 @@ module.exports.config = {
  * Paths of modules to be disabled by default when creating modules.json
  */
 module.exports.disabledModules = [
-  "bot/commands/example.js",
+  "bot/commands/template.js",
   "bot/commands/templateMultiple.js",
   "bot/commands/eval.js",
 ];
