@@ -184,8 +184,8 @@ module.exports = CommandConstruct;
  * @param {Client} client Bound as the first parameter by EventConstruct.load()
  * @param {CommandBlock} command
  * @param {Discord.Message} message
- * @param {Discord.GuildMember} member
- * @param {PermissionResolvable} permissions
+ * @param {Discord.GuildMember} member May be the GuildMember of a regular user or the bot itself, member.user.id allows for easy comparison with client.user.id
+ * @param {PermissionResolvable} permissions PermissionResolvable provided by the command
  */
 
 /**
