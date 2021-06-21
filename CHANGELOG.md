@@ -1,57 +1,90 @@
-## `0.0.7` / `2020-XX-XX`
+## `0.0.7` / `2021-05-XX`
 
-_The changelog for this version is incomplete/w.i.p and currently being written in tandem with the development of this version_
+_The changelog for this version is incomplete/w.i.p and currently being written in tandem with the development of this version._
 
-- Refactoring for various components, all changes made are described below. Closes [#21](https://github.com/06000208/sandplate/issues/21)
+*Changes which double as as noteworthy depreciation warnings will be prefixed with ⚠️*
 
-- Custom events, closes [#22](https://github.com/06000208/sandplate/issues/22)
-  - `./bot/listeners/customEvents.js` A module which resembles & serves the same purpose as logging.js but for every custom event implemented in sandplate, and a temporary solution in lieu of online documentation, although all custom events have been documented inline using jsdoc
-  - `blockedGuild` and `unknownGuild` events for guild access control, emitted when guilds are detected and left
+- Several parts of the bot have received attention, closing [#21](https://github.com/06000208/sandplate/issues/21). These are all described below.
 
-- Guild access control has been refactored from `guildAccess.js` into methods of an extended GuildManager class (`./modules/GuildManager.js`), which replaces discord.js's GuildManager in our extended client (`./modules/Client.js`). The modules `accessControl.js`, `customEvents.js`, and `defaultData.js` have been updated as part of this
-  - `client.guilds.leaveBlocked()` Checks & leaves blocked guilds in the cache, or a specific guild if supplied
-  - `client.guilds.leaveUnknown()` Checks & leaves unknown guilds in the cache, or a specific guild if supplied
-  - Blocking guilds via command will now prompt the bot to leave them as soon as possible
-  - The `guild.js` and `leave.js` command modules have had a bunch of minor improvements/fixes (as they were related to guilds), the former now respecting privacy slightly more by omitting member count, region, server icon, etc. from the embed for guilds with widget disabled
-
-- `./modules/regexes.js`, A new module specifically for useful regular expressions
-  - Removed the `isNumeric()` function from `./modules/miscellaneous.js` and updated usage, as there's little point compared to using [`RegExp.test()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test) directly
-
-- A new class, `BaseEventEmitter`, which is the same as [Base](https://github.com/06000208/sandplate/blob/master/modules/Base.js) but extends [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter). Closes [#20](https://github.com/06000208/sandplate/issues/20)
-
-- Changed the approach used for the [Handler](https://github.com/06000208/sandplate/blob/master/modules/Handler.js) class, now instantiated on the [Client](https://github.com/06000208/sandplate/blob/master/modules/Client.js) rather than being static. Note that `resolvePath()` and the new `searchDirectory()` are both still static methods. Closes [#25](https://github.com/06000208/sandplate/issues/25)
-  - Moved most of `requireDirectory()`'s logic to it's own function, `searchDirectory()`, and improved it
-  - A new handler function, `unloadDirectory()`, which does the exact opposite of `requireDirectory()`
-  - `unloadModule()`, `unloadMultipleModules()`, `loadModule()`, `requireModule()`, and `requireMultipleModules()` now return the resolved paths they've successfully performed their tasks with, if any
-  - The Handler class isn't Client class specific, and as far as I'm aware there's no point in making it's parent accessible like the constructs do, at least for now. Custom events such as module load, unload, reload, etc. might be one use case in the future
-
-- Changed `defaultConfig.js` into `defaultData.js` and updated usage accordingly
-  - Updated old references here in CHANGELOG.md and elsewhere so people won't go looking for a file that doesn't exist
-
-- Added the capacity for codes to the Response class, similar to the [Error.code](https://nodejs.org/api/errors.html#errors_error_code) property. Nothing uses this at the moment, and it may be removed in the future
-
-- New modules lowdb database as a built in way to disable modules, which is optionally respected by `requireDirectory()`, `requireMultipleModules()`, or `requireModule()`. This is so disabling modules plays much nicer with git (no longer requiring file renames), and with the new approach, disabled modules not loaded on start up can still be easily loaded later if desired. Closes [#26](https://github.com/06000208/sandplate/issues/26)
-  - Modules `./bot/commands/templateMultiple.js` and `./bot/commands/example.js` have been renamed back accordingly and disabled by default using the new method in `defaultData.js`
-  - New commands `enable` and `disable` which act the same way as `load` and `unload` but also enable/disable the modules you target accordingly
-  - The `eval` command is now disabled by default
-  - The old way of tacking `.disabled` onto the end of module file names will still work, as it was caused by only `.js` files being detected
-
-- Made how paths are used with lowdb more consistent (Client and Handler classes) and introduced a `.dbPath` property to both. This isn't enough to solve the notable issue of overlapping lowdb databases if you need multiple instances, but it's a step in the right direction
+- Changed the approach used for the [Handler](https://github.com/06000208/sandplate/blob/master/modules/Handler.js) class, now instantiated on the [Client](https://github.com/06000208/sandplate/blob/master/modules/Client.js) rather than being static. Note that `resolvePath()` and the new `searchDirectory()` are still static methods. Closes [#25](https://github.com/06000208/sandplate/issues/25)
 
 - The handler now deep clones required modules rather than passing around a reference to the [require cache](https://nodejs.org/api/modules.html#modules_require_cache) in order to avoid changing it. Closes [#32](https://github.com/06000208/sandplate/issues/32)
 
-- Created a `sandplate.json` file in the root. This allows sandplate's version and a few other things to be referenced separately from what's in package.json. Admittedly, I'm pretty unsure about it, but I don't think it's a half bad solution. I think it comes down to a compromise while sandplate isn't currently in the form of an NPM package
+- ⚠️ Command blocks no longer use the `scope` property to declare what channel types they may be used in, this was moved to the `channelTypes` property to free `scope` for potential new purposes
 
-- Added a simple info command for developers with versions, platform, etc. Some people get annoyed at these sorts of commands in bots, and the info it provides is easily "need to know" basis, so it's locked to hosts by default
+- CommandConstruct's run function has been rewritten, and it's various checks such as channel type, nsfw channel, locked command, etc. have been remade as functions on CommandBlock. As such, the help command which needed to use two of the same checks is much nicer now, and 5 new custom events have been added to aid behavior implementation, see below for more info.
+  - The new functions are `checkChannelType()`, `checkNotSafeForWork()`, `checkLocked()`, and `checkPermissions()`. They all take a Message as their first parameter, while checkPermissions also takes a GuildMember and the permissions to be checked
+  - ⚠️ The parameters for CommandConstruct's run function has been changed. It no longer runs commands by name, instead taking an id as the first parameter, and a new function `CommandConstruct.runByName` with the old functionality has been added
+
+- New modules.json lowdb database as a built in way to disable modules, which is optionally respected by `requireDirectory()`, `requireMultipleModules()`, or `requireModule()`. This is so disabling modules plays much nicer with git (no longer requiring file renames), and with the new approach, disabled modules not loaded on start up can still be easily loaded later if desired. Closes [#26](https://github.com/06000208/sandplate/issues/26)
+  - Modules `./bot/commands/templateMultiple.js` and `./bot/commands/example.js` have been renamed back accordingly and disabled by default using the new method in `defaultData.js`
+  - New `enable` and `disable` commands which act the same way as `load` and `unload`, but also enable/disable the modules you target accordingly
+  - The `eval` command is now disabled by default, and various ways to enable it may be found in a comment there
+  - The old way of tacking `.disabled` onto the end of module file names will still work, as it was a side effect of only `.js` files being detected
+  - ⚠️ If you already have a modules.json file from testing earlier versions of 0.0.7, remove it and let the bot generate it naturally
+
+- Alongside modules.json, a new property has been introduced for BaseBlock and the classes that inherit from it (CommandBlock and ListenerBlock) named trimmedPath. These paths are made by a new Handler function, trimPath(), which truncates X amount of subfolders equal to the amount descended to the working directory, if present, from the beginning
+
+  For example, `G:\\root\\projects\\discord bots\\sandplate\\bot\\commands\\ping.js` becomes `bot/commands/ping.js`
+
+  The resulting trimmed path should be uniform across all platforms, and can be restored to a normal file path via [path.join](https://nodejs.org/api/path.html#path_path_join_paths)`(client.handler.workingDirectory, trimmedPath)`
+
+- Guild access control has been refactored from `guildAccess.js` into methods of an extended GuildManager class (`./modules/GuildManager.js`), which replaces discord.js's GuildManager in our extended client (`./modules/Client.js`), which allows for better handling and the ability to prompt it from anywhere in the bot. The modules `accessControl.js`, `customEvents.js`, and `defaultData.js` were subsequently updated as part of this
+  - `client.guilds.leaveGuild()` Leaves a specific guild if available & not owned by the bot while optionally emitting a custom event
+  - `client.guilds.checkBlocked()` Checks & leaves blocked guilds in the cache, or a specific guild if supplied
+  - `client.guilds.checkUnknown()` Same as checkBlocked, but for unknown guilds when using the allow list
+  - Blocking guilds via command will now cause the bot to leave them as soon as possible
+
+- The `guild` command received substantial improvements, now fetching the current guild when used without input, and retains guild privacy by only providing minimal data.
+  - The guild list functionality was split off to the new `snippets` command, see below
+
+- Custom events, closes [#22](https://github.com/06000208/sandplate/issues/22)
+  - `./bot/listeners/customEvents.js` A module which resembles & serves the same purpose as logging.js but for every custom event implemented in sandplate, and a temporary solution in lieu of online documentation
+  - All custom events are documented inline via jsdoc at the bottom of their respective files
+  - `blockedGuild`, `unknownGuild` Events for guild access control, emitted when guilds are detected and left
+  - `commandUsed` Emitted whenever a command is successfully ran
+  - `channelTypeRejection`, `nsfwRejection`, `permissionRejection`, `lockedRejection` Emitted when their respective circumstances happen with command use. You can use these to create behavior when commands are attempted but denied, nsfw command being used in a non-nsfw channel, and when someone (or the bot) is missing necessary permissions to use the command.
+
+- A new module focused on useful regular expressions, `./modules/regexes.js`
+  - Removed the `isNumeric()` function from `./modules/miscellaneous.js` and updated usage, as there's little point compared to using [`RegExp.test()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test) directly
+  - Moved tokenRegex in `bot.js` to this module
+
+- A new class, `BaseEventEmitter`, which is the same as [Base](https://github.com/06000208/sandplate/blob/master/modules/Base.js) but extends [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter). Closes [#20](https://github.com/06000208/sandplate/issues/20)
+
+- Made how paths are used with lowdb more consistent (Client and Handler classes) and introduced a `.dbPath` property to both. This isn't enough to solve the notable issue of overlapping lowdb databases if you need multiple instances, but it's a step in the right direction
 
 - Improved `metadata.color` and `metadata.twitch` to support being null and changed both their defaults to such. Closes [#27](https://github.com/06000208/sandplate/issues/27)
 
-- Minor updates/fixes/syntax improvements to the guild, leave, help, set, and ping commands, the `Handler.js`, `Client.js`, and `CommandConstruct.js` classes, the `startup.js` and `logging.js` listeners, as well as `bot.js`, log messages across the bot, `README.md`, and `CONTRIBUTING.md`. Additionally:
-  - Everywhere lodash was being used as `const _ = require("lodash")` has been updated to use object destructuring
-  - Some async functions didn't need to be asynchronous
-  - A few leftover debug log messages have been removed (although they may be added back later)
+- Created `sandplate.json` in the root. This allows sandplate's version and a few other things to be referenced separately from what's in package.json. Unsure about this method, but I don't think it's a half bad solution.
+  - Added this info to the version logging in `index.js`
 
-- Fixed the `activity` command when `listening to` is specified, as discord includes the word "to" on it's own in the status
+- Changed `defaultConfig.js` into `defaultData.js` and updated usage accordingly
+
+- Updated old references here in CHANGELOG.md and elsewhere so people won't go looking for a file that doesn't exist
+
+- Some functions across the bot didn't need to be async. There may still be some of these, but most were fixed
+
+- Fixed the `activity` command when `listening to` is specified, as discord includes the word "to" on it's own in the status message
+
+- Everywhere lodash was being used with `const _ = require("lodash")` has been updated to use object destructuring
+
+- A few debug log messages have been removed (although they may be added back later)
+
+- Added the capacity for codes to the Response class, similar to the [Error.code](https://nodejs.org/api/errors.html#errors_error_code) property. Nothing uses this at the moment, and it may be removed in the future
+
+- A new command named `snippets` (also usable as `snip`) has been added. This is for small developer-only code snippets that don't need to be their own commands.
+  - The guild listing functionality of the `guild` command has been moved here as the `guilds` snippet
+  - `info` lists version numbers, platform, and other debug information
+  - `emoji` prints every emoji for the current guild
+  - `ascii` prints every ascii character
+  - `coin` returns heads or tails
+
+- Minor changes/improvements/fixes/etc to the following: 
+  - Jsdoc comments throughout the bot
+  - The guild, leave, help, set, ping, example, and template commands
+  - The `startup.js` and `logging.js` listeners
+  - The `Handler.js`, `Client.js`, and `CommandConstruct.js` classes
+  - Markdown files such as CONTRIBUTING.md, README.md, etc
 
 ## `0.0.6` / `2020-08-12`
 
