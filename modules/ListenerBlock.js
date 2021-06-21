@@ -10,8 +10,8 @@ const { has, isPlainObject, isFunction, isString, isNil, isBoolean } = require("
 /**
  * Callback function called when an event is emitted, as described here: https://nodejs.org/dist/latest/docs/api/events.html#events_event
  * @callback listener
- * @param {EventEmitter} emitter - Bound as first parameter by EventConstruct.load()
- * @param {...*} - Provided by the event being emitted
+ * @param {EventEmitter} emitter Bound as first parameter by EventConstruct.load()
+ * @param {...*} parameters Provided by the event being emitted
  * @todo Is there a way to specify that this callback's this value is an instance of ListenerBlock?
  */
 

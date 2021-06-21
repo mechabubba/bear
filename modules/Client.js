@@ -16,7 +16,7 @@ const { config } = require("./defaultData");
  */
 class Client extends Discord.Client {
   /**
-   * @param {ClientOptions} options - Options for the client
+   * @param {ClientOptions} options Options for the client
    */
   constructor(options) {
     super(options);
@@ -69,15 +69,3 @@ class Client extends Discord.Client {
 }
 
 module.exports = Client;
-
-/**
- * Emitted whenever a blocked guild is detected by the client and left
- * @event Client#blockedGuild
- * @param {Discord.Guild} guild The guild that was left
- */
-
-/**
- * Emitted whenever an unknown guild is detected by the client and left
- * @event Client#unknownGuild
- * @param {Discord.Guild} guild The guild that was left
- */

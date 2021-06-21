@@ -95,3 +95,17 @@ class GuildManager extends Discord.GuildManager {
 }
 
 module.exports = GuildManager;
+
+/**
+ * Emitted whenever a blocked guild is detected and subsequently left
+ * @event Client#blockedGuild
+ * @param {Client} client Bound as the first parameter by EventConstruct.load()
+ * @param {Discord.Guild} guild The guild that was left
+ */
+
+/**
+ * Emitted whenever an unknown guild is detected and subsequently left
+ * @event Client#unknownGuild
+ * @param {Client} client Bound as the first parameter by EventConstruct.load()
+ * @param {Discord.Guild} guild The guild that was left
+ */

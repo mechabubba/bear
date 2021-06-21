@@ -5,22 +5,22 @@ const { has, isNil, isArray, isPlainObject, isFunction, isString, isBoolean } = 
 /**
  * Data regarding the command such as it's names and metadata
  * @typedef {Object} CommandData
- * @property {(string|[string])} identity - The command's name(s)
- * @property {?string} [summary=null] - A sentence about what the command does, should be kept relatively short
- * @property {?string} [description=null] - Description about what the command does and it's usage, should be kept below 1800 characters
- * @property {?string} [usage=null] - String containing argument usage descriptors
- * @property {?boolean} [nsfw=false] - Whether or not the command is nsfw
- * @property {?(boolean|string|[string])} [locked=false] - Powerful command access control. `false` command is not locked, `true` command is locked, `string` command is locked to a user group name or an account id, `Array` command is locked to any number of group names or account ids
- * @property {?PermissionResolvable} [clientPermissions=null] - PermissionResolvable the client must have in guilds for the command to work
- * @property {?PermissionResolvable} [userPermissions=null] - PermissionResolvable the user of the command must have in guilds to use the command
+ * @property {(string|[string])} identity The command's name(s)
+ * @property {?string} [summary=null] A sentence about what the command does, should be kept relatively short
+ * @property {?string} [description=null] Description about what the command does and it's usage, should be kept below 1800 characters
+ * @property {?string} [usage=null] String containing argument usage descriptors
  * @property {?[string]} [channelTypes=["dm", "text", "news"]] An array of channel types where the command is allowed https://discord.js.org/#/docs/main/stable/class/Channel?scrollTo=type
+ * @property {?boolean} [nsfw=false] Whether or not the command is nsfw
+ * @property {?(boolean|string|[string])} [locked=false] Powerful command access control. `false` command is not locked, `true` command is locked, `string` command is locked to a user group name or an account id, `Array` command is locked to any number of group names or account ids
+ * @property {?PermissionResolvable} [clientPermissions=null] PermissionResolvable the client must have in guilds for the command to work
+ * @property {?PermissionResolvable} [userPermissions=null] PermissionResolvable the user of the command must have in guilds to use the command
  */
 
 /**
  * Function used as a command's run method
  * @callback run
- * @param {Client} client - Bound as the first parameter by CommandConstruct.load()
- * @param {Message} message
+ * @param {Client} client Bound as the first parameter by CommandConstruct.load()
+ * @param {Discord.Message} message
  * @param {?string} [content=null]
  * @param {Array} [args=[]]
  * @param {...*}

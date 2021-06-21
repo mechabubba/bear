@@ -2,11 +2,11 @@ const { has, isNil } = require("lodash");
 
 /**
  * @typedef {Object} ResponseData
- * @property {?string} [message="No Message Provided"] - Human readable description that describes what occurred
- * @property {?boolean} [success=true] - Whether or not the code succeeded
- * @property {?Error} [error=null] - Used to pass along an error, if one occurred
- * @property {?*} [value=null] - Used to return a value alongside the other data
- * @property {?string} [code=null] - Label used to identify certain situations if more complexity than the above is required
+ * @property {?string} [message="No Message Provided"] Human readable description that describes what occurred
+ * @property {?boolean} [success=true] Whether or not the code succeeded
+ * @property {?Error} [error=null] Used to pass along an error, if one occurred
+ * @property {?*} [value=null] Used to return a value alongside the other data
+ * @property {?string} [code=null] Label used to identify certain situations if more complexity than the above is required
  */
 
 /**

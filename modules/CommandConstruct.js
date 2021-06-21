@@ -101,9 +101,9 @@ class CommandConstruct extends BaseConstruct {
   }
 
   /**
-   * @param {string} name
-   * @param {Message} Message
-   * @param {?string} [content=null]
+   * @param {string} id
+   * @param {Discord.Message} message
+   * @param {?string} [content=null] Note that content should never be an empty string. A lack of content is represented by null, see how commandParser runs this function
    * @param {[string]} [args=[]]
    * @param {...*} [passThrough]
    * @todo This function needs to be fixed up
