@@ -7,8 +7,6 @@ module.exports = new CommandBlock({
   summary: "Leave a guild",
   description: "Instruct the bot to leave a specific guild.",
   usage: "<id>",
-  scope: ["dm", "text", "news"],
-  nsfw: false,
   locked: "hosts",
   clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   userPermissions: null,

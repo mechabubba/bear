@@ -12,7 +12,6 @@ const { has, isPlainObject, isFunction, isString, isNil, isBoolean } = require("
  * @callback listener
  * @param {EventEmitter} emitter - Bound as first parameter by EventConstruct.load()
  * @param {...*} - Provided by the event being emitted
- * @todo Should the bound parameter be included?
  * @todo Is there a way to specify that this callback's this value is an instance of ListenerBlock?
  */
 

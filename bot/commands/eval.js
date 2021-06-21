@@ -33,8 +33,6 @@ module.exports = new CommandBlock({
   summary: "Evaluates arbitrary javascript",
   description: "An enormous security risk for development purposes: [arbitrary javascript evaluation](https://en.wikipedia.org/wiki/Arbitrary_code_execution). Uses [`eval()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval) under the hood.",
   usage: "<code>",
-  scope: ["dm", "text", "news"],
-  nsfw: false,
   locked: "hosts",
   clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"],
   userPermissions: null,

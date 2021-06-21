@@ -10,7 +10,6 @@ module.exports = new CommandBlock({
   summary: "Retrieves a file from wikimedia (occasionally NSFW)",
   description: "Query a random or specific file from [Wikimedia Commons](https://commons.wikimedia.org/wiki/Main_Page). This, rarely, will contain NSFW, graphic, or otherwise inappropriate content.",
   usage: "[page id]",
-  scope: ["dm", "text", "news"],
   nsfw: true,
   locked: false,
   clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS", "ATTACH_FILES", "ADD_REACTIONS"],

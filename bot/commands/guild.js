@@ -7,8 +7,6 @@ module.exports = new CommandBlock({
   summary: "Provides guild info",
   description: "Logs a list of guilds to the console or provides info about individual guilds when queried.",
   usage: "[guild id]",
-  scope: ["dm", "text", "news"],
-  nsfw: false,
   locked: "hosts",
   clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   userPermissions: null,

@@ -14,7 +14,7 @@ const { drop } = require("lodash");
  * Handler framework
  *
  * As is, you shouldn't instantiate this anywhere other than in the Client class's constructor, unless you're prepared to deal with overlapping lowdb databases. This will be fixed in future versions.
-  */
+ */
 class Handler {
   constructor() {
     /**

@@ -52,8 +52,6 @@ module.exports = new CommandBlock({
   summary: "Various code snippets for developers",
   description: null,
   usage: "<snippet name> [args]",
-  scope: ["dm", "text", "news"],
-  nsfw: false,
   locked: "hosts",
   clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   userPermissions: null,
