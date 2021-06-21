@@ -15,35 +15,32 @@ module.exports = new ListenerBlock({
   if (users.blocked !== null) {
     if (users.blocked.includes(message.author.id)) return;
   }
-  const input = {
-    prefixed: false,
-  };
-  input.parsed = message.content.trim();
-  input.lowercase = input.parsed.toLowerCase();
+  let content = message.content.trim();
+  const lowercase = content.toLowerCase();
+  let prefixed = false;
   if (config.prefix) {
     if (isArray(config.prefix)) {
       for (const prefix of config.prefix) {
-        if (input.lowercase.startsWith(prefix)) {
-          input.prefixed = true;
-          input.parsed = input.parsed.substring(prefix.length).trim();
+        if (lowercase.startsWith(prefix)) {
+          prefixed = true;
+          content = content.substring(prefix.length).trim();
           break;
         }
       }
-    } else if (input.lowercase.startsWith(config.prefix)) {
-      input.prefixed = true;
-      input.parsed = input.parsed.substring(config.prefix.length).trim();
+    } else if (lowercase.startsWith(config.prefix)) {
+      prefixed = true;
+      content = content.substring(config.prefix.length).trim();
     }
   }
-  if (!input.prefixed) {
+  if (!prefixed) {
     if (!config.mentions) return;
-    if (!input.lowercase.startsWith("<@")) return;
-    if (!RegExp(`^<@!?${client.user.id}>`).test(input.lowercase)) return;
-    input.parsed = input.parsed.substring(input.parsed.indexOf(">") + 1).trim();
+    if (!lowercase.startsWith("<@")) return;
+    if (!RegExp(`^<@!?${client.user.id}>`).test(lowercase)) return;
+    content = content.substring(content.indexOf(">") + 1).trim();
   }
-  if (!input.parsed.length) return;
-  const args = input.parsed.split(/[\n\r\s]+/g);
+  if (!content.length) return;
+  const args = content.split(/[\n\r\s]+/g);
   const name = args.shift().toLowerCase();
-  input.parsed = input.parsed.slice(name.length).trim();
-  if (!input.parsed.length) input.parsed = null;
-  client.commands.run(name, message, input.parsed, args);
+  content = content.slice(name.length).trim();
+  client.commands.runByName(name, message, content.length ? content : null, args);
 });
