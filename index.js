@@ -1,5 +1,4 @@
 const log = require("./modules/log");
-const sandplate = require("./sandplate.json");
 const package = require("./package.json");
 const Discord = require("discord.js");
 
@@ -22,7 +21,7 @@ if (Number(process.version.slice(1).split(".")[0]) < 14) { // version < minVer
   log.fatal(`discord.js v12+ is required, currently v${Discord.version}`);
   process.exit(1);
 } else {
-  log.info(`Starting ${package.name === "sandplate" ? `sandplate v${package.version} using node.js ${process.version} and discord.js v${Discord.version}` : `${package.name} v${package.version} using node.js ${process.version}, discord.js v${Discord.version}, and sandplate v${sandplate.version}`} on ${process.platform}`);
+  log.info(`Starting ${package.name} v${package.version} using node.js ${process.version} and discord.js v${Discord.version} on ${process.platform}`);
 }
 
 // Work in progress

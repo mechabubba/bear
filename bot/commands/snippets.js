@@ -2,7 +2,6 @@ const CommandBlock = require("../../modules/CommandBlock");
 const log = require("../../modules/log");
 const chalk = require("chalk");
 const { MessageEmbed, Permissions } = require("discord.js");
-const sandplate = require("../../sandplate.json");
 const package = require("../../package.json");
 const Discord = require("discord.js");
 const { randomBytes } = require("crypto");
@@ -26,7 +25,7 @@ const snippets = {
   info: function(client, message, content, args) {
     const embed = new MessageEmbed()
       .setTitle("Developer Info")
-      .setDescription(`${client.user} v${package.version}\n[node.js](https://nodejs.org/) ${process.version}\n[discord.js](https://discord.js.org/) v${Discord.version}\n[sandplate](https://github.com/06000208/sandplate) v${sandplate.version}\n[platform](https://nodejs.org/api/process.html#process_process_platform) ${process.platform}`);
+      .setDescription(`${client.user} v${package.version}\n[node.js](https://nodejs.org/) ${process.version}\n[discord.js](https://discord.js.org/) v${Discord.version}\n[sandplate](https://github.com/06000208/sandplate)\n[platform](https://nodejs.org/api/process.html#process_process_platform) ${process.platform}`);
     const color = client.config.get("metadata.color").value();
     if (color) embed.setColor(color);
     message.channel.send(embed);
@@ -48,12 +47,12 @@ const snippets = {
   },
   permissions: function(client, message, content, args) {
     const perms = message.channel.permissionsFor(message.guild.me);
-    const has = perms.toArray().join("\n").toLowerCase();
+    const current = perms.toArray().join("\n").toLowerCase();
     const missing = perms.missing(Permissions.ALL).join("\n").toLowerCase();
     const embed = new MessageEmbed()
       .setTitle("Permissions")
       .addFields(
-        { name: "Has", value: has.length ? has : "none", inline: true },
+        { name: "Has", value: current.length ? current : "none", inline: true },
         { name: "Missing", value: missing.length ? missing : "none", inline: true },
       );
     if (perms.bitfield.toString().length) embed.setFooter(perms.bitfield.toString());
