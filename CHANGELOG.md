@@ -4,6 +4,10 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
 
 *Changes which double as as noteworthy depreciation warnings will be prefixed with ⚠️*
 
+- ⚠️ Bumped minimum node.js version from v12 to v14, matching the future minimum for discord.js
+
+- Updated all npm dependencies
+
 - Several parts of the bot have received attention, closing [#21](https://github.com/06000208/sandplate/issues/21). These are all described below.
 
 - Changed the approach used for the [Handler](https://github.com/06000208/sandplate/blob/master/modules/Handler.js) class, now instantiated on the [Client](https://github.com/06000208/sandplate/blob/master/modules/Client.js) rather than being static. Note that `resolvePath()` and the new `searchDirectory()` are still static methods. Closes [#25](https://github.com/06000208/sandplate/issues/25)
@@ -55,9 +59,6 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
 
 - Improved `metadata.color` and `metadata.twitch` to support being null and changed both their defaults to such. Closes [#27](https://github.com/06000208/sandplate/issues/27)
 
-- Created `sandplate.json` in the root. This allows sandplate's version and a few other things to be referenced separately from what's in package.json. Unsure about this method, but I don't think it's a half bad solution.
-  - Added this info to the version logging in `index.js`
-
 - Changed `defaultConfig.js` into `defaultData.js` and updated usage accordingly
 
 - Updated old references here in CHANGELOG.md and elsewhere so people won't go looking for a file that doesn't exist
@@ -80,6 +81,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
   - `coin` returns heads or tails
 
 - Minor changes/improvements/fixes/etc to the following: 
+  - `index.js`
   - Jsdoc comments throughout the bot
   - The guild, leave, help, set, ping, example, and template commands
   - The `startup.js` and `logging.js` listeners

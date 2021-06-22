@@ -15,8 +15,8 @@ process.on("warning", (warning) => log.warn(warning));
 process.on("exit", (code) => code === 0 ? log.info("Exiting peacefully") : log.warn("Exiting abnormally with code:", code));
 
 // node.js and discord.js version checks
-if (Number(process.version.slice(1).split(".")[0]) < 12) { // version < minVer
-  log.fatal(`node.js v12+ is required, currently ${process.version}`);
+if (Number(process.version.slice(1).split(".")[0]) < 14) { // version < minVer
+  log.fatal(`node.js v14+ is required, currently ${process.version}`);
   process.exit(1);
 } else if (Number(Discord.version.split(".")[0]) < 12) { // version < minVer
   log.fatal(`discord.js v12+ is required, currently v${Discord.version}`);
