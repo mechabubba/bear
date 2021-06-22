@@ -7,6 +7,7 @@ const package = require("../../package.json");
 const Discord = require("discord.js");
 const { randomBytes } = require("crypto");
 const moment = require("moment");
+const { has } = require("lodash");
 
 const snippets = {
   guilds: function(client, message, content, args) {
@@ -56,6 +57,23 @@ const snippets = {
         { name: "Missing", value: missing.length ? missing : "none", inline: true },
       );
     if (perms.bitfield.toString().length) embed.setFooter(perms.bitfield.toString());
+    const color = client.config.get("metadata.color").value();
+    if (color) embed.setColor(color);
+    message.channel.send(embed);
+  },
+  user: async function(client, message, content, args) {
+    const application = await client.fetchApplication();
+    const team = has(application.owner, "members");
+    const embed = new MessageEmbed()
+      .setTitle(client.user.tag)
+      .setThumbnail(client.user.avatarURL({ format: "png" }))
+      .addFields(
+        { name: team ? "Team Owner" : "Owner", value: `<@${team ? application.owner.owner.id : application.owner.id}>`, inline: true },
+        { name: "Public", value: application.botPublic, inline: true },
+        { name: "Verified", value: client.user.verified, inline: true },
+      )
+      .setFooter(client.user.id)
+      .setTimestamp(client.user.createdTimestamp);
     const color = client.config.get("metadata.color").value();
     if (color) embed.setColor(color);
     message.channel.send(embed);
