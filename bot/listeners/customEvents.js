@@ -14,5 +14,8 @@ module.exports = [
   new ListenerBlock({ event: "channelTypeRejection" }, (client, command, message) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} attempted to run "${command.firstName}" somewhere it cannot be used (${message.channel.type})`)),
   new ListenerBlock({ event: "nsfwRejection" }, (client, command, message) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} attempted to run "${command.firstName}" in a non-nsfw channel`)),
   new ListenerBlock({ event: "lockedRejection" }, (client, command, message) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} attempted to run "${command.firstName}" and was denied`)),
-  new ListenerBlock({ event: "permissionRejection" }, (client, command, message, member, permissions) => log.debug(`${chalk.gray("[command]")} ${member.user.tag} lacked permissions necessary to run "${command.firstName}"${(client.user.id === member.user.id ? ` for ${message.author.tag}` : "")}`)),
+  new ListenerBlock({ event: "permissionRejection" }, (client, command, message, permissions, useClient, useChannel) => {
+    const member = useClient ? message.guild.me : message.member;
+    log.debug(`${chalk.gray("[command]")} ${member.user.tag} lacked permissions necessary to run "${command.firstName}"${(useClient ? ` for ${message.author.tag}` : "")}${useChannel ? ` in <#${message.channel.id}>` : ""}`);
+  }),
 ];

@@ -12,8 +12,7 @@ module.exports = new CommandBlock({
   usage: "[page id]",
   nsfw: true,
   locked: false,
-  clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS", "ATTACH_FILES", "ADD_REACTIONS"],
-  userPermissions: null,
+  clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS", "ATTACH_FILES", "ADD_REACTIONS"],
 }, async function(client, message, content, args) {
   if (client.cookies.has(`wm-rate-limit-${message.author.id}`)) {
     if (moment().isBefore(client.cookies.get(`wm-rate-limit-${message.author.id}`))) {

@@ -34,8 +34,7 @@ module.exports = new CommandBlock({
   description: "An enormous security risk for development purposes: [arbitrary javascript evaluation](https://en.wikipedia.org/wiki/Arbitrary_code_execution). Uses [`eval()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval) under the hood.",
   usage: "<code>",
   locked: "hosts",
-  clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"],
-  userPermissions: null,
+  clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"],
 }, async function(client, message, code, args) {
   if (!code) return message.react(client.config.get("metadata.reactions.negative").value());
   log.debug(`Code provided to eval from ${message.author.tag}:`, "\n" + code);

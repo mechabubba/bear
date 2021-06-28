@@ -8,8 +8,7 @@ module.exports = new CommandBlock({
   description: "Instruct the bot to leave a specific guild.",
   usage: "<id>",
   locked: "hosts",
-  clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-  userPermissions: null,
+  clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, args) {
   if (!content) return message.channel.send(`Arguments are required\nUsage: \`${this.firstName} ${this.usage}\``);
   if (!numeric.test(content)) return message.channel.send(`The id \`${content}\` was invalid`);

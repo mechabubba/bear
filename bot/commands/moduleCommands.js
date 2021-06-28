@@ -52,8 +52,7 @@ module.exports = [
     description: "Load command or event modules by file path. Note that the /modules/ folder is treated as the working directory.",
     usage: "command/event <path>",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, function(client, message, content, [choice, args]) {
     if (!choice) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const constructProperty = determineConstruct(choice);
@@ -69,8 +68,7 @@ module.exports = [
     description: "Unload command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory.",
     usage: "command/event [name/path]",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, function(client, message, content, [choice, args]) {
     if (!choice) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const constructProperty = determineConstruct(choice);
@@ -85,8 +83,7 @@ module.exports = [
     description: "Reloading command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory.",
     usage: "command/event <name/path>",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, function(client, message, content, [choice, args]) {
     if (!choice) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const constructProperty = determineConstruct(choice);
@@ -104,8 +101,7 @@ module.exports = [
     description: "Enable command or event modules by file path. Note that paths should be written relative to the /modules/ folder (for example, navigating to `/bot/commands/` should be `../bot/commands`)",
     usage: "command/event <path>",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, function(client, message, content, [choice, args]) {
     if (!choice) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const constructProperty = determineConstruct(choice);
@@ -123,8 +119,7 @@ module.exports = [
     description: "Disable command or event modules by command name, event name, or file path. Note that paths should be written relative to the /modules/ folder (for example, navigating to `/bot/commands/` should be `../bot/commands`)",
     usage: "command/event <name/path>",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, function(client, message, content, [choice, args]) {
     if (!choice) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const constructProperty = determineConstruct(choice);

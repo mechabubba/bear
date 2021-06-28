@@ -85,8 +85,7 @@ module.exports = new CommandBlock({
   description: null,
   usage: "<snippet name> [args]",
   locked: "hosts",
-  clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-  userPermissions: null,
+  clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, function(client, message, content, [choice, args]) {
   const keys = Object.keys(snippets);
   const list = "`" + keys.join("`, `") + "`";

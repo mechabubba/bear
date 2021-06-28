@@ -108,22 +108,33 @@ class CommandConstruct extends BaseConstruct {
    */
   run(id, message, content = null, args = [], ...passThrough) {
     if (!this.cache.has(id)) return log.warn(`Command id "${id}" isn't mapped to a command in the cache, cannot run`);
+    /** @type {CommandBlock} */
     const command = this.cache.get(id);
     if (!command.checkChannelType(message)) {
       this.client.emit("channelTypeRejection", command, message);
       return;
     }
-    if (!command.checkNotSafeForWork(message)) {
-      this.client.emit("nsfwRejection", command, message);
-      return;
-    }
-    if (!command.checkPermissions(message, message.guild.me, command.clientPermissions)) {
-      this.client.emit("permissionRejection", command, message, message.guild.me, command.clientPermissions);
-      return;
-    }
-    if (!command.checkPermissions(message, message.member, command.userPermissions)) {
-      this.client.emit("permissionRejection", command, message, message.member, command.userPermissions);
-      return;
+    if (message.channel.type !== "dm") {
+      if (!command.checkNotSafeForWork(message)) {
+        this.client.emit("nsfwRejection", command, message);
+        return;
+      }
+      if (!command.checkPermissions(message, command.clientPermissions, true, false)) {
+        this.client.emit("permissionRejection", command, message, command.clientPermissions, true, false);
+        return;
+      }
+      if (!command.checkPermissions(message, command.clientChannelPermissions, true, true)) {
+        this.client.emit("permissionRejection", command, message, command.clientChannelPermissions, true, true);
+        return;
+      }
+      if (!command.checkPermissions(message, command.userPermissions, false, false)) {
+        this.client.emit("permissionRejection", command, message, command.userPermissions, false, false);
+        return;
+      }
+      if (!command.checkPermissions(message, command.userChannelPermissions, false, true)) {
+        this.client.emit("permissionRejection", command, message, command.userChannelPermissions, false, true);
+        return;
+      }
     }
     if (!command.checkLocked(message)) {
       this.client.emit("lockedRejection", command, message);
@@ -159,7 +170,7 @@ module.exports = CommandConstruct;
  * @param {Discord.Message} message
  * @param {?string} [content=null]
  * @param {[string]} [args=[]]
- * @param {...*} [passThrough]
+ * @param {...*} [extraParameters]
  */
 
 /**
@@ -184,8 +195,9 @@ module.exports = CommandConstruct;
  * @param {Client} client Bound as the first parameter by EventConstruct.load()
  * @param {CommandBlock} command
  * @param {Discord.Message} message
- * @param {Discord.GuildMember} member May be the GuildMember of a regular user or the bot itself, member.user.id allows for easy comparison with client.user.id
  * @param {PermissionResolvable} permissions PermissionResolvable provided by the command
+ * @param {boolean} usedClient Whether the client or the message author was checked
+ * @param {boolean} usedChannel Whether channel overrides were taken into account
  */
 
 /**

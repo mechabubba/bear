@@ -8,8 +8,7 @@ module.exports = new CommandBlock({
   description: "Logs a list of guilds to the console or provides info about individual guilds when queried.",
   usage: "[guild id]",
   locked: "hosts",
-  clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-  userPermissions: null,
+  clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, [id, ...args]) {
   if (message.channel.type === "dm" && !content) return message.channel.send("An id is required as input in direct messages");
   let guild = null;

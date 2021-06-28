@@ -33,13 +33,18 @@ module.exports.lovely = function(object, whitespace = 2, codeBlock = false) {
 };
 
 /**
- * Checks if a value is a non-empty array that only contains strings
+ * Checks if a value is a array that only contains strings, and by default, a non-empty array
  * @param {*} value
- * @returns {boolean} Returns `true` if value is a non-empty array that only contains strings, else `false`
+ * @param {boolean} [checkLength=true] Whether the array's length is checked
+ * @returns {boolean} Returns `true` if value is an array that only contains strings, else `false`
  */
-module.exports.isArrayOfStrings = function(value) {
+module.exports.isArrayOfStrings = function(value, checkLength = true) {
   if (!isArray(value)) return false;
-  if (!value.length) return false;
+  if (checkLength) {
+    if (!value.length) return false;
+  } else if (!value.length) {
+    return true;
+  }
   return !value.some(element => !isString(element));
 };
 

@@ -83,8 +83,7 @@ module.exports = [
     description: "Acts as an advanced shortcut to the `setavatar`, `setname`, `presence`, `status`, and `activity` commands.",
     usage: "[action] [input]",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, function(client, message, content, args) {
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const action = args[0].toLowerCase();
@@ -120,8 +119,7 @@ module.exports = [
     description: "Changes the bot's avatar. Be aware that this has a strict cool down (shared with changing the bot's name) in the discord api.",
     usage: "<image attachment/link>",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, async function(client, message, content, args) {
     // Avatar
     await sleep(2000); // Wait 2 seconds to give image links a higher chance of embedding
@@ -147,8 +145,7 @@ module.exports = [
     description: "Changes the bot's username. Be aware that this has a strict cool down (shared with changing the bot's avatar) in the discord api.",
     usage: "<text>",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, async function(client, message, content, args) {
     // Username
     if (!content) {
@@ -177,8 +174,7 @@ module.exports = [
     description: "Sets the bot's presence with raw json. Refer to the [`PresenceData`](https://discord.js.org/#/docs/main/stable/typedef/PresenceData) object for what properties and values to use. Using a codeblock with your json input is supported so long that your message contains a singular string of valid json somewhere within it.",
     usage: "<json>",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, async function(client, message, content, args) {
     // Presence
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\`\n<https://discord.js.org/#/docs/main/stable/typedef/PresenceData>`);
@@ -210,8 +206,7 @@ module.exports = [
     description: "Sets the bot's status. All four statuses are supported (online, idle, do not disturb, and invisible)",
     usage: "[status]",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, async function(client, message, content, args) {
     // Status
     let status = "online";
@@ -241,8 +236,7 @@ module.exports = [
     description: "Sets the bot's activity. All four activities are supported (playing, watching, listening, and streaming)",
     usage: "[type] [text]",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, async function(client, message, content, args) {
     const data = resolveActivity(client, content, args);
     if (!data) {

@@ -37,8 +37,7 @@ module.exports = [
     description: "Prohibits a user or guild from interacting with the bot.",
     usage: "user/guild <id>",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, async function(client, message, content, [type, id, ...args]) {
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const group = determineType(type);
@@ -60,8 +59,7 @@ module.exports = [
     description: "Restore a user or guild's access to the bot.",
     usage: "user/guild <id>",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, function(client, message, content, [type, id, ...args]) {
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const group = determineType(type);
@@ -83,8 +81,7 @@ module.exports = [
     description: "Create user groups and toggle ids in/out of them.",
     usage: "<group> [id]",
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    userPermissions: null,
+    clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, function(client, message, content, args) {
     if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
     const name = args[0].toLowerCase();
