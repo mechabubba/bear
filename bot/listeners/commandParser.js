@@ -42,5 +42,17 @@ module.exports = new ListenerBlock({
   const args = content.split(/[\n\r\s]+/g);
   const name = args.shift().toLowerCase();
   content = content.slice(name.length).trim();
+  client.emit("commandParsed", name, message, content.length ? content : null, args);
   client.commands.runByName(name, message, content.length ? content : null, args);
 });
+
+/**
+ * Emitted whenever a command is successfully parsed
+ * @event Client#commandParsed
+ * @param {Client} client Bound as the first parameter by EventConstruct.load()
+ * @param {string} commandName
+ * @param {Discord.Message} message
+ * @param {?string} [content=null]
+ * @param {[string]} [args=[]]
+ * @param {...*} [extraParameters]
+ */

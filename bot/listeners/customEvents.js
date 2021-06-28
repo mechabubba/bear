@@ -9,6 +9,8 @@ module.exports = [
   // Guild Access Control (from modules/GuildManager.js)
   new ListenerBlock({ event: "blockedGuild" }, (client, guild) => log.debug(`${chalk.gray("[blockedGuild]")} ${client.user.tag} automatically left ${guild.name} (${guild.id})`)),
   new ListenerBlock({ event: "unknownGuild" }, (client, guild) => log.debug(`${chalk.gray("[unknownGuild]")} ${client.user.tag} automatically left ${guild.name} (${guild.id})`)),
+  // Command Parser (from listeners/commandParser.js)
+  new ListenerBlock({ event: "commandParsed" }, (client, commandName, message, content, args, ...extraParameters) => log.debug(`${chalk.gray("[command]")} input from ${message.author.tag} successfully parsed as "${commandName}${(!content ? "\"" : `" with "${content}"`)}`)),
   // Commands (from modules/CommandConstruct.js)
   new ListenerBlock({ event: "commandUsed" }, (client, command, message, content, args, ...extraParameters) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} ran "${command.firstName}${(!content ? "\"" : `" with "${content}"`)}`)),
   new ListenerBlock({ event: "channelTypeRejection" }, (client, command, message) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} attempted to run "${command.firstName}" somewhere it cannot be used (${message.channel.type})`)),
