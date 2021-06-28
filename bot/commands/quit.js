@@ -1,7 +1,7 @@
 const CommandBlock = require("../../modules/CommandBlock");
 
 module.exports = new CommandBlock({
-  identity: ["quit", "exit", "shutdown", "logout", "restart"],
+  identity: ["quit", "exit", "stop", "shutdown", "logout", "restart"],
   summary: "Log out & shut down",
   description: "Log out followed by process exit. Bot may be auto restarted externally.",
   usage: null,
