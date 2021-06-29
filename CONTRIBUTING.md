@@ -30,7 +30,7 @@ After you've found something to do and communicated with the rest of us, feel fr
 
 ### [Branches](https://github.com/06000208/sandplate/branches)
 
-The `master` branch is treated as the latest stable version. Future versions have their own "in development" branches, awaiting their completion and merge into `master`.
+The main branch is treated as the latest stable version. Future versions have their own "in development" branches, awaiting their completion and merge into `main`.
 
 While sandplate is undergoing initial development, [releases](https://github.com/06000208/sandplate/releases/) for each version aren't being published, but they may be in the future.
 
@@ -58,18 +58,20 @@ This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md
 
 | Color | Label | Description |
 | ----- | ----- | ----------- |
-| ![Red](https://satyr.io/64x16/e36875?text=+)        | `bug`                | Something is producing errors or isn't working right                            |
-| ![Mint Green](https://satyr.io/64x16/97e6c6?text=+) | `enhancement`        | This introduces a new feature or improves sandplate                             |
-| ![Blue](https://satyr.io/64x16/90cff5?text=+)       | `documentation`      | Anything regarding documentation, including jsdoc and code comments             |
-| ![Pink](https://satyr.io/64x16/e6a9e8?text=+)       | `support`            | Questions, support, and assistance regarding sandplate                          |
-| ![Brown](https://satyr.io/64x16/cfb6a3?text=+)      | `maintenance`        | Anything regarding minor tasks, clean up, or code style/quality such as eslint  |
-| ![Purple](https://satyr.io/64x16/bfb0e8?text=+)     | `good first issue`   | Good for newcomers                                                              |
-| ![Green](https://satyr.io/64x16/a5db88?text=+)      | `help wanted`        | Extra attention is needed for this issue or pull request                        |
-| ![Yellow](https://satyr.io/64x16/f5d56e?text=+)     | `awaiting more info` | This issue or pull request requires more information to be handled              |
-| ![Orange](https://satyr.io/64x16/edb468?text=+)     | `won't fix/add`      | This will not be worked on                                                      |
-| ![Gray](https://satyr.io/64x16/9e9e9e?text=+)       | `meta`               | Anything regarding the repository, project, workflow, or other such meta topics |
-| ![Light Gray](https://satyr.io/64x16/d4d4d4?text=+) | `x.x.+`              | This is part of a new patch (backwards compatible bug fixes or maintenance)     |
-| ![Light Gray](https://satyr.io/64x16/d4d4d4?text=+) | `x.+.x`              | This is part of a new minor version (new backwards compatible functionality)    |
-| ![Light Gray](https://satyr.io/64x16/d4d4d4?text=+) | `+.x.x`              | This is part of a new major version (breaking changes)                          |
-| ![White](https://satyr.io/64x16/ffffff?text=+)      | `invalid`            | This doesn't seem right                                                         |
-| ![White](https://satyr.io/64x16/ffffff?text=+)      | `duplicate`          | This issue or pull request already exists                                       |
+| ![Red](https://satyr.io/64x16/e36875?text=+)            | `bug`                | Something is producing errors or isn't working right                         |
+| ![Mint Green](https://satyr.io/64x16/89e0ae?text=+)     | `enhancement`        | This introduces a new feature or improves sandplate                          |
+| ![Blue](https://satyr.io/64x16/90cff5?text=+)           | `documentation`      | Anything regarding documentation, including jsdoc and code comments          |
+| ![Pink](https://satyr.io/64x16/d15fde?text=+)           | `support`            | Questions, support, and assistance regarding sandplate                       |
+| ![Brown](https://satyr.io/64x16/b3845b?text=+)          | `maintenance`        |
+| Minor tasks, update dependencies, clean up, eslint, etc |
+| ![Purple](https://satyr.io/64x16/b2a2e0?text=+)         | `good first issue`   | Good for newcomers                                                           |
+| ![Green](https://satyr.io/64x16/a5db88?text=+)          | `help wanted`        | Extra attention is needed for this issue or pull request                     |
+| ![Yellow](https://satyr.io/64x16/f5d56e?text=+)         | `awaiting more info` | This issue or pull request requires more information to be handled           |
+| ![Black](https://satyr.io/64x16/000000?text=+)         | `won't fix/add`      | This will not be worked on                                                   |
+| ![Gray](https://satyr.io/64x16/9e9e9e?text=+)           | `meta`               |
+| Things regarding the repository or project itself       |
+| ![Light Gray](https://satyr.io/64x16/d4d4d4?text=+)     | `x.x.+`              | This is part of a new patch (backwards compatible bug fixes or maintenance)  |
+| ![Light Gray](https://satyr.io/64x16/d4d4d4?text=+)     | `x.+.x`              | This is part of a new minor version (new backwards compatible functionality) |
+| ![Light Gray](https://satyr.io/64x16/d4d4d4?text=+)     | `+.x.x`              | This is part of a new major version (breaking changes)                       |
+| ![Black](https://satyr.io/64x16/000000?text=+)          | `invalid`            | This doesn't seem right                                                      |
+| ![Black](https://satyr.io/64x16/000000?text=+)          | `duplicate`          | This issue or pull request already exists                                    |

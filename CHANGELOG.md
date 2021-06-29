@@ -6,11 +6,11 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
 
 - ⚠️ Bumped minimum node.js version from v12 to v14, matching the future minimum for discord.js
 
-- Updated all npm dependencies
+- Updated all npm dependencies to latest major, except for lodash 2.0.0 (would require esm migration)
 
 - Several parts of the bot have received attention, closing [#21](https://github.com/06000208/sandplate/issues/21). These are all described below.
 
-- Changed the approach used for the [Handler](https://github.com/06000208/sandplate/blob/master/modules/Handler.js) class, now instantiated on the [Client](https://github.com/06000208/sandplate/blob/master/modules/Client.js) rather than being static. Note that `resolvePath()` and the new `searchDirectory()` are still static methods. Closes [#25](https://github.com/06000208/sandplate/issues/25)
+- Changed the approach used for the [Handler](https://github.com/06000208/sandplate/blob/main/modules/Handler.js) class, now instantiated on the [Client](https://github.com/06000208/sandplate/blob/main/modules/Client.js) rather than being static. Note that `resolvePath()` and the new `searchDirectory()` are still static methods. Closes [#25](https://github.com/06000208/sandplate/issues/25)
 
 - The handler now deep clones required modules rather than passing around a reference to the [require cache](https://nodejs.org/api/modules.html#modules_require_cache) in order to avoid changing it. Closes [#32](https://github.com/06000208/sandplate/issues/32)
 
@@ -19,6 +19,8 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
 - CommandConstruct's run function has been rewritten, and it's various checks such as channel type, nsfw channel, locked command, etc. have been remade as functions on CommandBlock. As such, the help command which needed to use two of the same checks is much nicer now, and 5 new custom events have been added to aid behavior implementation, see below for more info.
   - The new functions are `checkChannelType()`, `checkNotSafeForWork()`, `checkLocked()`, and `checkPermissions()`. They all take a Message as their first parameter, while checkPermissions also takes a GuildMember and the permissions to be checked
   - ⚠️ The parameters for CommandConstruct's run function has been changed. It no longer runs commands by name, instead taking an id as the first parameter, and a new function `CommandConstruct.runByName` with the old functionality has been added
+
+- Two new parameters to match `clientPermissions` and `userPermissions` have been added, `clientChannelPermissions` and `userChannelPermissions`, allowing commands to specify channel overrides to be checked as well
 
 - New modules.json lowdb database as a built in way to disable modules, which is optionally respected by `requireDirectory()`, `requireMultipleModules()`, or `requireModule()`. This is so disabling modules plays much nicer with git (no longer requiring file renames), and with the new approach, disabled modules not loaded on start up can still be easily loaded later if desired. Closes [#26](https://github.com/06000208/sandplate/issues/26)
   - Modules `./bot/commands/templateMultiple.js` and `./bot/commands/example.js` have been renamed back accordingly and disabled by default using the new method in `defaultData.js`
@@ -46,6 +48,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
   - `./bot/listeners/customEvents.js` A module which resembles & serves the same purpose as logging.js but for every custom event implemented in sandplate, and a temporary solution in lieu of online documentation
   - All custom events are documented inline via jsdoc at the bottom of their respective files
   - `blockedGuild`, `unknownGuild` Events for guild access control, emitted when guilds are detected and left
+  - `commandParsed` Emitted whenever a command is successfully parsed
   - `commandUsed` Emitted whenever a command is successfully ran
   - `channelTypeRejection`, `nsfwRejection`, `permissionRejection`, `lockedRejection` Emitted when their respective circumstances happen with command use. You can use these to create behavior when commands are attempted but denied, nsfw command being used in a non-nsfw channel, and when someone (or the bot) is missing necessary permissions to use the command.
 
@@ -53,7 +56,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
   - Removed the `isNumeric()` function from `./modules/miscellaneous.js` and updated usage, as there's little point compared to using [`RegExp.test()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test) directly
   - Moved tokenRegex in `bot.js` to this module
 
-- A new class, `BaseEventEmitter`, which is the same as [Base](https://github.com/06000208/sandplate/blob/master/modules/Base.js) but extends [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter). Closes [#20](https://github.com/06000208/sandplate/issues/20)
+- A new class, `BaseEventEmitter`, which is the same as [Base](https://github.com/06000208/sandplate/blob/main/modules/Base.js) but extends [EventEmitter](https://nodejs.org/api/events.html#events_class_eventemitter). Closes [#20](https://github.com/06000208/sandplate/issues/20)
 
 - Made how paths are used with lowdb more consistent (Client and Handler classes) and introduced a `.dbPath` property to both. This isn't enough to solve the notable issue of overlapping lowdb databases if you need multiple instances, but it's a step in the right direction
 
@@ -86,6 +89,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
   - The guild, leave, help, set, ping, example, and template commands
   - The `startup.js` and `logging.js` listeners
   - The `Handler.js`, `Client.js`, and `CommandConstruct.js` classes
+  - The `isArrayOfStrings()` function from `./modules/miscellaneous.js`
   - Markdown files such as CONTRIBUTING.md, README.md, etc
 
 ## `0.0.6` / `2020-08-12`
@@ -98,7 +102,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
 
 In regards to the github repository, It's about time to give it a fresh new coat of paint, updating the README and adding templates, etc.
 
-Sandplate is not out of initial development yet, but the `initial-development` branch is going to be merged into master as there's no real reason to have it separate now that we've gotten into the flow of things.
+Sandplate is not out of initial development yet, but the `initial-development` branch is going to be merged into main as there's no real reason to have it separate now that we've gotten into the flow of things.
   
 As was started with `0.0.5`, specific versions that are in development will continue to have their own branches until being completed and merged.
 
