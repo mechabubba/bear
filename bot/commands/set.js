@@ -94,20 +94,20 @@ module.exports = [
     if (!input.content.length) input.content = null;
     if (actions.avatar.includes(action)) {
       // Avatar
-      return client.commands.run("setavatar", message, input.content, input.args);
+      return client.commands.runByName("setavatar", message, input.content, input.args);
     } else if (actions.username.includes(action)) {
       // Username
-      return client.commands.run("setname", message, input.content, input.args);
+      return client.commands.runByName("setname", message, input.content, input.args);
     } else if (actions.presence.includes(action)) {
       // Presence
-      return client.commands.run("setpresence", message, input.content, input.args);
+      return client.commands.runByName("setpresence", message, input.content, input.args);
     } else if (actions.status.includes(action)) {
       // Status
-      return client.commands.run("setstatus", message, input.content, input.args);
+      return client.commands.runByName("setstatus", message, input.content, input.args);
     } else if (actions.activity.includes(action) || activityTypes.includes(action)) {
       // Activity
       const useParsed = !activityTypes.includes(action);
-      return client.commands.run("setactivity", message, useParsed ? input.content : content, useParsed ? input.args : args);
+      return client.commands.runByName("setactivity", message, useParsed ? input.content : content, useParsed ? input.args : args);
     } else {
       // Unrecognized
       return message.channel.send(`Unrecognized action\nUsage: \`${this.firstName} ${this.usage}\``);
