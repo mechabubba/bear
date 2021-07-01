@@ -62,7 +62,7 @@ sudo systemctl enable sandplate
   - ``WorkingDirectory`` > The absolute path of the bot's root directory
   - ``ExecStart`` > Provide the command you want the bot to run with when you the service is started
 
-If you want to learn what you can do more with the service file, check the <a href="https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files">overview by Digital Ocean</a>
+If you want to learn what you can do more with the service file, check the <a href="https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files" target="_blank" rel="noopener noreferrer">overview by Digital Ocean</a>
 ## Contributing
 
 If you'd like to contribute to sandplate or get involved, read our [contributing](CONTRIBUTING.md) file! Reporting issues, bugs, and requesting features are also described there.
