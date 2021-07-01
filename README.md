@@ -26,6 +26,8 @@ Sandplate is currently in initial development, during which anything may change 
 
 ### Debian, Ubuntu & Arch Linux
 
+First make the script executable via ```sudo chmod +x setup.sh```
+
 **Default behaviour**
 ```bash
 $ ./setup.sh
