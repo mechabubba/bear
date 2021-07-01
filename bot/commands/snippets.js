@@ -25,7 +25,7 @@ const snippets = {
   info: function(client, message, content, args) {
     const embed = new MessageEmbed()
       .setTitle("Developer Info")
-      .setDescription(`${client.user} v${package.version}\n[node.js](https://nodejs.org/) ${process.version}\n[discord.js](https://discord.js.org/) v${Discord.version}\n[sandplate](https://github.com/06000208/sandplate)\n[platform](https://nodejs.org/api/process.html#process_process_platform) ${process.platform}`);
+      .setDescription(`${client.user} v${package.version}\n[node.js](https://nodejs.org/) ${process.version}\n[discord.js](https://discord.js.org/) v${Discord.version}\n[memory](https://nodejs.org/api/process.html#process_process_memoryusage) ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB\n[platform](https://nodejs.org/api/process.html#process_process_platform) ${process.platform}\n[sandplate](https://github.com/06000208/sandplate)`);
     const color = client.config.get("metadata.color").value();
     if (color) embed.setColor(color);
     message.channel.send(embed);
@@ -46,16 +46,22 @@ const snippets = {
     message.channel.send(`${moment().format("MMMM Do[,] dddd[,] h:mm a")}`);
   },
   permissions: function(client, message, content, args) {
-    const perms = message.channel.permissionsFor(message.guild.me);
-    const current = perms.toArray().join("\n").toLowerCase();
-    const missing = perms.missing(Permissions.ALL).join("\n").toLowerCase();
+    const guildPerms = message.guild.me.permissions;
+    const guildBits = guildPerms.bitfield.toString();
+    const channelPerms = message.channel.permissionsFor(message.guild.me);
+    const channelBits = channelPerms.bitfield.toString();
+    const current = guildPerms.toArray().join("\n").toLowerCase();
+    const missing = guildPerms.missing(Permissions.All).join("\n").toLowerCase();
+    const allowed = guildPerms.missing(channelPerms.bitfield).join("*\n*").toLowerCase();
+    const denied = channelPerms.missing(guildPerms.bitfield).join("*\n*").toLowerCase();
     const embed = new MessageEmbed()
       .setTitle("Permissions")
+      .setDescription(`Roles: [${guildBits}](https://discordapi.com/permissions.html#${guildBits})\nChannel: [${channelBits}](https://discordapi.com/permissions.html#${channelBits})`)
       .addFields(
-        { name: "Has", value: current.length ? current : "none", inline: true },
-        { name: "Missing", value: missing.length ? missing : "none", inline: true },
-      );
-    if (perms.bitfield.toString().length) embed.setFooter(perms.bitfield.toString());
+        { name: "Has", value: `${current.length ? current : "none"}\n*${allowed.length ? allowed : "none"}*`, inline: true },
+        { name: "Missing", value: `${missing.length ? missing : "none"}\n*${denied.length ? denied : "none"}*`, inline: true },
+      )
+      .setFooter("Italic permissions are channel overwrites");
     const color = client.config.get("metadata.color").value();
     if (color) embed.setColor(color);
     message.channel.send(embed);
@@ -80,12 +86,12 @@ const snippets = {
 };
 
 module.exports = new CommandBlock({
-  identity: ["snippets", "snip"],
+  identity: ["snippets", "snippet", "snip"],
   summary: "Various code snippets for developers",
   description: null,
   usage: "<snippet name> [args]",
   locked: "hosts",
-  clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
+  clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS", "ATTACH_FILES", "ADD_REACTIONS"],
 }, function(client, message, content, [choice, args]) {
   const keys = Object.keys(snippets);
   const list = "`" + keys.join("`, `") + "`";
