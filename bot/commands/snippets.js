@@ -25,7 +25,7 @@ const snippets = {
   info: function(client, message, content, args) {
     const embed = new MessageEmbed()
       .setTitle("Developer Info")
-      .setDescription(`${client.user} v${package.version}\n[node.js](https://nodejs.org/) ${process.version}\n[discord.js](https://discord.js.org/) v${Discord.version}\n[sandplate](https://github.com/06000208/sandplate)\n[platform](https://nodejs.org/api/process.html#process_process_platform) ${process.platform}`);
+      .setDescription(`${client.user} v${package.version}\n[node.js](https://nodejs.org/) ${process.version}\n[discord.js](https://discord.js.org/) v${Discord.version}\n[memory](https://nodejs.org/api/process.html#process_process_memoryusage) ${(process.memoryUsage().heapUsed / 1024 / 1024).toFixed(2)} MB\n[platform](https://nodejs.org/api/process.html#process_process_platform) ${process.platform}\n[sandplate](https://github.com/06000208/sandplate)`);
     const color = client.config.get("metadata.color").value();
     if (color) embed.setColor(color);
     message.channel.send(embed);
