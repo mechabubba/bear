@@ -21,6 +21,34 @@ However, the idea is *not* to skip learning how to code what sandplate does for 
 
 Sandplate is currently in initial development, during which anything may change at any time, and releases are not being utilized.
 
+## Installation
+**NOTE: If you want sandplate to be usable through a systemd service and gain it's features, see: <a href="systemd-service-setup"> Setup systemd sandplate service</a> post-installation**
+
+### Debian | Ubuntu
+
+**Default behaviour**
+```bash
+$ ./setup.sh
+```
+This will presume that you have Nodejs and npm installed, and ignores nvm. In turn, it will only install the npm packages for sandplate.
+
+**Installing Nodejs + npm through nvm if not installed already**
+```bash
+$ ./setup.sh --install
+```
+
+
+### <a href="systemd-service-setup"></a> Setup systemd sandplate service
+
+**Be sure you're inside the root directory of the project and sandplate.service file is visible:**
+
+![Imgur](http://i.imgur.com/Bx91m4C.gif)
+
+```bash
+sudo cp sandplate.service /etc/systemd/system
+sudo systemctl daemon-reload
+sudo systemctl enable sandplate
+```
 ## Contributing
 
 If you'd like to contribute to sandplate or get involved, read our [contributing](CONTRIBUTING.md) file! Reporting issues, bugs, and requesting features are also described there.
@@ -36,3 +64,4 @@ Additionally, you can get in touch with the project lead directly by emailing [`
 ## Code Of Conduct
 
 This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating, you're expected to abide by its terms. Please report unacceptable behavior to [`a06000208@protonmail.com`](mailto:a06000208@protonmail.com).
+
