@@ -24,15 +24,17 @@ Sandplate is currently in initial development, during which anything may change 
 ## Installation
 **NOTE: If you want sandplate to be usable through a systemd service and gain it's features, see: <a href="systemd-service-setup"> Setup systemd sandplate service</a> post-installation**
 
-### Debian | Ubuntu
+### Debian, Ubuntu & Arch Linux
 
 **Default behaviour**
 ```bash
 $ ./setup.sh
 ```
-This will presume that you have Nodejs and npm installed, and ignores nvm. In turn, it will only install the npm packages for sandplate.
+This will presume that you have Nodejs and npm installed, and ignores nvm. In turn, it will only install the npm packages for sandplate. 
 
-**Installing Nodejs + npm through nvm if not installed already**
+**Installing Nodejs & npm through nvm if not installed already**
+
+**DOES NOT install nvm for Arch Linux**
 ```bash
 $ ./setup.sh --install
 ```
