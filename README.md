@@ -42,7 +42,7 @@ $ ./setup.sh --install
 
 ### <a href="systemd-service-setup"></a> Setup systemd sandplate service
 
-**Be sure you're inside the root directory of the project and sandplate.service file is visible:**
+**Be sure you're inside the root directory of the project and the sandplate.service file is visible:**
 
 ![Imgur](http://i.imgur.com/Bx91m4C.gif)
 
@@ -51,6 +51,16 @@ sudo cp sandplate.service /etc/systemd/system
 sudo systemctl daemon-reload
 sudo systemctl enable sandplate
 ```
+**IMPORTANT NOTES:**
+- the ``sandplate.service`` file can be renamed to _anything_ you want, i.e renaming the file to mybot.service would change the command structure to ``sudo systemctl enable mybot``
+
+- Make sure to change the following in the service file **_before enabling the service or reloading the daemon_**:
+  - ``User`` > Change to the linux user you want the bot processes to run as
+  - ``Group`` > Optional parameter, can either be removed or you can define the linux user group ``User`` is part of
+  - ``WorkingDirectory`` > The absolute path of the bot's root directory
+  - ``ExecStart`` > Provide the command you want the bot to run with when you the service is started
+
+If you want to learn what you can do more with the service file, check the <a href="https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files">overview by Digital Ocean</a>
 ## Contributing
 
 If you'd like to contribute to sandplate or get involved, read our [contributing](CONTRIBUTING.md) file! Reporting issues, bugs, and requesting features are also described there.
