@@ -14,7 +14,7 @@ module.exports = new CommandBlock({
   summary: "Lists commands & provides command info",
   description: "Provides a list of commands or info about individual commands when queried.",
   usage: "[command]",
-  clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
+  clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
 }, function(client, message, content, args) {
   if (!content) {
     /** @type {Collection<Snowflake, CommandBlock>} */

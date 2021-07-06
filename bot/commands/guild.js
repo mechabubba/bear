@@ -3,12 +3,12 @@ const { numeric } = require("../../modules/regexes");
 const { MessageEmbed } = require("discord.js");
 
 module.exports = new CommandBlock({
-  identity: ["guild", "guilds"],
+  identity: ["guild"],
   summary: "Provides guild info",
   description: "Logs a list of guilds to the console or provides info about individual guilds when queried.",
   usage: "[guild id]",
   locked: "hosts",
-  clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
+  clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "EMBED_LINKS"],
 }, async function(client, message, content, [id, ...args]) {
   if (message.channel.type === "dm" && !content) return message.channel.send("An id is required as input in direct messages");
   let guild = null;
