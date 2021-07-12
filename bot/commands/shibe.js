@@ -1,26 +1,39 @@
 const CommandBlock = require("../../modules/CommandBlock");
-const http = require("http");
+const fetch = require("node-fetch");
 
-module.exports = new CommandBlock({
-    identity: "shibe",
-    summary: "Gets a shibe.",
-    description: "Gets a shibe. Images fetched from [shibe.online](https://shibe.online/).",
-    scope: ["dm", "text", "news"],
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"]
-  }, function(client, message, content, args) {
-    const negative = client.config.get("metadata.reactions.negative").value();
-    message.channel.startTyping();
-    http.get('http://shibe.online/api/shibes?count=1&urls=true&httpsUrls=true', (resp) => {
-      let data = "";
-      resp.on("data", (chunk) => data += chunk);
-      resp.on("end", () => {
-        message.channel.stopTyping(true);
-        let link = JSON.parse(data)[0];
-        message.channel.send({ files: [link] })
-      });
-    }).on("error", (e) => {
+module.exports = [
+  new CommandBlock({
+      identity: ["shibe"],
+      summary: "Gets a shibe.",
+      description: "Gets a shibe. Images fetched from [shibe.online](https://shibe.online/).",
+      clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"]
+    }, async function(client, message, content, args) {
+      const negative = client.config.get("metadata.reactions.negative").value();
+      message.channel.startTyping();
+
+      try {
+        const resp = await fetch("http://shibe.online/api/shibes", { method: "get" });
+        if(!resp.ok) throw new Error(res.statusText);
+
+        const json = await resp.json();
+        if(!json) throw new Error("Recieved malformed json.");
+
+        message.channel.send({ files: json });
+      } catch(e) {
+        message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e}\`\`\``);
+      }
+
       message.channel.stopTyping(true);
-      message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\`\`\``);
-    });
-  }
-);
+    }
+  ),
+  new CommandBlock({
+      identity: ["httpcat", "cattp"],
+      summary: "Gets an HTTP cat code.",
+      description: "Gets an HTTP cat code. Images fetched from [http.cat](https://http.cat).",
+      usage: "(code)",
+      clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"]
+    }, async function(client, message, content, [code]) {
+      return message.channel.send({ files: [`https://http.cat/${code}.jpg`] });
+    }
+  )
+];

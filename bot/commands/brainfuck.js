@@ -13,10 +13,10 @@ module.exports = new CommandBlock({
     const negative = client.config.get("metadata.reactions.negative").value();
     const alert = client.config.get("metadata.reactions.alert").value();
 
+    if(!content) return message.channel.send(`<:_:${negative}> You didn't send any code! Perform \`help ${this.firstName}\` for more information.`);
+
     let index = content.indexOf("|") || 0;
     let [input, code] = [content.substring(0, index), content.substring(index + 1)].map(x => x.trim());
-
-    if(!code) return message.channel.send(`<:_:${negative}> You didn't send any code! Perform \`help ${this.firstName}\` for more information.`);
     code = code.replace(/[^\+\-\[\].,<>]+/g, ""); // Sanitizes the code of any text other than the specified opcodes.
 
     message.channel.startTyping();
@@ -27,9 +27,10 @@ module.exports = new CommandBlock({
       if(output.length > 1993) output = output.substring(0, 1990) + "...";
 
       let reaction;
-      if(data.level == "warning") message.react(alert);
-      else if(data.level == "error") message.react(negative);
-      else message.react(positive);
+      if(data.level == "warning") reaction = alert;
+      else if(data.level == "error") reaction = negative;
+      else reaction = positive;
+      message.react(reaction);
 
       message.channel.send(`<:_:${reaction}> ${data.log}`);
       return message.channel.send(`\`\`\`\n${output}\`\`\``);
