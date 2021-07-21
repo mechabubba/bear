@@ -7,25 +7,40 @@ INSTALL_LOG="setup.log"
 OS=$(source /etc/os-release && echo "$NAME" | tr '[:upper:]' '[:lower:]')
 NODE_VERSION="14.16.0"
 
+EXIT_CODE=$(/sbin/modprobe -n -v)
 ### Terminal colour
-red=$(tput setaf 1)
-green=$(tput setaf 118)
-yellow=$(tput setaf 11)
-cyan=$(tput setaf 14)
-clear=$(tput sgr0)
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 118)
+YELLOW=$(tput setaf 11)
+CYAN=$(tput setaf 14)
+CLEAR=$(tput sgr0)
 ### Terminal colour
 
 run_setup() {
     case $1 in
         "-i"|"--install")
-            if is_compatible && install_ubuntu_debian ; then
-                echo_success "nvm, nodejs and npm is installed."
-                exit 0
-            elif [[ $OS == *"arch"* ]]; then
-                if install_node_arch ; then
-                    echo_success "Successfully installed nodejs and npm"
-                    exit 0
+            if is_compatible; then
+                if [[ $OS == *"arch"* ]]; then
+                    echo_info "Installing nvm, nodejs & npm for arch"
+                    if install_node_arch ; then
+                        echo_success "Installed."
+                    else
+                        echo_error "Couldn't install! Exiting." 1>&2
+                        exit 1
+                    fi
+                elif [[ $OS == *"debian"* ]] || [[ $OS == *"ubuntu"* ]] ; then
+                    if install_ubuntu_debian ; then
+                        echo_success "Installed."
+                    else
+                        echo_error "Couldn't install! Exiting." 1>&2
+                        exit 1
+                    fi
+                else
+                    echo_error "Something went wrong during check"
                 fi
+
+                fi
+                exit 0
             elif $? -eq 200 ; then
                 echo_warn "nvm installed but couldn't continue due to unidentified shell, please manually proceed. Exiting."
                 exit 1
@@ -60,7 +75,7 @@ install_npm_packages() {
     if npm install >> $INSTALL_LOG ; then
         echo_success "npm packages installed."
     else
-        echo_error "Couldn't run npm install. Check $INSTALL_LOG. Exiting"
+        echo_error "Couldn't run npm install. Exiting." 1>&2
         exit 1
     fi
 }
@@ -85,7 +100,7 @@ install_ubuntu_debian() {
             . ~/.nvm/nvm.sh
         else
             echo_warn "Cannot identify current shell. Please source or spawn a new shell instance for nvm commands to take effect."
-            return 200
+            exit 1
         fi
 
         if nvm install $NODE_VERSION >>$INSTALL_LOG ; then
@@ -93,18 +108,18 @@ install_ubuntu_debian() {
             echo_info "Checking for npm install"
             if nvm install-latest-npm >>$INSTALL_LOG ; then
                 echo_success "nvm successfully installed npm from current nodejs version"
-                return 0
+                exit 0
             else
-                echo_error "Unable to install npm through nvm"
-                return 1
+                echo_error "Unable to install npm through nvm" 1>&2
+                exit 1
             fi
         else
-            echo_error "Unable to run nvm install $NODE_VERSION"
-            return 1
+            echo_error "Unable to run nvm install $NODE_VERSION" 1>&2
+            exit 1
         fi
     else 
-        echo_error "Unable to wget nvm install.sh"
-        return 1
+        echo_error "Unable to wget nvm install.sh" 1>&2
+        exit 1
     fi
 }
 
@@ -125,7 +140,7 @@ install_node_arch() {
                 exit 1
             fi
         else
-            echo_error "Unable to pull nvm aur upstream ${cyan}$NVM_URL${clear}"
+            echo_error "Unable to pull nvm aur upstream ${CYAN}$NVM_URL${CLEAR}"
             exit 1
         fi
     else
@@ -136,8 +151,10 @@ install_node_arch() {
     echo_info "Installing nodejs and npm"
     if pacman -S nodejs npm ; then
         echo_success "Nodejs and npm installed through pacman"
+        exit 0
     else
         echo_error "Unable to install nodejs and npm through pacman"
+        exit 1
     fi
         
 }
@@ -157,19 +174,19 @@ is_compatible() {
 }
 
 echo_error() {
-    echo "[${red}ERROR${clear}] -> $*"
+    echo "[${RED}ERROR${CLEAR}] -> $*"
 }
 
 echo_warn() {
-    echo "[${yellow}WARN${clear}] -> $*"
+    echo "[${YELLOW}WARN${CLEAR}] -> $*"
 }
 
 echo_info() {
-    echo "[${cyan}INFO${clear}] -> $*"
+    echo "[${CYAN}INFO${CLEAR}] -> $*"
 }
 
 echo_success() {
-    echo "[${green}SUCCESS${clear}] -> $*"
+    echo "[${GREEN}SUCCESS${CLEAR}] -> $*"
 }
 
 
