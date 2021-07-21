@@ -7,7 +7,6 @@ INSTALL_LOG="setup.log"
 OS=$(source /etc/os-release && echo "$NAME" | tr '[:upper:]' '[:lower:]')
 NODE_VERSION="14.16.0"
 
-EXIT_CODE=$(/sbin/modprobe -n -v)
 ### Terminal colour
 RED=$(tput setaf 1)
 GREEN=$(tput setaf 118)
@@ -38,9 +37,6 @@ run_setup() {
                 else
                     echo_error "Something went wrong during check"
                 fi
-
-                fi
-                exit 0
             elif $? -eq 200 ; then
                 echo_warn "nvm installed but couldn't continue due to unidentified shell, please manually proceed. Exiting."
                 exit 1
@@ -58,7 +54,7 @@ run_setup() {
         *)
             echo_warn "No arguments supplied, proceeding with default setup"
             install_npm_packages
-            return 0
+            exit 0
         ;;
     esac
 }
@@ -136,15 +132,15 @@ install_node_arch() {
             if cd /tmp/nvm-arch && makepkg si ; then
                 echo_success "NVM has been installed through the AUR."
             else
-                echo_error "Unable to makepkg -si in /opt/nvm-arch"
+                echo_error "Unable to makepkg -si in /opt/nvm-arch" 1>&2
                 exit 1
             fi
         else
-            echo_error "Unable to pull nvm aur upstream ${CYAN}$NVM_URL${CLEAR}"
+            echo_error "Unable to pull nvm aur upstream ${CYAN}$NVM_URL${CLEAR}" 1>&2
             exit 1
         fi
     else
-        echo_error "Unable to make temporary directory $TEMP_DIR"
+        echo_error "Unable to make temporary directory $TEMP_DIR" 1>&2
         exit 1
     fi
 
@@ -153,7 +149,7 @@ install_node_arch() {
         echo_success "Nodejs and npm installed through pacman"
         exit 0
     else
-        echo_error "Unable to install nodejs and npm through pacman"
+        echo_error "Unable to install nodejs and npm through pacman" 1>&2
         exit 1
     fi
         
