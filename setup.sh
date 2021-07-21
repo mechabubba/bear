@@ -7,6 +7,14 @@ INSTALL_LOG="setup.log"
 OS=$(source /etc/os-release && echo "$NAME" | tr '[:upper:]' '[:lower:]')
 NODE_VERSION="14.16.0"
 
+### Terminal colour
+red=$(tput setaf 1)
+green=$(tput setaf 118)
+yellow=$(tput setaf 11)
+cyan=$(tput setaf 14)
+clear=$(tput sgr0)
+### Terminal colour
+
 run_setup() {
     case $1 in
         "-i"|"--install")
@@ -122,20 +130,21 @@ is_compatible() {
 }
 
 echo_error() {
-    echo "[ERROR] -> $*"
+    echo "[${red}ERROR${clear}] -> $*"
 }
 
 echo_warn() {
-    echo "[WARN] -> $*"
+    echo "[${yellow}WARN${clear}] -> $*"
 }
 
 echo_info() {
-    echo "[INFO] -> $*"
+    echo "[${cyan}INFO${clear}] -> $*"
 }
 
 echo_success() {
-    echo "[SUCCESS] -> $*"
+    echo "[${green}SUCCESS${clear}] -> $*"
 }
+
 
 prompt_yn() {
      case "$1" in
