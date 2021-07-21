@@ -20,11 +20,11 @@ run_setup() {
         "-i"|"--install")
             if is_compatible && install_ubuntu_debian ; then
                 echo_success "nvm, nodejs and npm is installed."
-                exit 1
+                exit 0
             elif [[ $OS == *"arch"* ]]; then
                 if install_node_arch ; then
                     echo_success "Successfully installed nodejs and npm"
-                    exit 1
+                    exit 0
                 fi
             elif $? -eq 200 ; then
                 echo_warn "nvm installed but couldn't continue due to unidentified shell, please manually proceed. Exiting."
