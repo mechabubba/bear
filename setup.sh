@@ -210,6 +210,6 @@ if ! [ $(id -u) = 0 ]; then
         echo_error "$0 is not executable, please run chmod +x $0"
     fi
 else
-    echo_error "DO NOT RUN THIS SCRIPT WITH SUDO/ROOT!"
+    echo_error "No need to run as root."
     exit 1
 fi
