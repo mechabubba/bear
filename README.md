@@ -36,11 +36,13 @@ This will presume that you have Nodejs and npm installed, and ignores nvm. In tu
 
 **Installing Nodejs & npm through nvm if not installed already**
 
-**DOES NOT install nvm for Arch Linux**
 ```bash
 $ ./setup.sh --install
 ```
-
+**Supported systems:**
+- [**Arch**](https://archlinux.org/)
+- [**Debian**](https://www.debian.org/)
+- [**Ubuntu**](https://ubuntu.com/)
 
 ### <a href="systemd-service-setup"></a> Setup systemd sandplate service
 
