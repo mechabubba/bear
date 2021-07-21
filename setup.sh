@@ -47,7 +47,7 @@ run_setup() {
         ;;
 
         "-h"|"--help")
-            echo "Usage -> setup.sh <arg> [-h|--help; show's this prompt] [ -i|--install; installs nvm,nodejs,npm ] "
+            print_help
             exit 0
         ;;
 
@@ -57,6 +57,19 @@ run_setup() {
             exit 0
         ;;
     esac
+}
+
+print_help() {
+    cat << EOF
+
+${GREEN}USAGE: ./setup.sh <args> <options>${CLEAR}
+
+${YELLOW}==== Args ====${CLEAR}
+
+${YELLOW}-h${CLEAR} | ${YELLOW}--help${CLEAR} -> The current help menu
+${YELLOW}-i${CLEAR} | ${YELLOW}--install${CLEAR} -> complete install of nvm, npm, nodejs
+
+EOF
 }
 
 install_npm_packages() {
