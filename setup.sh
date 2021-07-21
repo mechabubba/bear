@@ -57,7 +57,6 @@ install_npm_packages() {
     fi
 
     echo_info "$PACKAGE_FILE exists, proceeding with npm install"
-
     if npm install >> $INSTALL_LOG ; then
         echo_success "npm packages installed."
     else
@@ -75,7 +74,6 @@ install_ubuntu_debian() {
             echo_info "Sourcing .bashrc nvm.sh"
             . ~/.bashrc
             . ~/.nvm/nvm.sh
-
         elif grep -q "zsh" $SHELL ; then
             echo_info "Sourcing .zshrc and nvm.sh"
             . ~/.zshrc
@@ -85,7 +83,6 @@ install_ubuntu_debian() {
             echo "Sourcing .profile nvm.sh"
             . ~/.profile
             . ~/.nvm/nvm.sh
-
         else
             echo_warn "Cannot identify current shell. Please source or spawn a new shell instance for nvm commands to take effect."
             return 200
@@ -112,7 +109,37 @@ install_ubuntu_debian() {
 }
 
 install_node_arch() {
-    pacman -S nodejs npm
+    TEMP_DIR="/tmp/nvm-arch"
+    NVM_URL="https://github.com/nvm-sh/nvm"
+
+    echo_info "Creating working directory for nvm upstream $NVM_URL"
+    if mkdir "$TEMP_DIR" ; then
+        echo_success "Working directory created"
+        echo_info "Cloning nvm upstream url"
+        if git clone $NVM_URL "$TEMP_DIR" ; then 
+            echo_success "nvm cloned into $TEMP_DIR, changing dir and making package"
+            if cd /tmp/nvm-arch && makepkg si ; then
+                echo_success "NVM has been installed through the AUR."
+            else
+                echo_error "Unable to makepkg -si in /opt/nvm-arch"
+                exit 1
+            fi
+        else
+            echo_error "Unable to pull nvm aur upstream ${cyan}$NVM_URL${clear}"
+            exit 1
+        fi
+    else
+        echo_error "Unable to make temporary directory $TEMP_DIR"
+        exit 1
+    fi
+
+    echo_info "Installing nodejs and npm"
+    if pacman -S nodejs npm ; then
+        echo_success "Nodejs and npm installed through pacman"
+    else
+        echo_error "Unable to install nodejs and npm through pacman"
+    fi
+        
 }
 
 is_compatible() {
