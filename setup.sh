@@ -142,7 +142,7 @@ install_node_arch() {
         echo_info "Cloning nvm upstream url"
         if git clone $NVM_URL "$TEMP_DIR" ; then 
             echo_success "nvm cloned into $TEMP_DIR, changing dir and making package"
-            if cd /tmp/nvm-arch && makepkg si ; then
+            if cd /tmp/nvm-arch && makepkg -si ; then
                 echo_success "NVM has been installed through the AUR."
             else
                 echo_error "Unable to makepkg -si in /opt/nvm-arch" 1>&2
