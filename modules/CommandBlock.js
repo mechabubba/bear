@@ -1,8 +1,8 @@
 const BaseBlock = require("./BaseBlock");
 const { isArrayOfStrings, isPermissionResolvable } = require("./miscellaneous");
-const { has, isNil, isArray, isPlainObject, isFunction, isString, isBoolean } = require("lodash");
+const { has, defaultsDeep, isNil, isArray, isPlainObject, isFunction, isString, isBoolean } = require("lodash");
 const log = require("./log");
-const { defaultCommandBlock } = require("./defaultData");
+const { defaultCommandData } = require("./defaultData");
 
 /**
  * Data regarding the command such as it's names and metadata
@@ -58,70 +58,63 @@ class CommandBlock extends BaseBlock {
      * @type {?string}
      * @name CommandBlock#summary
      */
-    this.summary = has(data, "summary") && !isNil(data.summary) ? data.summary : defaultCommandBlock.summary;
 
     /**
      * A description describing this command block, can be paragraphs long and include markdown formatting
      * @type {?string}
      * @name CommandBlock#description
      */
-    this.description = has(data, "description") && !isNil(data.description) ? data.description : defaultCommandBlock.description;
 
     /**
      * A string describing expected parameters and usage. There isn't a standard for these laid out yet, but in the default commands <> denotes a required parameter while [] denotes an optional one
      * @type {?string}
      * @name CommandBlock#usage
      */
-    this.usage = has(data, "usage") && !isNil(data.usage) ? data.usage : defaultCommandBlock.usage;
 
     /**
      * An array of [channel types](https://discord.js.org/#/docs/main/stable/class/TextChannel?scrollTo=type) that this command block may be ran in. Most commonly used to limit commands to guilds or direct messages
      * @type {[string]}
      * @name CommandBlock#channelTypes
      */
-    this.channelTypes = has(data, "channelTypes") && !isNil(data.channelTypes) ? data.channelTypes : defaultCommandBlock.channelTypes;
 
     /**
      * Whether or not this command block may only be ran in a [nsfw channel](https://discord.js.org/#/docs/main/stable/class/TextChannel?scrollTo=nsfw)
      * @type {boolean}
      * @name CommandBlock#nsfw
      */
-    this.nsfw = has(data, "nsfw") && !isNil(data.nsfw) ? data.nsfw : defaultCommandBlock.nsfw;
 
     /**
      * Access control for commands. Accepts `true` (prevents being ran by anyone), user ids, and user group names. Can take multiple user ids and group names via array, mixing allowed.
      * @type {(boolean|string|[string])}
      * @name CommandBlock#locked
      */
-    this.locked = has(data, "locked") && !isNil(data.locked) ? data.locked : defaultCommandBlock.locked;
 
     /**
      * Permissions the client (bot account) needs to run the command
      * @type {?PermissionResolvable}
      * @name CommandBlock#clientPermissions
      */
-    this.clientPermissions = has(data, "clientPermissions") && !isNil(data.clientPermissions) ? data.clientPermissions : defaultCommandBlock.clientPermissions;
 
     /**
      * Permissions the client (bot account) needs to run the command in a specific channel, taking into account channel overwrites
      * @type {?PermissionResolvable}
      * @name CommandBlock#clientChannelPermissions
      */
-    this.clientChannelPermissions = has(data, "clientChannelPermissions") && !isNil(data.clientChannelPermissions) ? data.clientChannelPermissions : defaultCommandBlock.clientChannelPermissions;
 
     /**
      * Permissions the user (person running the command) needs to access the command
      * @type {?PermissionResolvable}
      * @name CommandBlock#userPermissions
      */
-    this.userPermissions = has(data, "userPermissions") && !isNil(data.userPermissions) ? data.userPermissions : defaultCommandBlock.userPermissions;
 
     /**
      * Permissions the user (person running the command) needs to access the command in a specific channel, taking into account channel overwrites
      * @type {?PermissionResolvable}
      * @name CommandBlock#userChannelPermissions
      */
-    this.userChannelPermissions = has(data, "userChannelPermissions") && !isNil(data.userChannelPermissions) ? data.userChannelPermissions : defaultCommandBlock.userChannelPermissions;
+
+    // Write properties to command block & default values for properties that weren't supplied
+    defaultsDeep(this, data, defaultCommandData);
 
     // Methods
     // Note that bind() isn't used here in favor of doing it in CommandConstruct's load method, so that it can bind parameters as well

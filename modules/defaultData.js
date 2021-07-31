@@ -72,11 +72,11 @@ module.exports.disabledModules = [
 ];
 
 /**
- * Default CommandBlock properties
+ * Default CommandBlock property data
  * These may be moved to static properties of CommandBlock, but [expected year for feature publication is 2022](https://github.com/tc39/proposals/blob/master/finished-proposals.md) and I'm not switching to babel parser yet
  * See documentation for these properties in ./modules/CommandBlock.js
  */
-module.exports.defaultCommandBlock = {
+module.exports.defaultCommandData = {
   summary: null,
   description: null,
   usage: null,
@@ -94,4 +94,4 @@ module.exports.defaultCommandBlock = {
  * As of right now, there aren't any
  * Same deal as the default CommandBlock properties above re: static properties on the class
  */
-module.exports.defaultListenerBlock = {};
+module.exports.defaultListenerData = {};
