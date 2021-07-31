@@ -2,6 +2,7 @@ const BaseBlock = require("./BaseBlock");
 const { isArrayOfStrings, isPermissionResolvable } = require("./miscellaneous");
 const { has, isNil, isArray, isPlainObject, isFunction, isString, isBoolean } = require("lodash");
 const log = require("./log");
+const { defaultCommandBlock } = require("./defaultData");
 
 /**
  * Data regarding the command such as it's names and metadata
@@ -52,52 +53,52 @@ class CommandBlock extends BaseBlock {
     /**
      * @type {?string}
      */
-    this.summary = has(data, "summary") && !isNil(data.summary) ? data.summary : null;
+    this.summary = has(data, "summary") && !isNil(data.summary) ? data.summary : defaultCommandBlock.summary;
 
     /**
      * @type {?string}
      */
-    this.description = has(data, "description") && !isNil(data.description) ? data.description : null;
+    this.description = has(data, "description") && !isNil(data.description) ? data.description : defaultCommandBlock.description;
 
     /**
      * @type {?string}
      */
-    this.usage = has(data, "usage") && !isNil(data.usage) ? data.usage : null;
+    this.usage = has(data, "usage") && !isNil(data.usage) ? data.usage : defaultCommandBlock.usage;
 
     /**
      * @type {[string]}
      */
-    this.channelTypes = has(data, "channelTypes") && !isNil(data.channelTypes) ? data.channelTypes : ["dm", "text", "news"];
+    this.channelTypes = has(data, "channelTypes") && !isNil(data.channelTypes) ? data.channelTypes : defaultCommandBlock.channelTypes;
 
     /**
      * @type {boolean}
      */
-    this.nsfw = has(data, "nsfw") && !isNil(data.nsfw) ? data.nsfw : false;
+    this.nsfw = has(data, "nsfw") && !isNil(data.nsfw) ? data.nsfw : defaultCommandBlock.nsfw;
 
     /**
      * @type {(boolean|string|[string])}
      */
-    this.locked = has(data, "locked") && !isNil(data.locked) ? data.locked : false;
+    this.locked = has(data, "locked") && !isNil(data.locked) ? data.locked : defaultCommandBlock.locked;
 
     /**
      * @type {?PermissionResolvable}
      */
-    this.clientPermissions = has(data, "clientPermissions") && !isNil(data.clientPermissions) ? data.clientPermissions : null;
+    this.clientPermissions = has(data, "clientPermissions") && !isNil(data.clientPermissions) ? data.clientPermissions : defaultCommandBlock.clientPermissions;
 
     /**
      * @type {?PermissionResolvable}
      */
-    this.clientChannelPermissions = has(data, "clientChannelPermissions") && !isNil(data.clientChannelPermissions) ? data.clientChannelPermissions : null;
+    this.clientChannelPermissions = has(data, "clientChannelPermissions") && !isNil(data.clientChannelPermissions) ? data.clientChannelPermissions : defaultCommandBlock.clientChannelPermissions;
 
     /**
      * @type {?PermissionResolvable}
      */
-    this.userPermissions = has(data, "userPermissions") && !isNil(data.userPermissions) ? data.userPermissions : null;
+    this.userPermissions = has(data, "userPermissions") && !isNil(data.userPermissions) ? data.userPermissions : defaultCommandBlock.userPermissions;
 
     /**
      * @type {?PermissionResolvable}
      */
-    this.userChannelPermissions = has(data, "userChannelPermissions") && !isNil(data.userChannelPermissions) ? data.userChannelPermissions : null;
+    this.userChannelPermissions = has(data, "userChannelPermissions") && !isNil(data.userChannelPermissions) ? data.userChannelPermissions : defaultCommandBlock.userChannelPermissions;
 
     // Methods
     // Note that bind() isn't used here in favor of doing it in CommandConstruct's load method, so that it can bind parameters as well

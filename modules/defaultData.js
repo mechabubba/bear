@@ -72,3 +72,27 @@ module.exports.disabledModules = [
   "bot/commands/templateMultiple.js",
   "bot/commands/eval.js",
 ];
+
+/**
+ * Default CommandBlock properties
+ * These may be moved to static properties of CommandBlock, but [expected year for feature publication is 2022](https://github.com/tc39/proposals/blob/master/finished-proposals.md) and I'm not switching to babel parser yet
+ */
+module.exports.defaultCommandBlock = {
+  summary: null,
+  description: null,
+  usage: null,
+  channelTypes: ["dm", "text", "news"],
+  nsfw: false,
+  locked: false,
+  clientPermissions: null,
+  clientChannelPermissions: null,
+  userPermissions: null,
+  userChannelPermissions: null,
+};
+
+/**
+ * Default ListenerBlock properties
+ * As of right now, there aren't any
+ * Same deal as the default CommandBlock properties above re: static properties on the class
+ */
+module.exports.defaultListenerBlock = {};

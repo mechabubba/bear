@@ -1,8 +1,8 @@
-## `0.0.7` / `2021-05-XX`
+## `0.0.7` / `2021-0X-XX`
 
 _The changelog for this version is incomplete/w.i.p and currently being written in tandem with the development of this version._
 
-*Changes which double as as noteworthy depreciation warnings will be prefixed with ⚠️*
+*Changes which count as as noteworthy depreciation warnings will be prefixed with* ⚠️
 
 - ⚠️ Bumped minimum node.js version from v12 to v14, matching the future minimum for discord.js
 
@@ -15,6 +15,8 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
 - The handler now deep clones required modules rather than passing around a reference to the [require cache](https://nodejs.org/api/modules.html#modules_require_cache) in order to avoid changing it. Closes [#32](https://github.com/06000208/sandplate/issues/32)
 
 - ⚠️ Command blocks no longer use the `scope` property to declare what channel types they may be used in, this was moved to the `channelTypes` property to free `scope` for potential new purposes
+
+- CommandBlock's default properties, such as description, channelType, locked, etc. which are used when they aren't supplied to the constructor are now stored in `defaultData.js` and easier to change
 
 - CommandConstruct's run function has been rewritten, and it's various checks such as channel type, nsfw channel, locked command, etc. have been remade as functions on CommandBlock. As such, the help command which needed to use two of the same checks is much nicer now, and 5 new custom events have been added to aid behavior implementation, see below for more info.
   - The new functions are `checkChannelType()`, `checkNotSafeForWork()`, `checkLocked()`, and `checkPermissions()`. They all take a Message as their first parameter, while checkPermissions also takes a GuildMember and the permissions to be checked
