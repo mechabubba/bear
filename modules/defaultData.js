@@ -5,7 +5,6 @@
  * @property {?string} client.token Token of the account to login with
  * @property {Object} commands Config options concerning commands
  * @property {string} commands.directory Path of a folder where modules are located
- * @property {[string]} commands.channelTypes An array of channel types where commands are allowed. https://discord.js.org/#/docs/main/stable/class/Channel?scrollTo=type
  * @property {?(string|[string])} commands.prefix Command prefixes. Supports any amount of them, including none (null), one (string), or any (array)
  * @property {boolean} commands.mentions Whether mentioning the bot as a prefix is enabled
  * @property {Object} events Config options concerning discord.js events
@@ -34,7 +33,6 @@ module.exports.config = {
   },
   "commands": {
     "directory": "./bot/commands/",
-    "channelTypes": ["dm", "text", "news"],
     "prefix": null,
     "mentions": true,
   },
@@ -76,6 +74,7 @@ module.exports.disabledModules = [
 /**
  * Default CommandBlock properties
  * These may be moved to static properties of CommandBlock, but [expected year for feature publication is 2022](https://github.com/tc39/proposals/blob/master/finished-proposals.md) and I'm not switching to babel parser yet
+ * See documentation for these properties in ./modules/CommandBlock.js
  */
 module.exports.defaultCommandBlock = {
   summary: null,
