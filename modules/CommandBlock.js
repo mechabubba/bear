@@ -7,17 +7,19 @@ const { defaultCommandData } = require("./defaultData");
 /**
  * Data regarding the command such as it's names and metadata
  * @typedef {Object} CommandData
- * @property {(string|[string])} identity The command's name(s)
- * @property {?string} [summary=null] A sentence about what the command does, should be kept relatively short
- * @property {?string} [description=null] Description about what the command does and it's usage, should be kept below 1800 characters
- * @property {?string} [usage=null] String containing argument usage descriptors
- * @property {?[string]} [channelTypes=["dm", "text", "news"]] An array of channel types where the command is allowed https://discord.js.org/#/docs/main/stable/class/Channel?scrollTo=type
- * @property {?boolean} [nsfw=false] Whether or not the command is nsfw
- * @property {?(boolean|string|[string])} [locked=false] Powerful command access control. `false` command is not locked, `true` command is locked, `string` command is locked to a user group name or an account id, `Array` command is locked to any number of group names or account ids
- * @property {?PermissionResolvable} [clientPermissions=null] PermissionResolvable the client must have in guilds for the command to work
- * @property {?PermissionResolvable} [clientChannelPermissions=null] PermissionResolvable the client must have in guilds (taking into account channel overrides) for the command to work
- * @property {?PermissionResolvable} [userPermissions=null] PermissionResolvable the user of the command must have in guilds to use the command
- * @property {?PermissionResolvable} [userChannelPermissions=null] PermissionResolvable the user of the command must have in guilds (taking into account channel overrides) to use the command
+ * @property {[string]} names The CommandBlock's unique names
+ * @property {(string|[string])} identity Deprecated property. The CommandBlock's unique names
+ * @property {?string} [summary=null]  A summary describing this command block, expected to be only a sentence or so and not use any markdown formatting
+ * @property {?string} [description=null] A description describing this command block, can be paragraphs long and include markdown formatting, but should be kept below 1800 characters
+ * @property {?string} [usage=null] A string describing expected parameters and usage. There isn't a standard for these laid out yet, but in the default commands <> denotes a required parameter while [] denotes an optional one
+ * @property {?[string]} [channelTypes=["dm", "text", "news"]] An array of [channel types](https://discord.js.org/#/docs/main/stable/class/TextChannel?scrollTo=type) that this command block may be ran in. Most commonly used to limit commands to guilds or direct messages.
+ * @property {?[string]} [scope=["dm", "text", "news"]] Deprecated property. An array of [channel types](https://discord.js.org/#/docs/main/stable/class/TextChannel?scrollTo=type) that this command block may be ran in. Most commonly used to limit commands to guilds or direct messages.
+ * @property {?boolean} [nsfw=false] Whether or not this command block may only be ran in a [nsfw channel](https://discord.js.org/#/docs/main/stable/class/TextChannel?scrollTo=nsfw)
+ * @property {?(boolean|string|[string])} [locked=false] Access control for commands. Accepts `false` (not locked), `true` (prevents being ran by anyone), user ids, and user group names. Can take any number of user ids and group names via array, mixing allowed.
+ * @property {?PermissionResolvable} [clientPermissions=null] Permission the client (bot account) needs for the command to work
+ * @property {?PermissionResolvable} [clientChannelPermissions=null] Permissions the client (bot account) needs for the command to work in a specific channel, taking into account channel overwrites
+ * @property {?PermissionResolvable} [userPermissions=null] Permissions the user (person running the command) must have in guilds to use the command
+ * @property {?PermissionResolvable} [userChannelPermissions=null] Permissions the user (person running the command) must have in guilds to use the command in a specific channel, taking into account channel overwrites
  */
 
 /**
@@ -46,12 +48,28 @@ class CommandBlock extends BaseBlock {
     // Data
 
     /**
-     * The unique names associated with this command block
-     * @deprecated string only identities will throw an err. in 0.0.8 and above, store them in an array
+     * The unique names associated with this command block. Each is mapped to this CommandBlock's id in CommandConstruct#index
+     * @type {[string]}
+     * @name CommandBlock#names
+     */
+    if (has(data, "names")) {
+      this.names = data.names;
+    } else if (has(data, "identity")) {
+      if (isArray(data.identity)) {
+        this.names = data.identity;
+      } else {
+        this.names [data.identity];
+      }
+      this.identity = data.identity;
+    }
+
+    /**
+     * The unique names associated with this command block. Deprecated in favor of CommandBlock#names
+     * @deprecated In 0.0.8 and above, this property will stop working. Use CommandBlock#names and store them via array
      * @type {(string|[string])}
      * @name CommandBlock#identity
+     * @todo Remove this and related code supporting the older property in 0.0.8
      */
-    this.identity = data.identity;
 
     /**
      * A summary describing this command block, expected to be only a sentence or so and not use any markdown formatting
@@ -60,7 +78,7 @@ class CommandBlock extends BaseBlock {
      */
 
     /**
-     * A description describing this command block, can be paragraphs long and include markdown formatting
+     * A description describing this command block, can be paragraphs long and include markdown formatting, but should be kept below 1800 characters
      * @type {?string}
      * @name CommandBlock#description
      */
@@ -76,6 +94,20 @@ class CommandBlock extends BaseBlock {
      * @type {[string]}
      * @name CommandBlock#channelTypes
      */
+    if (has(data, "channelTypes") && !isNil(data.channelTypes)) {
+      this.channelTypes = data.channelTypes;
+    } else if (has(data, "scope")) {
+      this.scope = data.scope;
+      this.channelTypes = data.scope;
+    }
+
+    /**
+     * An array of [channel types](https://discord.js.org/#/docs/main/stable/class/TextChannel?scrollTo=type) that this command block may be ran in. Most commonly used to limit commands to guilds or direct messages. Deprecated in favor of CommandBlock#channelTypes
+     * @deprecated In 0.0.8 and above, this property will stop working. Use CommandBlock#channelTypes with the same usage
+     * @type {[string]}
+     * @name CommandBlock#scope
+     * @todo Remove this and related code supporting the older property in 0.0.8
+     */
 
     /**
      * Whether or not this command block may only be ran in a [nsfw channel](https://discord.js.org/#/docs/main/stable/class/TextChannel?scrollTo=nsfw)
@@ -84,31 +116,31 @@ class CommandBlock extends BaseBlock {
      */
 
     /**
-     * Access control for commands. Accepts `true` (prevents being ran by anyone), user ids, and user group names. Can take multiple user ids and group names via array, mixing allowed.
+     * Access control for commands. Accepts `false` (not locked), `true` (prevents being ran by anyone), user ids, and user group names. Can take any number of user ids and group names via array, mixing allowed.
      * @type {(boolean|string|[string])}
      * @name CommandBlock#locked
      */
 
     /**
-     * Permissions the client (bot account) needs to run the command
+     * Permissions the client (bot account) needs for the command to work
      * @type {?PermissionResolvable}
      * @name CommandBlock#clientPermissions
      */
 
     /**
-     * Permissions the client (bot account) needs to run the command in a specific channel, taking into account channel overwrites
+     * Permissions the client (bot account) needs for the command to work in a specific channel, taking into account channel overwrites
      * @type {?PermissionResolvable}
      * @name CommandBlock#clientChannelPermissions
      */
 
     /**
-     * Permissions the user (person running the command) needs to access the command
+     * Permissions the user (person running the command) must have in guilds to use the command
      * @type {?PermissionResolvable}
      * @name CommandBlock#userPermissions
      */
 
     /**
-     * Permissions the user (person running the command) needs to access the command in a specific channel, taking into account channel overwrites
+     * Permissions the user (person running the command) must have in guilds to use the command in a specific channel, taking into account channel overwrites
      * @type {?PermissionResolvable}
      * @name CommandBlock#userChannelPermissions
      */
@@ -128,15 +160,12 @@ class CommandBlock extends BaseBlock {
   }
 
   /**
+   * @deprecated Use names[0] instead
    * @type {string}
    * @readonly
    */
   get firstName() {
-    if (isArray(this.identity)) {
-      return this.identity[0];
-    } else {
-      return this.identity;
-    }
+    return this.names[0];
   }
 
   /**
@@ -144,11 +173,7 @@ class CommandBlock extends BaseBlock {
    * @readonly
    */
   get shortestName() {
-    if (isArray(this.identity)) {
-      return this.identity.reduce((acc, cur) => acc.length <= cur.length ? acc : cur);
-    } else {
-      return this.identity;
-    }
+    return this.names.reduce((acc, cur) => acc.length <= cur.length ? acc : cur);
   }
 
   /**
@@ -156,11 +181,7 @@ class CommandBlock extends BaseBlock {
    * @readonly
    */
   get longestName() {
-    if (isArray(this.identity)) {
-      return this.identity.reduce((acc, cur) => acc.length < cur.length ? cur : acc);
-    } else {
-      return this.identity;
-    }
+    return this.names.reduce((acc, cur) => acc.length < cur.length ? cur : acc);
   }
 
   /**
@@ -231,53 +252,61 @@ class CommandBlock extends BaseBlock {
    * @param {run} run
    * @private
    * @todo May be worth looking into schema based validation
-   * @todo Parameter scope is now depreciated, remove warning in one of the next versions
+   * @todo Parameter scope is now deprecated, remove warning in one of the next versions
    */
   static validateParameters(data, run) {
     if (!isPlainObject(data)) throw new TypeError("Command data parameter must be an Object.");
     if (!isFunction(run)) throw new TypeError("Command run parameter must be a function.");
-    if (!isString(data.identity) && !isArrayOfStrings(data.identity)) throw new TypeError("Command data.identity must be a string or an Array of strings.");
-    if (has(data, "summary") && !isNil(data.summary)) if (!isString(data.summary)) throw new TypeError("Command data.summary must be a string.");
-    if (has(data, "description") && !isNil(data.description)) if (!isString(data.description)) throw new TypeError("Command data.description must be a string.");
-    if (has(data, "usage") && !isNil(data.usage)) if (!isString(data.usage)) throw new TypeError("Command data.usage must be a string.");
-    if (has(data, "scope")) log.warn("Depreciation Warning: Command parameter \"scope\" was renamed to \"channelTypes\" and now does nothing, new parameter retains same usage. This warning will be removed in a future version.");
-    if (has(data, "channelTypes") && !isNil(data.channelTypes)) if (!isArrayOfStrings(data.channelTypes, false)) throw new TypeError("Command data.channelTypes must be an Array of strings.");
-    if (has(data, "nsfw") && !isNil(data.nsfw)) if (!isBoolean(data.nsfw)) throw new TypeError("Command data.nsfw must be a boolean.");
-    if (has(data, "locked") && !isNil(data.locked)) if (!isBoolean(data.locked) && !isString(data.locked) && !isArrayOfStrings(data.locked)) throw new TypeError("Command data.locked must be a boolean, string, or an Array of strings.");
+    if (!has(data, "names") && !has(data, "identity")) throw new TypeError("CommandBlock#names is a required property and must be supplied.");
+    if (has(data, "names")) if (!isArrayOfStrings(data.names)) throw new TypeError("CommandBlock#names must be an Array of strings.");
+    if (has(data, "identity") && !isNil(data.identity)) {
+      log.warn("Depreciation Warning: CommandBlock#identity was deprecated in favor of CommandBlock#names. This warning and support will be removed in a future version.");
+      if (!isString(data.identity) && !isArrayOfStrings(data.identity)) throw new TypeError("CommandBlock#identity must be a string or an Array of strings.");
+    }
+    if (has(data, "summary") && !isNil(data.summary)) if (!isString(data.summary)) throw new TypeError("CommandBlock#summary must be a string.");
+    if (has(data, "description") && !isNil(data.description)) if (!isString(data.description)) throw new TypeError("CommandBlock#description must be a string.");
+    if (has(data, "usage") && !isNil(data.usage)) if (!isString(data.usage)) throw new TypeError("CommandBlock#usage must be a string.");
+    if (has(data, "channelTypes") && !isNil(data.channelTypes)) if (!isArrayOfStrings(data.channelTypes, false)) throw new TypeError("CommandBlock#channelTypes must be an Array of strings.");
+    if (has(data, "scope") && !isNil(data.scope)) {
+      log.warn("Depreciation Warning: CommandBlock#scope was renamed to CommandBlock#channelTypes which retains same usage. This warning and support will be removed in a future version.");
+      if (!isArrayOfStrings(data.scope, false)) throw new TypeError("CommandBlock#scope must be an Array of strings.");
+    }
+    if (has(data, "nsfw") && !isNil(data.nsfw)) if (!isBoolean(data.nsfw)) throw new TypeError("CommandBlock#nsfw must be a boolean.");
+    if (has(data, "locked") && !isNil(data.locked)) if (!isBoolean(data.locked) && !isString(data.locked) && !isArrayOfStrings(data.locked)) throw new TypeError("CommandBlock#locked must be a boolean, string, or an Array of strings.");
     if (has(data, "clientPermissions") && !isNil(data.clientPermissions)) {
       if (isArray(data.clientPermissions)) {
         for (const value of data.clientPermissions) {
-          if (!isPermissionResolvable(value)) throw new TypeError("Command data.clientPermissions Array must only contain PermissionResolvable");
+          if (!isPermissionResolvable(value)) throw new TypeError("CommandBlock#clientPermissions Array must only contain PermissionResolvable");
         }
       } else if (!isPermissionResolvable(data.clientPermissions)) {
-        throw new TypeError("Command data.clientPermissions must be a PermissionResolvable");
+        throw new TypeError("CommandBlock#clientPermissions must be a PermissionResolvable");
       }
     }
     if (has(data, "clientChannelPermissions") && !isNil(data.clientChannelPermissions)) {
       if (isArray(data.clientChannelPermissions)) {
         for (const value of data.clientChannelPermissions) {
-          if (!isPermissionResolvable(value)) throw new TypeError("Command data.clientChannelPermissions Array must only contain PermissionResolvable");
+          if (!isPermissionResolvable(value)) throw new TypeError("CommandBlock#clientChannelPermissions Array must only contain PermissionResolvable");
         }
       } else if (!isPermissionResolvable(data.clientChannelPermissions)) {
-        throw new TypeError("Command data.clientChannelPermissions must be a PermissionResolvable");
+        throw new TypeError("CommandBlock#clientChannelPermissions must be a PermissionResolvable");
       }
     }
     if (has(data, "userPermissions") && !isNil(data.userPermissions)) {
       if (isArray(data.userPermissions)) {
         for (const value of data.userPermissions) {
-          if (!isPermissionResolvable(value)) throw new TypeError("Command data.userPermissions Array must only contain PermissionResolvable");
+          if (!isPermissionResolvable(value)) throw new TypeError("CommandBlock#userPermissions Array must only contain PermissionResolvable");
         }
       } else if (!isPermissionResolvable(data.userPermissions)) {
-        throw new TypeError("Command data.userPermissions must be a PermissionResolvable");
+        throw new TypeError("CommandBlock#userPermissions must be a PermissionResolvable");
       }
     }
     if (has(data, "userChannelPermissions") && !isNil(data.userChannelPermissions)) {
       if (isArray(data.userChannelPermissions)) {
         for (const value of data.userChannelPermissions) {
-          if (!isPermissionResolvable(value)) throw new TypeError("Command data.userChannelPermissions Array must only contain PermissionResolvable");
+          if (!isPermissionResolvable(value)) throw new TypeError("CommandBlock#userChannelPermissions Array must only contain PermissionResolvable");
         }
       } else if (!isPermissionResolvable(data.userChannelPermissions)) {
-        throw new TypeError("Command data.userChannelPermissions must be a PermissionResolvable");
+        throw new TypeError("CommandBlock#userChannelPermissions must be a PermissionResolvable");
       }
     }
   }

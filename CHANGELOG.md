@@ -1,12 +1,12 @@
-## `0.0.7` / `2021-0X-XX`
+## `0.0.7` / `2021-XX-XX`
 
-_The changelog for this version is incomplete/w.i.p and currently being written in tandem with the development of this version._
+_The changelog for this version is incomplete/w.i.p and currently being written in tandem with the development of this version. Things may be incorrect._
 
 *Changes which count as as noteworthy depreciation warnings will be prefixed with* ⚠️
 
 - ⚠️ Bumped minimum node.js version from v12 to v14, matching the future minimum for discord.js
 
-- Updated all npm dependencies to latest major, except for lodash 2.0.0 (would require esm migration)
+- Updated all npm dependencies to latest major, except for lowdb 2.0.0 (would require esm migration)
 
 - Several parts of the bot have received attention, closing [#21](https://github.com/06000208/sandplate/issues/21). These are all described below.
 
@@ -14,15 +14,19 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
 
 - The handler now deep clones required modules rather than passing around a reference to the [require cache](https://nodejs.org/api/modules.html#modules_require_cache) in order to avoid changing it. Closes [#32](https://github.com/06000208/sandplate/issues/32)
 
-- ⚠️ Command blocks no longer use the `scope` property to declare what channel types they may be used in, this was moved to the `channelTypes` property to free `scope` for potential new purposes
+- ⚠️ The `CommandBlock#identity` property is now deprecated in favor of the new `CommandBlock#names` and exclusively using arrays. It still works for this version, but support and the deprecation warning logged to console will be removed in 0.0.8. 
+
+- ⚠️ The `CommandBlock#scope` property is now deprecated, it was renamed to `CommandBlock#channelTypes` with identical usage to free `scope` for potential new purposes. It still works for this version, but support and the deprecation warning logged to console will be removed in 0.0.8
 
 - CommandBlock's default properties, such as description, channelType, locked, etc. which are used when they aren't supplied to the constructor are now stored in `defaultData.js` and easier to change. They're also correctly documented now
+  - The `commands.channelTypes` config property was removed from default config data, as I'm pretty sure it wasn't being used anywhere
+  - ⚠️ The order (in which they were defined) of properties on instances of CommandBlock is no longer consistent. This shouldn't effect or break anything, but I'm mentioning it here anyway.
+
+- Two new parameters to match `CommandBlock#clientPermissions` and `CommandBlock#userPermissions` have been added, `CommandBlock#clientChannelPermissions` and `CommandBlock#userChannelPermissions`, allowing commands to specify channel overrides to be checked as well
 
 - CommandConstruct's run function has been rewritten, and it's various checks such as channel type, nsfw channel, locked command, etc. have been remade as functions on CommandBlock. As such, the help command which needed to use two of the same checks is much nicer now, and 5 new custom events have been added to aid behavior implementation, see below for more info.
   - The new functions are `checkChannelType()`, `checkNotSafeForWork()`, `checkLocked()`, and `checkPermissions()`. They all take a Message as their first parameter, and checkPermissions also takes the PermissionResolvable to be checked and two booleans to control behavior, useClient and useChannel
   - ⚠️ The parameters for CommandConstruct's run function has been changed. It no longer runs commands by name, instead taking an id as the first parameter, and a new function `CommandConstruct.runByName` with the old functionality has been added
-
-- Two new parameters to match `clientPermissions` and `userPermissions` have been added, `clientChannelPermissions` and `userChannelPermissions`, allowing commands to specify channel overrides to be checked as well
 
 - New modules.json lowdb database as a built in way to disable modules, which is optionally respected by `requireDirectory()`, `requireMultipleModules()`, or `requireModule()`. This is so disabling modules plays much nicer with git (no longer requiring file renames), and with the new approach, disabled modules not loaded on start up can still be easily loaded later if desired. Closes [#26](https://github.com/06000208/sandplate/issues/26)
   - Modules `./bot/commands/templateMultiple.js` and `./bot/commands/example.js` have been renamed back accordingly and disabled by default using the new method in `defaultData.js`
@@ -31,7 +35,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
   - The old way of tacking `.disabled` onto the end of module file names will still work, as it was a side effect of only `.js` files being detected
   - ⚠️ If you already have a modules.json file from testing earlier versions of 0.0.7, remove it and let the bot generate it naturally
 
-- Alongside modules.json, a new property has been introduced for BaseBlock and the classes that inherit from it (CommandBlock and ListenerBlock) named trimmedPath. These paths are made by a new Handler function, trimPath(), which truncates X amount of subfolders equal to the amount descended to the working directory, if present, from the beginning
+- Alongside modules.json, a new property has been introduced for BaseBlock and the classes that inherit from it (CommandBlock and ListenerBlock) named trimmedPath. These paths are made by a new Handler function, trimPath(), which truncates X amount of subfolders equal to the amount descended to the working directory from the beginning, if present
 
   For example, `G:\\root\\projects\\discord bots\\sandplate\\bot\\commands\\ping.js` becomes `bot/commands/ping.js`
 

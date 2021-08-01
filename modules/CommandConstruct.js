@@ -77,14 +77,14 @@ class CommandConstruct extends BaseConstruct {
     // bind correct this value & prefix the client as the first parameter
     command.run = command.run.bind(command, this.client);
     // collections
-    forAny((name) => {
+    command.names.forEach((name) => {
       if (this.index.has(name) && this.cache.has(this.index.get(name))) {
         const oldCommand = this.cache.get(this.index.get(name));
         log.warn(`Command name "${name}" from ${!oldCommand.filePath ? "an anonymous block" : oldCommand.filePath} was overwritten in the index by ${!command.filePath ? "an anonymous block" : command.filePath}`);
       }
       if (/[\n\r\s]+/.test(name)) log.warn(`Command name "${name}" from ${!command.filePath ? "an anonymous block" : command.filePath} contains white space and won't be reached by the parsing in commandParser.js`);
       this.index.set(name, command.id);
-    }, command.identity);
+    });
   }
 
   /**
@@ -96,7 +96,7 @@ class CommandConstruct extends BaseConstruct {
     // parent
     super.unload(command);
     // collections
-    forAny((name) => this.index.delete(name), command.identity);
+    command.names.forEach((name) => this.index.delete(name));
   }
 
   /**
