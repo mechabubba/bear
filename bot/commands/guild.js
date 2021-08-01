@@ -3,7 +3,7 @@ const { numeric } = require("../../modules/regexes");
 const { MessageEmbed } = require("discord.js");
 
 module.exports = new CommandBlock({
-  identity: ["guild"],
+  names: ["guild"],
   summary: "Provides guild info",
   description: "Logs a list of guilds to the console or provides info about individual guilds when queried.",
   usage: "[guild id]",

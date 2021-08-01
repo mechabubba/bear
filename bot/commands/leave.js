@@ -3,14 +3,14 @@ const log = require("../../modules/log");
 const { numeric } = require("../../modules/regexes");
 
 module.exports = new CommandBlock({
-  identity: ["leave"],
+  names: ["leave"],
   summary: "Leave a guild",
   description: "Instruct the bot to leave a specific guild.",
   usage: "<id>",
   locked: "hosts",
   clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, args) {
-  if (!content) return message.channel.send(`Arguments are required\nUsage: \`${this.firstName} ${this.usage}\``);
+  if (!content) return message.channel.send(`Arguments are required\nUsage: \`${this.names[0]} ${this.usage}\``);
   if (!numeric.test(content)) return message.channel.send(`The id \`${content}\` was invalid`);
   if (!client.guilds.cache.has(content)) return message.channel.send(`${client.user.tag} did not have \`${content}\` mapped to a guild in the guilds cache`);
   const guild = client.guilds.cache.get(content);

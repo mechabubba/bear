@@ -6,7 +6,7 @@ const fileTypes = [".png", ".jpg", ".jpeg", ".webp", ".gif"];
 const { has } = require("lodash");
 
 module.exports = new CommandBlock({
-  identity: ["file", "wm", "wikimedia", "commons", "cc"],
+  names: ["file", "wm", "wikimedia", "commons", "cc"],
   summary: "Retrieves a file from wikimedia (occasionally NSFW)",
   description: "Query a random or specific file from [Wikimedia Commons](https://commons.wikimedia.org/wiki/Main_Page). This, rarely, will contain NSFW, graphic, or otherwise inappropriate content.",
   usage: "[page id]",

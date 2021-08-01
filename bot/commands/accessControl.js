@@ -32,17 +32,17 @@ const determineType = function(input) {
 
 module.exports = [
   new CommandBlock({
-    identity: ["block", "deny"],
+    names: ["block", "deny"],
     summary: "Deny access to the bot",
     description: "Prohibits a user or guild from interacting with the bot.",
     usage: "user/guild <id>",
     locked: "hosts",
     clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, async function(client, message, content, [type, id, ...args]) {
-    if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
+    if (!content) return message.channel.send(`Usage: \`${this.names[0]} ${this.usage}\``);
     const group = determineType(type);
-    if (!group) return message.channel.send(`Unrecognized type\nUsage: \`${this.firstName} ${this.usage}\``);
-    if (!numeric.test(id)) return message.channel.send(`An id is required\nUsage: \`${this.firstName} ${this.usage}\``);
+    if (!group) return message.channel.send(`Unrecognized type\nUsage: \`${this.names[0]} ${this.usage}\``);
+    if (!numeric.test(id)) return message.channel.send(`An id is required\nUsage: \`${this.names[0]} ${this.usage}\``);
     if (client.config.get(group.path).value() === null) {
       client.config.set(group.path, []).write();
     } else if (client.config.get(group.path).includes(id).value()) {
@@ -54,17 +54,17 @@ module.exports = [
     return message.channel.send(`Blocked ${group.type} \`${id}\``);
   }),
   new CommandBlock({
-    identity: ["unblock", "allow"],
+    names: ["unblock", "allow"],
     summary: "Restore access to the bot",
     description: "Restore a user or guild's access to the bot.",
     usage: "user/guild <id>",
     locked: "hosts",
     clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, function(client, message, content, [type, id, ...args]) {
-    if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
+    if (!content) return message.channel.send(`Usage: \`${this.names[0]} ${this.usage}\``);
     const group = determineType(type);
-    if (!group) return message.channel.send(`Unrecognized type\nUsage: \`${this.firstName} ${this.usage}\``);
-    if (!numeric.test(id)) return message.channel.send(`An id is required\nUsage: \`${this.firstName} ${this.usage}\``);
+    if (!group) return message.channel.send(`Unrecognized type\nUsage: \`${this.names[0]} ${this.usage}\``);
+    if (!numeric.test(id)) return message.channel.send(`An id is required\nUsage: \`${this.names[0]} ${this.usage}\``);
     if (client.config.get(group.path).value() === null || !client.config.get(group.path).includes(id).value()) {
       return message.channel.send(`${startCase(group.type)} \`${id}\` isn't blocked`);
     }
@@ -76,14 +76,14 @@ module.exports = [
     return message.channel.send(`Unblocked ${group.type} \`${id}\``);
   }),
   new CommandBlock({
-    identity: ["group", "usergroup", "usergroups"],
+    names: ["group", "usergroup", "usergroups"],
     summary: "Modify user groups",
     description: "Create user groups and toggle ids in/out of them.",
     usage: "<group> [id]",
     locked: "hosts",
     clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, function(client, message, content, args) {
-    if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
+    if (!content) return message.channel.send(`Usage: \`${this.names[0]} ${this.usage}\``);
     const name = args[0].toLowerCase();
     if (name === "allowed") return message.channel.send("Interacting with that group is forbidden");
     // not using an object like the block/unblock commands because this only interacts with user groups

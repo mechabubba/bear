@@ -86,7 +86,7 @@ const snippets = {
 };
 
 module.exports = new CommandBlock({
-  identity: ["snippets", "snippet", "snip"],
+  names: ["snippets", "snippet", "snip"],
   summary: "Various code snippets for developers",
   description: null,
   usage: "<snippet name> [args]",

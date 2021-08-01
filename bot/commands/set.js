@@ -78,14 +78,14 @@ const resolveActivity = function(client, content, args) {
 
 module.exports = [
   new CommandBlock({
-    identity: ["set"],
+    names: ["set"],
     summary: "Control various parts of the bot",
     description: "Acts as an advanced shortcut to the `setavatar`, `setname`, `presence`, `status`, and `activity` commands.",
     usage: "[action] [input]",
     locked: "hosts",
     clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, function(client, message, content, args) {
-    if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\``);
+    if (!content) return message.channel.send(`Usage: \`${this.names[0]} ${this.usage}\``);
     const action = args[0].toLowerCase();
     const input = {
       content: content.substring(action.length).trim(),
@@ -110,11 +110,11 @@ module.exports = [
       return client.commands.runByName("setactivity", message, useParsed ? input.content : content, useParsed ? input.args : args);
     } else {
       // Unrecognized
-      return message.channel.send(`Unrecognized action\nUsage: \`${this.firstName} ${this.usage}\``);
+      return message.channel.send(`Unrecognized action\nUsage: \`${this.names[0]} ${this.usage}\``);
     }
   }),
   new CommandBlock({
-    identity: ["setavatar", "seticon"],
+    names: ["setavatar", "seticon"],
     summary: "Change the bot's avatar",
     description: "Changes the bot's avatar. Be aware that this has a strict cool down (shared with changing the bot's name) in the discord api.",
     usage: "<image attachment/link>",
@@ -126,7 +126,7 @@ module.exports = [
     const url = resolveInputToImage(await message.fetch(), content);
     if (!url) {
       message.react(client.config.get("metadata.reactions.negative").value());
-      return message.channel.send(`No image detected\nUsage: \`${this.firstName} ${this.usage}\``);
+      return message.channel.send(`No image detected\nUsage: \`${this.names[0]} ${this.usage}\``);
     }
     try {
       await client.user.setAvatar(url);
@@ -140,7 +140,7 @@ module.exports = [
     return message.channel.send(`Changed avatar to \`${url}\``);
   }),
   new CommandBlock({
-    identity: ["setname", "setusername"],
+    names: ["setname", "setusername"],
     summary: "Change the bot's name",
     description: "Changes the bot's username. Be aware that this has a strict cool down (shared with changing the bot's avatar) in the discord api.",
     usage: "<text>",
@@ -150,11 +150,11 @@ module.exports = [
     // Username
     if (!content) {
       message.react(client.config.get("metadata.reactions.negative").value());
-      return message.channel.send(`No text detected\nUsage: \`${this.firstName} ${this.usage}\``);
+      return message.channel.send(`No text detected\nUsage: \`${this.names[0]} ${this.usage}\``);
     }
     if (!validateUsername(content)) {
       message.react(client.config.get("metadata.reactions.negative").value());
-      return message.channel.send(`Username must be 2 to 32 characters long and not contain \`@\`, \`#\`, \`:\`, or \` \`\`\` \`\nUsage: \`${this.firstName} ${this.usage}\``);
+      return message.channel.send(`Username must be 2 to 32 characters long and not contain \`@\`, \`#\`, \`:\`, or \` \`\`\` \`\nUsage: \`${this.names[0]} ${this.usage}\``);
     }
     const tag = client.user.tag;
     try {
@@ -169,7 +169,7 @@ module.exports = [
     return message.channel.send(`Changed username from \`${tag}\` to \`${client.user.tag}\``);
   }),
   new CommandBlock({
-    identity: ["presence", "setpresence"],
+    names: ["presence", "setpresence"],
     summary: "Set the bot's presence with json",
     description: "Sets the bot's presence with raw json. Refer to the [`PresenceData`](https://discord.js.org/#/docs/main/stable/typedef/PresenceData) object for what properties and values to use. Using a codeblock with your json input is supported so long that your message contains a singular string of valid json somewhere within it.",
     usage: "<json>",
@@ -177,10 +177,10 @@ module.exports = [
     clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
   }, async function(client, message, content, args) {
     // Presence
-    if (!content) return message.channel.send(`Usage: \`${this.firstName} ${this.usage}\`\n<https://discord.js.org/#/docs/main/stable/typedef/PresenceData>`);
+    if (!content) return message.channel.send(`Usage: \`${this.names[0]} ${this.usage}\`\n<https://discord.js.org/#/docs/main/stable/typedef/PresenceData>`);
     if (!content.includes("{") || !content.includes("}")) {
       message.react(client.config.get("metadata.reactions.negative").value());
-      return message.channel.send(`Input isn't enclosed in curly brackets, valid json is required\nUsage: \`${this.firstName} ${this.usage}\`\n<https://discord.js.org/#/docs/main/stable/typedef/PresenceData>`);
+      return message.channel.send(`Input isn't enclosed in curly brackets, valid json is required\nUsage: \`${this.names[0]} ${this.usage}\`\n<https://discord.js.org/#/docs/main/stable/typedef/PresenceData>`);
     }
     let data = content.substring(content.indexOf("{"), content.lastIndexOf("}") + 1).trim();
     try {
@@ -201,7 +201,7 @@ module.exports = [
     return message.channel.send(`Updated presence`);
   }),
   new CommandBlock({
-    identity: ["status", "setstatus"],
+    names: ["status", "setstatus"],
     summary: "Set the bot's status",
     description: "Sets the bot's status. All four statuses are supported (online, idle, do not disturb, and invisible)",
     usage: "[status]",
@@ -231,7 +231,7 @@ module.exports = [
     return message.channel.send(`${!content ? "Reset" : "Updated"} status`);
   }),
   new CommandBlock({
-    identity: ["activity", "setactivity"],
+    names: ["activity", "setactivity"],
     summary: "Set the bot's activity",
     description: "Sets the bot's activity. All four activities are supported (playing, watching, listening, and streaming)",
     usage: "[type] [text]",

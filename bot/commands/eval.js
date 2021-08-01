@@ -29,7 +29,7 @@ const clean = async function(input, token) {
 };
 
 module.exports = new CommandBlock({
-  identity: ["eval", "evaluate", "js"],
+  names: ["eval", "evaluate", "js"],
   summary: "Evaluates arbitrary javascript",
   description: "An enormous security risk for development purposes: [arbitrary javascript evaluation](https://en.wikipedia.org/wiki/Arbitrary_code_execution). Uses [`eval()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval) under the hood.",
   usage: "<code>",

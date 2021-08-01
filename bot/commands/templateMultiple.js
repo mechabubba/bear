@@ -1,12 +1,12 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const log = require("../../modules/log");
 
-// all keys other than identity can be set to null or omitted for default value
+// all keys other than names can be set to null or omitted for default value
 // refer to CommandBlock.js for documentation
 
 module.exports = [
   new CommandBlock({
-    identity: ["template_a"],
+    names: ["template_a"],
     summary: null,
     description: null,
     usage: null,
@@ -23,7 +23,7 @@ module.exports = [
     message.channel.send(text);
   }),
   new CommandBlock({
-    identity: ["template_b"],
+    names: ["template_b"],
     summary: null,
     description: null,
     usage: null,

@@ -12,12 +12,12 @@ module.exports = [
   // Command Parser (from listeners/commandParser.js)
   new ListenerBlock({ event: "commandParsed" }, (client, commandName, message, content, args, ...extraParameters) => log.debug(`${chalk.gray("[command]")} input from ${message.author.tag} successfully parsed as "${commandName}${(!content ? "\"" : `" with "${content}"`)}`)),
   // Commands (from modules/CommandConstruct.js)
-  new ListenerBlock({ event: "commandUsed" }, (client, command, message, content, args, ...extraParameters) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} ran "${command.firstName}${(!content ? "\"" : `" with "${content}"`)}`)),
-  new ListenerBlock({ event: "channelTypeRejection" }, (client, command, message) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} attempted to run "${command.firstName}" somewhere it cannot be used (${message.channel.type})`)),
-  new ListenerBlock({ event: "nsfwRejection" }, (client, command, message) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} attempted to run "${command.firstName}" in a non-nsfw channel`)),
-  new ListenerBlock({ event: "lockedRejection" }, (client, command, message) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} attempted to run "${command.firstName}" and was denied`)),
+  new ListenerBlock({ event: "commandUsed" }, (client, command, message, content, args, ...extraParameters) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} ran "${command.names[0]}${(!content ? "\"" : `" with "${content}"`)}`)),
+  new ListenerBlock({ event: "channelTypeRejection" }, (client, command, message) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} attempted to run "${command.names[0]}" somewhere it cannot be used (${message.channel.type})`)),
+  new ListenerBlock({ event: "nsfwRejection" }, (client, command, message) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} attempted to run "${command.names[0]}" in a non-nsfw channel`)),
+  new ListenerBlock({ event: "lockedRejection" }, (client, command, message) => log.debug(`${chalk.gray("[command]")} ${message.author.tag} attempted to run "${command.names[0]}" and was denied`)),
   new ListenerBlock({ event: "permissionRejection" }, (client, command, message, permissions, useClient, useChannel) => {
     const member = useClient ? message.guild.me : message.member;
-    log.debug(`${chalk.gray("[command]")} ${member.user.tag} lacked permissions necessary to run "${command.firstName}"${(useClient ? ` for ${message.author.tag}` : "")}${useChannel ? ` in <#${message.channel.id}>` : ""}`);
+    log.debug(`${chalk.gray("[command]")} ${member.user.tag} lacked permissions necessary to run "${command.names[0]}"${(useClient ? ` for ${message.author.tag}` : "")}${useChannel ? ` in <#${message.channel.id}>` : ""}`);
   }),
 ];
