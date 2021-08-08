@@ -7,6 +7,7 @@
  * @property {string} commands.directory Path of a folder where modules are located
  * @property {?(string|[string])} commands.prefix Command prefixes. Supports any amount of them, including none (null), one (string), or any (array)
  * @property {boolean} commands.mentions Whether mentioning the bot as a prefix is enabled
+ * @property {[string]} commands.channelTypes An array of [channel types](https://discord.js.org/#/docs/main/stable/class/TextChannel?scrollTo=type) that this command block may be ran in. Most commonly used to limit commands to guilds or direct messages.
  * @property {Object} events Config options concerning discord.js events
  * @property {string} events.directory Path of a folder where modules are located
  * @property {Object} metadata Metadata for the bot such as configurable visuals, links, and invites
@@ -35,6 +36,7 @@ module.exports.config = {
     "directory": "./bot/commands/",
     "prefix": null,
     "mentions": true,
+    "channelTypes": ["dm", "text", "news"],
   },
   "events": {
     "directory": "./bot/listeners/",

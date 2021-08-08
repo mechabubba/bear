@@ -19,7 +19,6 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
 - ⚠️ The `CommandBlock#scope` property is now deprecated, it was renamed to `CommandBlock#channelTypes` with identical usage to free `scope` for potential new purposes. It still works for this version, but support and the deprecation warning logged to console will be removed in 0.0.8
 
 - CommandBlock's default properties, such as description, channelType, locked, etc. which are used when they aren't supplied to the constructor are now stored in `defaultData.js` and easier to change. They're also correctly documented now
-  - The `commands.channelTypes` config property was removed from default config data, as I'm pretty sure it wasn't being used anywhere
   - ⚠️ The order (in which they were defined) of properties on instances of CommandBlock is no longer consistent. This shouldn't effect or break anything, but I'm mentioning it here anyway.
 
 - Two new parameters to match `CommandBlock#clientPermissions` and `CommandBlock#userPermissions` have been added, `CommandBlock#clientChannelPermissions` and `CommandBlock#userChannelPermissions`, allowing commands to specify channel overrides to be checked as well
