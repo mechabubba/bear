@@ -18,7 +18,7 @@
   "homepage": "https://github.com/06000208/sandplate#readme",
   "dependencies": {
     "bufferutil": "^4.0.3",
-    "chalk": "^4.1.1",
+    "chalk": "^4.1.2",
     "discord.js": "^12.5.3",
     "filehound": "^1.17.4",
     "fs-extra": "^10.0.0",
@@ -29,6 +29,6 @@
     "utf-8-validate": "^5.0.4"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=16.6.0"
   }
 }
