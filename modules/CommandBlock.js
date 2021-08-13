@@ -260,7 +260,7 @@ class CommandBlock extends BaseBlock {
     if (!has(data, "names") && !has(data, "identity")) throw new TypeError("CommandBlock#names is a required property and must be supplied.");
     if (has(data, "names")) if (!isArrayOfStrings(data.names)) throw new TypeError("CommandBlock#names must be an Array of strings.");
     if (has(data, "identity") && !isNil(data.identity)) {
-      log.warn("Depreciation Warning: CommandBlock#identity was deprecated in favor of CommandBlock#names. This warning and support will be removed in a future version.");
+      log.warn("Deprecation Warning: CommandBlock#identity was deprecated in favor of CommandBlock#names. This warning and support will be removed in a future version.");
       if (!isString(data.identity) && !isArrayOfStrings(data.identity)) throw new TypeError("CommandBlock#identity must be a string or an Array of strings.");
     }
     if (has(data, "summary") && !isNil(data.summary)) if (!isString(data.summary)) throw new TypeError("CommandBlock#summary must be a string.");
@@ -268,7 +268,7 @@ class CommandBlock extends BaseBlock {
     if (has(data, "usage") && !isNil(data.usage)) if (!isString(data.usage)) throw new TypeError("CommandBlock#usage must be a string.");
     if (has(data, "channelTypes") && !isNil(data.channelTypes)) if (!isArrayOfStrings(data.channelTypes, false)) throw new TypeError("CommandBlock#channelTypes must be an Array of strings.");
     if (has(data, "scope") && !isNil(data.scope)) {
-      log.warn("Depreciation Warning: CommandBlock#scope was renamed to CommandBlock#channelTypes which retains same usage. This warning and support will be removed in a future version.");
+      log.warn("Deprecation Warning: CommandBlock#scope was renamed to CommandBlock#channelTypes which retains same usage. This warning and support will be removed in a future version.");
       if (!isArrayOfStrings(data.scope, false)) throw new TypeError("CommandBlock#scope must be an Array of strings.");
     }
     if (has(data, "nsfw") && !isNil(data.nsfw)) if (!isBoolean(data.nsfw)) throw new TypeError("CommandBlock#nsfw must be a boolean.");
