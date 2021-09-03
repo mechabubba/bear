@@ -19,7 +19,7 @@ const thepeoplewhodevelopdiscordarefuckingstupid = 199; // The limit to how many
 module.exports = new CommandBlock({
     identity: ["minesweeper", "ms", "minesweep"],
     summary: "Generates a Minesweeper board.",
-    description: "Generates a playable Minesweeper board, using spoiler tags. The seed is optional and is random by default.",
+    description: "Generates a playable Minesweeper board, using spoiler tags. The seed is optional and is random by default.\n\n**Tip:** The upper left corner will never be a mine; start there!",
     usage: "[length] [width] [mines] (-seed [...values])",
     scope: ["dm", "text", "news"],
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
@@ -70,9 +70,9 @@ module.exports = new CommandBlock({
     while(curmines < maxmines) {
       let rl = Math.floor(rng() * length);
       let rw = Math.floor(rng() * width);
-      if(board[rl][rw] == tiles[9]) {
-        continue;
-      } else {
+      if(rl == 0 && rw == 0) continue;
+      if(board[rl][rw] == tiles[9]) continue;
+      else {
         board[rl][rw] = tiles[9];
         curmines++;
       }
