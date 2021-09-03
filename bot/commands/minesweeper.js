@@ -3,7 +3,7 @@ const { MessageEmbed } = require("discord.js");
 const seedrandom = require("seedrandom");
 
 const tiles = [
-  "．", // Ideographic Space
+  "．",
   "１",
   "２",
   "３",
