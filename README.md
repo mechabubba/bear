@@ -1,6 +1,7 @@
 <img align="right" src="assets/bear_static_small.png">
 
 # <a href="https://goon.haus/bear/">bear</a>
+<a href="https://discord.gg/9gdMpBR6bK">![Join the server!](https://discordapp.com/api/guilds/525773944351883304/widget.png?style=shield)</a>
 
 *"the best discord bot"*<br>
 &nbsp;&nbsp;&nbsp;&nbsp;— @everyone
