@@ -14,10 +14,10 @@ const tiles = [
     "８",
     "＠", // Mine
 ];
-const discordsux = 199; // The limit to how many mines can be viewed on the Discord client app. (read the comment on line 51) 
+const discordsux = 199; // The limit to how many mines can be viewed on the Discord client app. (read the comment on line 50)
 
 module.exports = new CommandBlock({
-    identity: ["minesweeper", "ms", "minesweep"],
+    identity: ["minesweeper", "ms"],
     summary: "Generates a Minesweeper board.",
     description: "Generates a playable Minesweeper board, using spoiler tags. The seed is optional and is random by default.\n\n**Tip:** The upper left corner will never be a mine; start there!",
     usage: "[length] [width] [mines] (-seed [...values])",
@@ -27,23 +27,22 @@ module.exports = new CommandBlock({
     const positive = client.config.get("metadata.reactions.positive").value();
     const negative = client.config.get("metadata.reactions.negative").value();
 
-    seed = hasseed == "-seed" ? args.join(" ") : undefined;
-    let rng = seedrandom(seed);
+    const seed = hasseed == "-seed" ? args.join(" ") : undefined;
+    const rng = seedrandom(seed);
 
     if(!length || !width || !maxmines) {
         message.react(negative);
         return message.channel.send(`<:_:${negative}> Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
     }
 
-    let area = length * width;
+    const area = length * width;
     if(maxmines > area) {
         message.react(negative);
         return message.reply(`<:_:${negative}> The mines on the field outnumber the fields area.`);
     } else if(area == 0) {
         message.react(negative);
         return message.reply(`<:_:${negative}> You can't create an empty board!`);
-    }
-    else if(area > discordsux) {
+    } else if(area > discordsux) {
         message.react(negative);
         return message.reply(`<:_:${negative}> The board exceeds a maximum of ${discordsux} cells.`);
     }
@@ -66,15 +65,15 @@ module.exports = new CommandBlock({
     }
     */
 
-    let board = Array.from({length: length});
-    for(i = 0; i < board.length; i++) {
-        board[i] = Array.from({length: width});
+    const board = Array.from({ length: length });
+    for(let i = 0; i < board.length; i++) {
+        board[i] = Array.from({ length: width });
     }
 
     let curmines = 0;
     while(curmines < maxmines) {
-        let rl = Math.floor(rng() * length);
-        let rw = Math.floor(rng() * width);
+        const rl = Math.floor(rng() * length);
+        const rw = Math.floor(rng() * width);
         if(rl == 0 && rw == 0) continue;
         if(board[rl][rw] == tiles[9]) continue;
         else {
@@ -83,30 +82,30 @@ module.exports = new CommandBlock({
         }
     }
 
-    for(i = 0; i < board.length; i++) {
-        for(j = 0; j < board[i].length; j++) {
+    for(let i = 0; i < board.length; i++) {
+        for(let j = 0; j < board[i].length; j++) {
             let mines = 0;
             if(board[i][j] === tiles[9]) continue;
-            if((j - 1 != -1) && board[i][j-1] == tiles[9]) mines++; // left
-            if((j - 1 != -1) && (i - 1 != -1) && board[i-1][j-1] == tiles[9]) mines++;  // top left
-            if((i - 1 != -1) && board[i-1][j] == tiles[9]) mines++; // top
-            if((i - 1 != -1) && (j + 1 != board[i].length) && board[i-1][j+1] == tiles[9]) mines++; // top right
-            if((j + 1 != board[i].length) && board[i][j+1] == tiles[9]) mines++; // right
-            if((j + 1 != board[i].length) && (i + 1 != board.length) && board[i+1][j+1] == tiles[9]) mines++; // bottom right
-            if((i + 1 != board.length) && board[i+1][j] == tiles[9]) mines++; // bottom
-            if((i + 1 != board.length) && (j - 1 != -1) && board[i+1][j-1] == tiles[9]) mines++; // bottom left
+            if((j - 1 != -1) && board[i][j - 1] == tiles[9]) mines++; // left
+            if((j - 1 != -1) && (i - 1 != -1) && board[i - 1][j - 1] == tiles[9]) mines++;  // top left
+            if((i - 1 != -1) && board[i - 1][j] == tiles[9]) mines++; // top
+            if((i - 1 != -1) && (j + 1 != board[i].length) && board[i - 1][j + 1] == tiles[9]) mines++; // top right
+            if((j + 1 != board[i].length) && board[i][j + 1] == tiles[9]) mines++; // right
+            if((j + 1 != board[i].length) && (i + 1 != board.length) && board[i + 1][j + 1] == tiles[9]) mines++; // bottom right
+            if((i + 1 != board.length) && board[i + 1][j] == tiles[9]) mines++; // bottom
+            if((i + 1 != board.length) && (j - 1 != -1) && board[i + 1][j - 1] == tiles[9]) mines++; // bottom left
             board[i][j] = tiles[mines];
         }
     }
-    
+
     let tab = "";
-    for(i = 0; i < board.length; i++) {
-        for(j = 0; j < board[i].length; j++) {
+    for(let i = 0; i < board.length; i++) {
+        for(let j = 0; j < board[i].length; j++) {
             tab += ("||" + board[i][j] + "||");
         }
         tab += "\n";
     }
-    
+
     message.react(positive);
     const embed = new MessageEmbed()
         .setColor("C0C0C0")
@@ -115,5 +114,4 @@ module.exports = new CommandBlock({
         .attachFiles(["assets/mine.png"])
         .setFooter(`${length}x${width} • ${maxmines} mines${seed ? ` • ${seed}` : ``}`, "attachment://mine.png");
     return message.channel.send(embed);
-}
-);
+});
