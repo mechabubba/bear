@@ -20,7 +20,7 @@ module.exports = new CommandBlock({
     if(!spawn_cmd[os.platform()]) return message.channel.send(`<:_:${negative}> You must set the shell for your OS in the \`spawn_cmd\` object at \`bot/commands/sh.js\`. See https://nodejs.org/api/os.html#os_os_platform for more information.`);
     
     const userinfo = os.userInfo();
-    const cwd = client.cookies.get(`shell_cwd_${message.author.id}`) ? client.cookies.get(`shell_cwd_${message.author.id}`) : userinfo["homedir"];
+    const cwd = (`shell_cwd_${message.author.id}` in client.cookies) ? client.cookies[`shell_cwd_${message.author.id}`] : userinfo["homedir"];
 
     const shell = spawn(spawn_cmd[os.platform()], [], { cwd: cwd });
     shell.stdout.on("data", (d) => output += d + "\n");
@@ -34,10 +34,12 @@ module.exports = new CommandBlock({
     }
 
     // Saves current cwd as a cookie. For whatever reason, this isn't *perfect,* but its good enough from my testing.
-    fs.readlink("/proc/" + shell.pid + "/cwd", (e, new_cwd) => {
-      if(e) return;
-      return client.cookies.set(`shell_cwd_${message.author.id}`, new_cwd);
-    });
+    if(os.platform() == "linux") {
+      fs.readlink("/proc/" + shell.pid + "/cwd", (e, new_cwd) => {
+        if(e) return;
+        client.cookies[`shell_cwd_${message.author.id}`] = new_cwd;
+      });
+    }
     shell.stdin.end();
 
     shell.on("close", (c) => {

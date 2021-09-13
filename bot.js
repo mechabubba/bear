@@ -35,7 +35,7 @@ if (argv.length !== 0) {
   if (argv.length > 1) log.warn("Regarding command line arguments, the bot only supports using the first argument to pass in a token");
   if (tokenRegex.test(argv[0])) {
     log.info("Command line argument matched token pattern, will attempt to login with it");
-    client.cookies.set("token", argv[0]);
+    client.cookies["token"] = argv[0];
   } else {
     log.warn("Command line argument didn't match token pattern, the bot won't try to use it");
   }
@@ -51,8 +51,8 @@ const init = async function() {
   log.info(eventLoadResult.message);
   log.info(remindersLoadResult.message);
   // Ground control to major tom
-  if (client.cookies.has("token") || client.config.get("client.token").value() !== null) {
-    client.login(client.cookies.has("token") ? client.cookies.get("token") : client.config.get("client.token").value());
+  if (client.cookies["token"] || client.config.get("client.token").value() !== null) {
+    client.login(client.cookies["token"] || client.config.get("client.token").value());
   } else {
     log.warn("No token available to login with! Please set one in config.json or pass one in as an argument");
     process.exit(0);
