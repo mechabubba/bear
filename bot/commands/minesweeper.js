@@ -14,7 +14,7 @@ const tiles = [
   "８", 
   "＠"  // Mine
 ];
-const thepeoplewhodevelopdiscordarefuckingstupid = 199; // The limit to how many mines can be viewed on the Discord client app.
+const discordsux = 199; // The limit to how many mines can be viewed on the Discord client app. (read the comment on line 51) 
 
 module.exports = new CommandBlock({
     identity: ["minesweeper", "ms", "minesweep"],
@@ -43,18 +43,23 @@ module.exports = new CommandBlock({
       message.react(negative);
       return message.reply(`<:_:${negative}> You can't create an empty board!`);
     }
-    else if(area > thepeoplewhodevelopdiscordarefuckingstupid) {
+    else if(area > discordsux) {
       message.react(negative);
-      return message.reply(`<:_:${negative}> The board exceeds a maximum of ${thepeoplewhodevelopdiscordarefuckingstupid} cells.`);
+      return message.reply(`<:_:${negative}> The board exceeds a maximum of ${discordsux} cells.`);
     }
 
-    // Embed descriptions are only able to hold 2048 characters.
-    // Minesweeper cells are at most 7 characters (4 for the spoiler bars, at most 3 for the numbers - mines are 2 characters).
-    // Newlines take up one character in themselves.
+    // This implementation of minesweeper is a little weird, and here's why.
+    // - Embed descriptions are only able to hold 2048 characters.
+    // - Minesweeper cells are at most 5 characters (4 for the spoiler bars, 1 for the character itself.
+    // - A previous implementation used emojis; with emojis it would be at most 3 for the numbers - mine emojis are 2 characters).
+    // - Newlines take up one character in themselves.
 
-    // I *would* use this, however Discord messages limits the message to *display* only the first 198 emotes; the content is sent, and can be viewed in the "Edit message" box or if you're grabbing the raw content of the message via the API, however everything after 198 emotes does not display.
+    // The commented out solution below would theoretically allow any size minesweeper field below 2048 characters, but at the moment its not possible to use.
+    // Discord's official web and mobile clients limit messages to display only the first 199 components. To clarify, the content is sent, and can be viewed in the "Edit message" box or if you're grabbing the raw content of the message via the API. However, everything after 199 components does not display.
+    // In this case, a "component" is a piece of spoiler text or an emoji.
+    // If for some ungodly reason a Discord employee is reading this, please remove or unrestrict these limitations from bots! You're hindering some great stuff here. :(
     /*
-    let charea = (area * 7) + (length - 1);
+    let charea = (area * 5) + (length - 1);
     if(charea > (2000 - suffix.length)) {
       message.react(negative);
       return message.reply(`<:_:${negative}> The board exceeds a maximum of 2048 characters.`);
