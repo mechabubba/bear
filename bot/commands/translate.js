@@ -1,7 +1,7 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const fetch = require("node-fetch");
 
-const fuck = false; // hello google, nice api endpoint you have here
+const debug = false; // Set to true to send the JSON output over the regular output.
 
 module.exports = new CommandBlock({
     identity: ["translate", "trans"],
@@ -9,7 +9,7 @@ module.exports = new CommandBlock({
     description: "Translates text using the Google Translate API.\n\nThe `source` parameter is an (optional) ISO 639-1 language code. The source language is automatically detected, but you can force it to translate between languages by prefacing an underscore `_` in between the source and the destination language; for example, `zh-cn_es` would translate from simplified chinese to spanish.\n\nView all supported languages [here!](https://cloud.google.com/translate/docs/languages)",
     usage: `(source) [foreign text]`,
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
-  }, async function(client, message, content, args) {
+}, async function(client, message, content, args) {
     const positive = client.config.get("metadata.reactions.positive").value();
     const negative = client.config.get("metadata.reactions.negative").value();
 
@@ -21,14 +21,14 @@ module.exports = new CommandBlock({
     if(langs !== undefined) args.shift();
 
     let api = `https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=${langs ? langs.sl : "auto"}&tl=${langs ? langs.tl : "en"}&q=${encodeURIComponent(args.join(" "))}`;
-    try {    
+    try {
         const resp = await fetch(api, {
             headers: {
                 "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36"
             }
         });
         if(!resp.ok) throw new Error(resp.statusText);
-        
+
         const json = await resp.json();
 
         let translation = "";
@@ -37,12 +37,11 @@ module.exports = new CommandBlock({
         }
 
         message.channel.stopTyping(true);
-        return message.channel.send(fuck ? `\`\`\`\n${JSON.stringify(json, null, 4)}\`\`\`` : translation);
+        return message.channel.send(debug ? `\`\`\`\n${JSON.stringify(json, null, 4)}\`\`\`` : translation);
     } catch(e) {
         message.channel.stopTyping(true);
         return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\`\`\``);
     }
-
 });
 
 const getlang = (lang) => {
@@ -58,7 +57,7 @@ const getlang = (lang) => {
     } else {
         return undefined;
     }
-}
+};
 
 // Data taken from https://cloud.google.com/translate/docs/languages. Last updated: 09/03/21 
 const languages = {
@@ -171,5 +170,5 @@ const languages = {
     "xh": "Xhosa",
     "yi": "Yiddish",
     "yo": "Yoruba",
-    "zu": "Zulu"
-}
+    "zu": "Zulu",
+};

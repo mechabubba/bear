@@ -8,7 +8,7 @@ module.exports = new CommandBlock({
     scope: ["dm", "text", "news"],
     usage: "[bf code] or [(input text) | (bf code)]",
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-  }, function(client, message, content, args) {
+}, function(client, message, content, args) {
     const positive = client.config.get("metadata.reactions.positive").value();
     const negative = client.config.get("metadata.reactions.negative").value();
     const alert = client.config.get("metadata.reactions.alert").value();
@@ -22,18 +22,18 @@ module.exports = new CommandBlock({
     message.channel.startTyping();
     const child = fork("./modules/brainfuck", [input, code], { cwd: process.cwd() });
     child.on("message", (data) => {
-      message.channel.stopTyping(true);
-      let output = data.output;
-      if(output.length > 1993) output = output.substring(0, 1990) + "...";
+        message.channel.stopTyping(true);
+        let output = data.output;
+        if(output.length > 1993) output = output.substring(0, 1990) + "...";
 
-      let reaction;
-      if(data.level == "warning") reaction = alert;
-      else if(data.level == "error") reaction = negative;
-      else reaction = positive;
-      message.react(reaction);
+        let reaction;
+        if(data.level == "warning") reaction = alert;
+        else if(data.level == "error") reaction = negative;
+        else reaction = positive;
+        message.react(reaction);
 
-      message.channel.send(`<:_:${reaction}> ${data.log}`);
-      return message.channel.send(`\`\`\`\n${output}\`\`\``);
+        message.channel.send(`<:_:${reaction}> ${data.log}`);
+        return message.channel.send(`\`\`\`\n${output}\`\`\``);
     });
-  }
+}
 );
