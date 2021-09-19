@@ -1,7 +1,6 @@
 const { Collection } = require("discord.js");
 const BaseConstruct = require("./BaseConstruct");
 const CommandBlock = require("./CommandBlock");
-const { forAny } = require("./miscellaneous");
 const log = require("./log");
 const { isArray } = require("lodash");
 
@@ -153,7 +152,10 @@ class CommandConstruct extends BaseConstruct {
    */
   runByName(name, message, ...passThrough) {
     if (!name || !message) return;
-    if (!this.index.has(name)) return;
+    if (!this.index.has(name)) {
+      this.client.emit("ignoredMessage", name, message);
+      return;
+    }
     const id = this.index.get(name);
     if (!this.cache.has(id)) return log.warn(`Command name "${name}" was mapped to id "${id}" but no corresponding command block found in the cache`);
     this.run(id, message, ...passThrough);
@@ -161,6 +163,14 @@ class CommandConstruct extends BaseConstruct {
 }
 
 module.exports = CommandConstruct;
+
+/**
+ * Emitted whenever CommandConstruct.runByName() is ran with a command name not mapped in the index. Recommended for debugging purposes only, as 99% of the time this will be unrelated messages, not attempted command use.
+ * @event Client#ignoredMessage
+ * @param {Client} client Bound as the first parameter by EventConstruct.load()
+ * @param {string} name The name which isn't mapped to an id in CommandConstruct.index
+ * @param {Discord.Message} message Originating message
+ */
 
 /**
  * Emitted whenever a command is successfully ran
