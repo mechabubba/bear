@@ -2,11 +2,13 @@
 
 _The changelog for this version is incomplete/w.i.p and currently being written in tandem with the development of this version. Things may be incorrect._
 
-*Changes which count as as noteworthy depreciation warnings will be prefixed with* ⚠️
+*Changes which count as as noteworthy deprecation warnings will be prefixed with* ⚠️
 
-- ⚠️ Bumped minimum node.js version from v12 to v14, matching the future minimum for discord.js
+- ⚠️ Bumped minimum node.js version from v12 to v16.6, matching the minimum for discord.js v13
 
-- Updated all npm dependencies to latest major, except for lowdb 2.0.0 (would require esm migration)
+- ⚠️ In 0.0.8 and above, much of the how configuration works will change. See [issue #35](https://github.com/06000208/sandplate/issues/35) for details.
+
+- Updated all npm dependencies to latest major, except for lowdb 2.0.0 (would require esm migration) and discord v13 (will be done in 0.0.8)
 
 - Several parts of the bot have received attention, closing [#21](https://github.com/06000208/sandplate/issues/21). These are all described below.
 
@@ -14,7 +16,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
 
 - The handler now deep clones required modules rather than passing around a reference to the [require cache](https://nodejs.org/api/modules.html#modules_require_cache) in order to avoid changing it. Closes [#32](https://github.com/06000208/sandplate/issues/32)
 
-- ⚠️ The `CommandBlock#identity` property is now deprecated in favor of the new `CommandBlock#names` and exclusively using arrays. It still works for this version, but support and the deprecation warning logged to console will be removed in 0.0.8. 
+- ⚠️ The `CommandBlock#identity` property is now deprecated in favor of the new `CommandBlock#names`, which exclusively uses arrays. It still works for this version, but support and the deprecation warning logged to console will be removed in 0.0.8. 
 
 - ⚠️ The `CommandBlock#scope` property is now deprecated, it was renamed to `CommandBlock#channelTypes` with identical usage to free `scope` for potential new purposes. It still works for this version, but support and the deprecation warning logged to console will be removed in 0.0.8
 
@@ -22,6 +24,8 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
   - ⚠️ The order (in which they were defined) of properties on instances of CommandBlock is no longer consistent. This shouldn't effect or break anything, but I'm mentioning it here anyway.
 
 - Two new parameters to match `CommandBlock#clientPermissions` and `CommandBlock#userPermissions` have been added, `CommandBlock#clientChannelPermissions` and `CommandBlock#userChannelPermissions`, allowing commands to specify channel overrides to be checked as well
+
+- Added `commands.parseUserMessages`, `commands.parseBotMessages`, and `commands.parseSelfMessages` in `defaultData.js` and updated the command parser to respect their usage
 
 - CommandConstruct's run function has been rewritten, and it's various checks such as channel type, nsfw channel, locked command, etc. have been remade as functions on CommandBlock. As such, the help command which needed to use two of the same checks is much nicer now, and 5 new custom events have been added to aid behavior implementation, see below for more info.
   - The new functions are `checkChannelType()`, `checkNotSafeForWork()`, `checkLocked()`, and `checkPermissions()`. They all take a Message as their first parameter, and checkPermissions also takes the PermissionResolvable to be checked and two booleans to control behavior, useClient and useChannel
@@ -56,6 +60,7 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
   - `commandParsed` Emitted whenever a command is successfully parsed
   - `commandUsed` Emitted whenever a command is successfully ran
   - `channelTypeRejection`, `nsfwRejection`, `permissionRejection`, `lockedRejection` Emitted when their respective circumstances happen with command use. You can use these events to create behavior when commands are attempted but denied, nsfw command being used in a non-nsfw channel, when someone is missing necessary permissions to use the command, etc.
+  - `ignoredChannel`, `unknownUser`, `blockedUser`, `ignoredMessage` Emitted when their respective circumstances happen while parsing messages or attempting to run a command. They aren't too useful, as they are *not representative of user interaction* with the bot, and should only be used for debugging purposes.
 
 - A new module focused on useful regular expressions, `./modules/regexes.js`
   - Removed the `isNumeric()` function from `./modules/miscellaneous.js` and updated usage, as there's little point compared to using [`RegExp.test()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/test) directly
@@ -349,7 +354,7 @@ I'm going to keep this brief and refrain from explaining too much (particularly 
 
 - Several listener modules are included with v0.0.3 (located in `./bot/listeners/`)
 
-  - `commandParser.js` Listener for the [`message`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-message) event that's responsible for determining if messages are prefixed, responsible filtering out anything that isn't valid command use, parsing messages into arguments, and running commands.
+  - `commandParser.js` Listener for the [`message`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-message) event that's responsible for determining if messages are prefixed, filtering out anything that isn't valid command use, parsing messages into arguments, and running commands.
     - Sandplate can be configured with any number of string prefixes, including none, and has support for @mention prefixes. Refer to `./modules/defaultConfig.js` (after 0.0.6, now `./modules/defaultData.js`) for documentation about this
   - `startup.js` Listener for the [`ready`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-ready) event, runs after the bot is online and workable, but will only run once, so it's safe for things like cron jobs or startup code. Currently just adds the bot owner's account id to the hosts user group if the hosts group is null.
   - `guildAccess.js` Implementation of guild access control using the [`ready`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-ready) and [`guildCreate`](https://discord.js.org/#/docs/main/stable/class/Client?scrollTo=e-guildCreate) events, which demonstrates exporting multiple event listeners from one module. refer to `./modules/defaultConfig.js` (after 0.0.6, now `./modules/defaultData.js`) for some information regarding guild groups and this, allow and block lists are both disabled (null) by default.
