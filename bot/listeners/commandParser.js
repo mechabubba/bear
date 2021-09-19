@@ -13,7 +13,7 @@ module.exports = new ListenerBlock({
   // Only parse messages from configured accounts
   if (!configuration.parseUserMessages && !message.author.bot) return;
   if (!configuration.parseBotMessages && message.author.bot) return;
-  // if (!configuration.parseSelfMessages && message.author.id === client.user.id) return;
+  if (!configuration.parseSelfMessages && message.author.id === client.user.id) return;
   // Only parse messages from configured channel types
   if (!configuration.channelTypes.includes(message.channel.type)) {
     client.emit("ignoredChannel", message);
@@ -55,6 +55,7 @@ module.exports = new ListenerBlock({
   if (!prefixed) {
     if (!configuration.mentions) return;
     if (!lowercase.startsWith("<@")) return;
+    /** @todo This line could be better if it didn't use a regexp */
     if (!RegExp(`^<@!?${client.user.id}>`).test(lowercase)) return;
     content = content.substring(content.indexOf(">") + 1).trim();
   }

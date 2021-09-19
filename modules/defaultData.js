@@ -10,6 +10,7 @@
  * @property {boolean} commands.mentions Whether mentioning the bot as a prefix is enabled
  * @property {boolean} commands.parseUserMessages Whether messages from users are parsed
  * @property {boolean} commands.parseBotMessages Whether messages from bots are parsed
+ * @property {boolean} commands.parseSelfMessages Whether messages from the client user are parsed
  * @property {[string]} commands.channelTypes An array of [channel types](https://discord.js.org/#/docs/main/stable/class/TextChannel?scrollTo=type) that this command block may be ran in. Most commonly used to limit commands to guilds or direct messages.
  * @property {Object} events Config options concerning discord.js events
  * @property {string} events.directory Path of a folder where modules are located
@@ -41,6 +42,7 @@ module.exports.config = {
     "mentions": true,
     "parseUserMessages": true,
     "parseBotMessages": false,
+    "parseSelfMessages": false,
     "channelTypes": ["dm", "text", "news"],
   },
   "events": {
