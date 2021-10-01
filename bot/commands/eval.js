@@ -3,6 +3,8 @@ const log = require("../../modules/log");
 const { inspect } = require("util");
 const _ = require("lodash");
 
+const autodelete = "💾";
+
 const clean = async function(input, token) {
     let value = input;
     if (_.isNil(value)) return null;
@@ -27,23 +29,35 @@ module.exports = new CommandBlock({
 }, async function(client, message, code, args) {
     const positive = client.config.get("metadata.reactions.positive").value();
     const negative = client.config.get("metadata.reactions.negative").value();
-
     if (!code) return message.react(client.config.get("metadata.reactions.negative").value());
+
     log.debug(`Code provided to eval from ${message.author.tag}:`, "\n" + code);
+
     let cleaned = null;
     try {
         const result = eval(code);
         cleaned = await clean(result, client.token);
-        message.react(positive);
+        await message.react(positive);
         log.debug(`Eval from ${message.author.tag} resulted in:`, result);
     } catch (e) {
         cleaned = await clean(e, client.token);
-        message.react(negative);
+        await message.react(negative);
         log.error(`Eval from ${message.author.tag} caused an error:`, e);
         return message.channel.send(`<:_:${negative}> An evaluation error occurred;\`\`\`\n${e.stack}\`\`\``);
     }
-    if(cleaned) {
-        if(cleaned.length > 1991) cleaned = cleaned.substring(0, 1988) + "...";
-        message.channel.send(`\`\`\`js\n${cleaned}\`\`\``);
-    }
+
+    if(cleaned && cleaned.length > 1991) cleaned = cleaned.substring(0, 1988) + "...";
+    const msg = await message.channel.send(`\`\`\`js\n${cleaned || "undefined"}\`\`\``);
+    await msg.react(autodelete);
+
+    // tjios doesnt fuckign work
+    const filter = (reaction, user) => [autodelete].includes(reaction.emoji.name) && user.id === message.author.id;
+    msg.awaitReactions({ filter, time: 5000, max: 1, errors: ["time"] }).then((collected) => {
+        // this is bad programming practice
+        // im not going to fix it
+        // ¯\_(ツ)_/¯
+    }).catch((e) => {
+        console.log("no reactions. deleting this bih");
+        msg.delete();
+    });
 });
