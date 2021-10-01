@@ -8,20 +8,19 @@ module.exports = new CommandBlock({
     description: "Gets the current queue length of 2b2t. Data fetched from [2b2t.io](https://2b2t.io/).",
     scope: ["dm", "text", "news"],
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
-  }, function(client, message, content, args) {
+}, function(client, message, content, args) {
     const negative = client.config.get("metadata.reactions.negative").value();
     https.get("https://2b2t.io/api/queue?last=true", (resp) => {
-      let data = "";
-      resp.on("data", (chunk) => data += chunk);
-      resp.on("end", () => {
-        let len = JSON.parse(data)[0][1];
-        const embed = new MessageEmbed()
-          .setColor("#FFAA00")
-          .setTitle(`The 2b2t queue is \`${len}\` users long.`);
-        message.channel.send(embed);
-      });
+        let data = "";
+        resp.on("data", (chunk) => data += chunk);
+        resp.on("end", () => {
+            let len = JSON.parse(data)[0][1];
+            const embed = new MessageEmbed()
+                .setColor("#FFAA00")
+                .setTitle(`The 2b2t queue is \`${len}\` users long.`);
+            message.channel.send(embed);
+        });
     }).on("error", (e) => {
-      message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e}\`\`\``);
+        message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e}\`\`\``);
     });
-  }
-);
+});

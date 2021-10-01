@@ -3,16 +3,14 @@ const Client = require("./modules/Client");
 const Handler = require("./modules/Handler");
 const log = require("./modules/log");
 const fse = require("fs-extra");
-const { SnowflakeUtil } = require("discord.js");
+const { Intents, SnowflakeUtil } = require("discord.js");
 
 // Discord token regex
 const tokenRegex = RegExp(/^[\w]{24}\.[\w-]{6}\.[\w-]{27}$/);
 
 // Instantiate client
 const client = new Client({
-  disableMentions: "everyone",
-  // This changes the default value for the equivalent message option, good practice imo
-  // https://discord.js.org/#/docs/main/stable/typedef/MessageOptions?scrollTo=disableMentions
+  intents: [Intents.FLAGS.GUILD_MESSAGE_REACTIONS],
 });
 
 // Token validation (config)

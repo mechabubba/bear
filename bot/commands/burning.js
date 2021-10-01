@@ -15,7 +15,7 @@ module.exports = new CommandBlock({
 
     const serialized = encodeURIComponent(content.trim()).replace(/%20/g, "+");
     const data = `LogoID=4&Text=${serialized}&FontSize=70&Color1_color=%23FF0000&Integer1=15&Boolean1=on&Integer9=0&Integer13=on&Integer12=on&BackgroundColor_color=%23FFFFFF`;
-    
+
     // This API isn't public, so this will probably break eventually.
     try {
         const resp = await fetch("https://cooltext.com/PostChange", {
@@ -24,11 +24,11 @@ module.exports = new CommandBlock({
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
                 "Content-Length": data.length
-            }
+            },
         });
 
         if(!resp.ok) {
-            throw new Error(res.statusText);
+            throw new Error(resp.statusText);
         }
 
         const json = await resp.json();

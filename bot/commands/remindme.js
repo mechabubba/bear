@@ -26,98 +26,97 @@ module.exports = new CommandBlock({
     scope: ["dm", "text", "news"],
     locked: ["trusted", "hosts"],
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
-  }, async function(client, message, content, args) {
+}, async function(client, message, content, args) {
     const positive = client.config.get("metadata.reactions.positive").value();
     const negative = client.config.get("metadata.reactions.negative").value();
 
     if(!args[0]) return message.channel.send(`<:_:${negative}> Not enough parameters! Perform \`help ${this.firstName}\` for more information.`);
 
     switch(args[0]) {
-      case "list": {
-        const embed = new MessageEmbed()
-          .setColor("#9B59B6")
-          .setTitle("Currently Active Reminders");
+        case "list": {
+            const embed = new MessageEmbed()
+                .setColor("#9B59B6")
+                .setTitle("Currently Active Reminders");
 
-        let reminders = client.reminders.activeReminders(message.author.id);
-        embed.setFooter(`${reminders.size} active reminder(s) • You can stop a reminder at any time by performing "remindme stop [id]".`);
+            let reminders = client.reminders.activeReminders(message.author.id);
+            embed.setFooter(`${reminders.size} active reminder(s) • You can stop a reminder at any time by performing "remindme stop [id]".`);
 
-        if(reminders.size > 0) {
-          for(const value of reminders.values()) {
-            let reminder = value.reminder;
-            embed.addField(`"${reminder.message}"`, `• **Start:** ${moment(reminder.start).format("dddd, MMMM Do YYYY, h:mm a")}\n` + (reminder.iscron ? `• **Cron Statement:** \`${reminder.end}\`\n` : `• **End:** ${moment(reminder.end).format("dddd, MMMM Do YYYY, h:mm a")}\n`) + `• **ID:** \`${reminder.id.toUpperCase()}\``);
-          }
-        }
-        return message.channel.send(embed);
-      }
-
-      case "stop":
-      case "delete":
-      case "remove": {
-        let given = args[1];
-        if(!given) {
-          return message.channel.send(`<:_:${negative}> You must input a reminder ID!`);
-        } else {
-          try {
-            await client.reminders.stop(message.author.id, given.toLowerCase());
-          } catch(e) {
-            return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
-          }
-          return message.channel.send(`<:_:${positive}> The reminder was removed successfully!`);
-        }
-      }
-      
-      case "trigger": {
-        let given = args[1];
-        if(!given) {
-          return message.channel.send(`<:_:${negative}> You must input a reminder ID!`);
-        } else {
-          try {
-            await client.reminders.trigger(message.author.id, given.toLowerCase());
-          } catch(e) {
-            return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
-          }
-        }
-        break;
-      }
-
-      default: {
-        if(!content.includes("|")) return message.channel.send(`<:_:${negative}> You must split your date and message with a \`|\`!`);
-        
-        let reminder;
-        try {
-          let ishost = false;
-          if(slg !== "*") {
-            for(group of slg) {
-              if(client.storage.get(["users", group]).includes(message.author.id).value()) {
-                ishost = true;
-                break;
-              }
+            if(reminders.size > 0) {
+                for(const value of reminders.values()) {
+                    let reminder = value.reminder;
+                    embed.addField(`"${reminder.message}"`, `• **Start:** ${moment(reminder.start).format("dddd, MMMM Do YYYY, h:mm a")}\n` + (reminder.iscron ? `• **Cron Statement:** \`${reminder.end}\`\n` : `• **End:** ${moment(reminder.end).format("dddd, MMMM Do YYYY, h:mm a")}\n`) + `• **ID:** \`${reminder.id.toUpperCase()}\``);
+                }
             }
-          } else {
-            ishost = true;
-          }
-          if(message.channel.type == "dm") {
-            reminder = new Reminder(content, message.author.id, null, null, ishost); // pain.
-          } else {
-            reminder = new Reminder(content, message.author.id, message.guild.id, message.channel.id, ishost); // pain.
-          }
-        } catch(e) {
-          return message.channel.send(`<:_:${negative}> An error occured.\`\`\`\n${e.message}\`\`\``);
+            return message.channel.send(embed);
         }
 
-        if(!reminder.iscron && (reminder.end.getTime() < new Date().getTime())) return message.channel.send(`<:_:${negative}> The supplied date is before the current date!`);
-        let time = reminder.iscron ? `the cron expression \`${reminder.end}\`` : `**${moment(reminder.end).format("dddd, MMMM Do YYYY, h:mm a")}**`;
-
-        let id;
-        try {
-          id = await client.reminders.start(reminder);
-        } catch(e) {
-          return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\`\`\``); // should never be seen
+        case "stop":
+        case "delete":
+        case "remove": {
+            let given = args[1];
+            if(!given) {
+                return message.channel.send(`<:_:${negative}> You must input a reminder ID!`);
+            } else {
+                try {
+                    await client.reminders.stop(message.author.id, given.toLowerCase());
+                } catch(e) {
+                    return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
+                }
+                return message.channel.send(`<:_:${positive}> The reminder was removed successfully!`);
+            }
         }
-        
-        message.react(positive);
-        return message.channel.send(`<:_:${positive}> ${affirmations[Math.floor(Math.random() * affirmations.length)]} I set a reminder for ${time} with the text "${reminder.message}"\nYour ID is \`${id.toUpperCase()}\`.`);
-      }
+
+        case "trigger": {
+            let given = args[1];
+            if(!given) {
+                return message.channel.send(`<:_:${negative}> You must input a reminder ID!`);
+            } else {
+                try {
+                    await client.reminders.trigger(message.author.id, given.toLowerCase());
+                } catch(e) {
+                    return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
+                }
+            }
+            break;
+        }
+
+        default: {
+            if(!content.includes("|")) return message.channel.send(`<:_:${negative}> You must split your date and message with a \`|\`!`);
+
+            let reminder;
+            try {
+                let ishost = false;
+                if(slg !== "*") {
+                    for(group of slg) {
+                        if(client.storage.get(["users", group]).includes(message.author.id).value()) {
+                            ishost = true;
+                            break;
+                        }
+                    }
+                } else {
+                    ishost = true;
+                }
+                if(message.channel.type == "dm") {
+                    reminder = new Reminder(content, message.author.id, null, null, ishost); // pain.
+                } else {
+                    reminder = new Reminder(content, message.author.id, message.guild.id, message.channel.id, ishost); // pain.
+                }
+            } catch(e) {
+                return message.channel.send(`<:_:${negative}> An error occured.\`\`\`\n${e.message}\`\`\``);
+            }
+
+            if(!reminder.iscron && (reminder.end.getTime() < new Date().getTime())) return message.channel.send(`<:_:${negative}> The supplied date is before the current date!`);
+            let time = reminder.iscron ? `the cron expression \`${reminder.end}\`` : `**${moment(reminder.end).format("dddd, MMMM Do YYYY, h:mm a")}**`;
+
+            let id;
+            try {
+                id = await client.reminders.start(reminder);
+            } catch(e) {
+                return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\`\`\``); // should never be seen
+            }
+
+            message.react(positive);
+            return message.channel.send(`<:_:${positive}> ${affirmations[Math.floor(Math.random() * affirmations.length)]} I set a reminder for ${time} with the text "${reminder.message}"\nYour ID is \`${id.toUpperCase()}\`.`);
+        }
     }
-  }
-);
+});

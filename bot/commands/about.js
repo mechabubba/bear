@@ -12,18 +12,16 @@ module.exports = new CommandBlock({
     identity: "about",
     description: "Displays information about the bot.",
     scope: ["dm", "text", "news"],
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
-  }, function(client, message, content, args) {
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
+}, function(client, message, content, args) {
     const col = randomColor();
     const embed = new MessageEmbed()
-      .setTitle(`Hello, I am ${client.user.username}.`)
-      .setColor(col)
-      .setDescription(desc)
-      .attachFiles(["assets/bear.gif"])
-      .setThumbnail("attachment://bear.gif")
-      .addField("Statistics", `• **Uptime:** ${moment.duration(client.uptime).humanize()}\n• **Guilds:** ${client.guilds.cache.size}\n• **Users:** ${client.users.cache.size}`)
-      .setFooter(`Made with \uD83D\uDC96 by @stev#7503. • Last updated: 10/15/20 v3.1 α \uD83C\uDF89 • #${col.toUpperCase()}`);
-      
+        .setTitle(`Hello, I am ${client.user.username}.`)
+        .setColor(col)
+        .setDescription(desc)
+        .attachFiles(["assets/bear.gif"])
+        .setThumbnail("attachment://bear.gif")
+        .addField("Statistics", `• **Uptime:** ${moment.duration(client.uptime).humanize()}\n• **Guilds:** ${client.guilds.cache.size}\n• **Users:** ${client.users.cache.size}`)
+        .setFooter(`Made with \uD83D\uDC96 by @stev#7503. • Last updated: 10/15/20 v3.1 α \uD83C\uDF89 • #${col.toUpperCase()}`);
     return message.channel.send(embed);
-  }
-);
+});
