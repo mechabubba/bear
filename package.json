@@ -30,6 +30,7 @@
     "gamedig": "^2.0.23",
     "lodash": "^4.17.21",
     "lowdb": "^1.0.0",
+    "luxon": "^2.0.2",
     "moment": "^2.27.0",
     "node-fetch": "^2.6.1",
     "seedrandom": "^3.0.5",
