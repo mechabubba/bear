@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /**
  * This module contains a bunch of exported functions. Some are useful in general, others are for convenience and code clarity, as it's often simpler for logic to be a reusable function rather than complicated alternatives or implementing the logic multiple times where needed to achieve the same result.
  * @module miscellaneous
@@ -129,6 +130,6 @@ module.exports.isNumeric = function(value) {
  * @returns {String}
  */
 module.exports.randomColor = function(w = 6) {
-  let col = Math.floor(Math.random() * ((256 ** 3) - 1)).toString(16);
+  const col = Math.floor(Math.random() * ((256 ** 3) - 1)).toString(16);
   return new Array(w + 1 - (col + "").length).join("0") + col;
 };
