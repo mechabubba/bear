@@ -1,5 +1,5 @@
 const CommandBlock = require("../../modules/CommandBlock");
-const moment = require("moment");
+const { DateTime } = require("luxon");
 
 const sdate = new Date(1993, 8, 1); // its the right date, but the month index starts at 0 :/
 
@@ -8,10 +8,9 @@ module.exports = [
         identity: ["thetime", "time"],
         description: "Tells the time.",
         scope: ["dm", "text", "news"],
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"]
-    }, function(client, message, content, args) {
-        const time = moment(Date.now()).format("lll");
-        return message.channel.send(`It is currently **${time}.**`);
+        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"],
+    }, (client, message, content, args) => {
+        return message.channel.send(`It is currently **${DateTime.now().toLocaleString(DateTime.DATETIME_FULL)}.**`);
     }),
     new CommandBlock({
         identity: ["sdate"],

@@ -1,7 +1,7 @@
 const { MessageEmbed } = require("discord.js");
 const log = require("../../modules/log");
 const ListenerBlock = require("../../modules/ListenerBlock");
-const moment = require("moment");
+const { DateTime } = require("luxon");
 
 module.exports = [
     new ListenerBlock({ event: "command" }, async (client, message) => {
@@ -12,10 +12,11 @@ module.exports = [
                 .setColor(clogging.color)
                 .setDescription(`\`\`\`\n${message.content}\`\`\``)
                 .setThumbnail(message.author.displayAvatarURL({ format: "png", dynamic: "true" }))
-                .setFooter(`${moment(message.createdTimestamp).format("lll")} • ${message.channel.id}`);
+                .setFooter(`${DateTime.fromMillis(message.createdTimestamp).format(DateTime.DATETIME_MED_WITH_SECONDS)} • ${message.channel.id}`);
+
             const guild = await client.guilds.fetch(clogging.guild);
             if(guild.available) {
-                let channel = guild.channels.cache.get(clogging.channel);
+                const channel = guild.channels.cache.get(clogging.channel);
                 channel.send(embed);
             }
         }

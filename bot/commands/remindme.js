@@ -6,9 +6,12 @@
 
 const CommandBlock = require("../../modules/CommandBlock");
 const Reminder = require("../../modules/Reminder");
-const moment = require("moment");
+const { DateTime } = require("luxon");
 const { MessageEmbed } = require("discord.js");
 const affirmations = ["Okee doke!", "Will do!", "Gotcha!", "Affirmative.", "You got it!", "Alright!", "Can do!", "Roger that.", "Okay.", "Done.", "On it!"];
+
+// Default DateTime format. Used in the reminder list and the reminder confirmation.
+const dt_format = DateTime.DATETIME_FULL_WITH_SECONDS;
 
 /**
  * A list of groups that can use second level granularity in cron statements.
@@ -25,7 +28,7 @@ module.exports = new CommandBlock({
     usage: "[(date / time / cron / human-readable string) | (message)] [list] [trigger (id)] [remove (id)]",
     scope: ["dm", "text", "news"],
     locked: ["trusted", "hosts"],
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, args) {
     const positive = client.config.get("metadata.reactions.positive").value();
     const negative = client.config.get("metadata.reactions.negative").value();
@@ -38,13 +41,13 @@ module.exports = new CommandBlock({
                 .setColor("#9B59B6")
                 .setTitle("Currently Active Reminders");
 
-            let reminders = client.reminders.activeReminders(message.author.id);
+            const reminders = client.reminders.activeReminders(message.author.id);
             embed.setFooter(`${reminders.size} active reminder(s) • You can stop a reminder at any time by performing "remindme stop [id]".`);
 
             if(reminders.size > 0) {
                 for(const value of reminders.values()) {
-                    let reminder = value.reminder;
-                    embed.addField(`"${reminder.message}"`, `• **Start:** ${moment(reminder.start).format("dddd, MMMM Do YYYY, h:mm a")}\n` + (reminder.iscron ? `• **Cron Statement:** \`${reminder.end}\`\n` : `• **End:** ${moment(reminder.end).format("dddd, MMMM Do YYYY, h:mm a")}\n`) + `• **ID:** \`${reminder.id.toUpperCase()}\``);
+                    const reminder = value.reminder;
+                    embed.addField(`"${reminder.message}"`, `• **Start:** ${DateTime.fromJSDate(reminder.start).toLocaleString(dt_format)}\n` + (reminder.iscron ? `• **Cron Statement:** \`${reminder.end}\`\n` : `• **End:** ${DateTime.fromJSDate(reminder.end).toLocaleString(dt_format)}\n`) + `• **ID:** \`${reminder.id.toUpperCase()}\``);
                 }
             }
             return message.channel.send(embed);
@@ -53,7 +56,7 @@ module.exports = new CommandBlock({
         case "stop":
         case "delete":
         case "remove": {
-            let given = args[1];
+            const given = args[1];
             if(!given) {
                 return message.channel.send(`<:_:${negative}> You must input a reminder ID!`);
             } else {
@@ -67,7 +70,7 @@ module.exports = new CommandBlock({
         }
 
         case "trigger": {
-            let given = args[1];
+            const given = args[1];
             if(!given) {
                 return message.channel.send(`<:_:${negative}> You must input a reminder ID!`);
             } else {
@@ -87,7 +90,7 @@ module.exports = new CommandBlock({
             try {
                 let ishost = false;
                 if(slg !== "*") {
-                    for(group of slg) {
+                    for(const group of slg) {
                         if(client.storage.get(["users", group]).includes(message.author.id).value()) {
                             ishost = true;
                             break;
@@ -106,7 +109,7 @@ module.exports = new CommandBlock({
             }
 
             if(!reminder.iscron && (reminder.end.getTime() < new Date().getTime())) return message.channel.send(`<:_:${negative}> The supplied date is before the current date!`);
-            let time = reminder.iscron ? `the cron expression \`${reminder.end}\`` : `**${moment(reminder.end).format("dddd, MMMM Do YYYY, h:mm a")}**`;
+            const time = reminder.iscron ? `the cron expression \`${reminder.end}\`` : `**${DateTime.fromJSDate(reminder.end).toLocaleString(dt_format)}**`;
 
             let id;
             try {
