@@ -13,7 +13,7 @@ module.exports = [
 
         try {
             const resp = await fetch("http://shibe.online/api/shibes", { method: "get" });
-            if(!resp.ok) throw new Error(res.statusText);
+            if(!resp.ok) throw new Error(resp.statusText);
 
             const json = await resp.json();
             if(!json) throw new Error("Recieved malformed json.");
@@ -30,7 +30,7 @@ module.exports = [
         summary: "Gets an HTTP cat code.",
         description: "Gets an HTTP cat code. Images fetched from [http.cat](https://http.cat).",
         usage: "(code)",
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"]
+        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"],
     }, async function(client, message, content, [code]) {
         return message.channel.send({ files: [`https://http.cat/${code}.jpg`] });
     }),

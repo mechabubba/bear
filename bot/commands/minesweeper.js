@@ -109,10 +109,10 @@ module.exports = new CommandBlock({
 
     message.react(positive);
     const embed = new MessageEmbed()
-        .setColor("C0C0C0")
+        .setColor("#C0C0C0")
         .setTitle("Minesweeper")
         .setDescription(tab)
         .attachFiles(["assets/mine.png"])
-        .setFooter(`${length}x${width} • ${maxmines} mines${seed ? ` • ${seed}` : ``}`, "attachment://mine.png");
+        .setFooter(`${length} × ${width} tiles • ${maxmines} mines${seed ? ` • ${seed}` : ``}`, "attachment://mine.png");
     return message.channel.send(embed);
 });

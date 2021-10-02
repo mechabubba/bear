@@ -4,7 +4,7 @@ const os = require("os");
 const { spawn } = require("child_process");
 const spawn_cmd = {
     linux: "/bin/sh",
-    win32: "cmd"
+    win32: "cmd",
 };
 
 module.exports = new CommandBlock({

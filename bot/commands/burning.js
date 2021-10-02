@@ -6,7 +6,7 @@ const charlimit = 64;
 module.exports = new CommandBlock({
     identity: ["burning"],
     description: "Makes really awesome burning text. Generated from https://cooltext.com/.",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"]
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"],
 }, async function(client, message, content, args) {
     const negative = client.config.get("metadata.reactions.negative").value();
     if(content.length > charlimit) return message.channel.send(`<:_:${negative}> There is a character limit of ${charlimit} per image.`);
@@ -23,7 +23,7 @@ module.exports = new CommandBlock({
             body: data,
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-                "Content-Length": data.length
+                "Content-Length": data.length,
             },
         });
 
