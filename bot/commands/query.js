@@ -6,10 +6,10 @@ const log = require("../../modules/log");
 module.exports = new CommandBlock({
     identity: ["query", "q", "srcds"],
     summary: "Querys a source engine server.",
-    description: "Querys a source engine server. The port is optional and defaults to \`27015\`.",
+    description: "Querys a source engine server. The port is optional and defaults to `27015`.",
     usage: "ip:port",
     scope: ["dm", "text", "news"],
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, [ip, port]) {
     const online = client.config.get("metadata.reactions.online").value();
     const offline = client.config.get("metadata.reactions.offline").value();
@@ -20,7 +20,7 @@ module.exports = new CommandBlock({
 
     message.channel.startTyping();
     if(ip.match(/:/g)) {
-        let split = ip.split(":");
+        const split = ip.split(":");
         ip = split[0];
         port = split[split.length - 1];
     }
@@ -35,7 +35,7 @@ module.exports = new CommandBlock({
             host: ip,
             port: port || "27015",
         });
-    } catch(e) { 
+    } catch(e) {
         embed.setTitle(vanity);
         embed.setColor("#F04747");
         embed.setFooter("This server is offline.", `https://cdn.discordapp.com/emojis/${offline}.png`);

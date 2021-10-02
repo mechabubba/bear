@@ -41,10 +41,9 @@ class Client extends Discord.Client {
     this.storage.defaultsDeep(defaultStorage).write()
 
     /**
-     * Arbitrary Collection
-     * @type {Discord.Collection<*, *>}
+     * Arbitrary object for temporary data.
      */
-    this.cookies = new Discord.Collection();
+    this.cookies = {};
 
     /**
      * Commands

@@ -15,9 +15,9 @@ module.exports = new CommandBlock({
 
     if(!content) return message.channel.send(`<:_:${negative}> You didn't send any code! Perform \`help ${this.firstName}\` for more information.`);
 
-    let index = content.indexOf("|") || 0;
-    let [input, code] = [content.substring(0, index), content.substring(index + 1)].map(x => x.trim());
-    code = code.replace(/[^\+\-\[\].,<>]+/g, ""); // Sanitizes the code of any text other than the specified opcodes.
+    const index = content.indexOf("|") || 0;
+    let [input, code] = [content.substring(0, index), content.substring(index + 1)].map(x => x.trim()); // eslint-disable-line prefer-const
+    code = code.replace(/[^+\-[\].,<>]+/g, ""); // Sanitizes the code of any text other than the specified opcodes.
 
     message.channel.startTyping();
     const child = fork("./modules/brainfuck", [input, code], { cwd: process.cwd() });
@@ -35,5 +35,4 @@ module.exports = new CommandBlock({
         message.channel.send(`<:_:${reaction}> ${data.log}`);
         return message.channel.send(`\`\`\`\n${output}\`\`\``);
     });
-}
-);
+});

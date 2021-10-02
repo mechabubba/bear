@@ -7,7 +7,7 @@ module.exports = new CommandBlock({
     usage: "[guild ID]",
     scope: ["dm", "text", "news"],
     locked: "hosts",
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, args) {
     if (!content) return message.channel.send(`Arguments are required\nUsage: \`${this.firstName} ${this.usage}\``);
     if (!client.guilds.cache.has(content)) return message.channel.send(`${client.user.tag} did not have \`${content}\` mapped to a guild in the guilds cache`);

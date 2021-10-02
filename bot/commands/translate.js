@@ -6,9 +6,9 @@ const debug = false; // Set to true to send the JSON output over the regular out
 module.exports = new CommandBlock({
     identity: ["translate", "trans"],
     summary: "Translates text.",
-    description: "Translates text using the Google Translate API.\n\nThe `source` parameter is an (optional) ISO 639-1 language code. The source language is automatically detected, but you can force it to translate between languages by prefacing an underscore `_` in between the source and the destination language; for example, `zh-cn_es` would translate from simplified chinese to spanish.\n\nView all supported languages [here!](https://cloud.google.com/translate/docs/languages)",
+    description: "Translates text using the Google Translate API.\n\n**Language settings:** By default, the command takes given text and translates it to english. The `source` parameter can override this in one of two ways;\n• Set it to an (optional) ISO 639-1 language code to translate the text to a different language.\n• Force it to translate between different languages by placing an underscore `_` in between the source and the destination language; for example, `zh-cn_es` would attempt to translate from simplified chinese to spanish.\n\nView all supported languages [here!](https://cloud.google.com/translate/docs/languages)",
     usage: `(source) [foreign text]`,
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, args) {
     const positive = client.config.get("metadata.reactions.positive").value();
     const negative = client.config.get("metadata.reactions.negative").value();
@@ -17,15 +17,15 @@ module.exports = new CommandBlock({
 
     message.channel.startTyping();
 
-    let langs = getlang(args[0]);
+    const langs = getlang(args[0]);
     if(langs !== undefined) args.shift();
 
-    let api = `https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=${langs ? langs.sl : "auto"}&tl=${langs ? langs.tl : "en"}&q=${encodeURIComponent(args.join(" "))}`;
+    const api = `https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=${langs ? langs.sl : "auto"}&tl=${langs ? langs.tl : "en"}&q=${encodeURIComponent(args.join(" "))}`;
     try {
         const resp = await fetch(api, {
             headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36"
-            }
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36",
+            },
         });
         if(!resp.ok) throw new Error(resp.statusText);
 
@@ -59,7 +59,7 @@ const getlang = (lang) => {
     }
 };
 
-// Data taken from https://cloud.google.com/translate/docs/languages. Last updated: 09/03/21 
+// Data taken from https://cloud.google.com/translate/docs/languages. Last updated: 09/03/21
 const languages = {
     "af": "Afrikaans",
     "sq": "Albanian",

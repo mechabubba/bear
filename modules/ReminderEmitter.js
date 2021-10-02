@@ -23,7 +23,7 @@ class ReminderEmitter extends EventEmitter {
      * @returns {string} A reminder ID that can be used to internally identify and stop a reminder.
      */
     start(reminder) {
-        if(!reminder instanceof Reminder) throw new Error(`Reminder object expected; got ${typeof reminder}`);
+        if(!(reminder instanceof Reminder)) throw new Error(`Reminder object expected; got ${typeof reminder}`);
         if(!this.reminders.has(reminder.userID)) this.reminders.set(reminder.userID, new Map());
         if(!reminder.id) reminder.id = this.generateID(reminder.userID);
 

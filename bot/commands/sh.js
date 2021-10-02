@@ -4,7 +4,7 @@ const os = require("os");
 const { spawn } = require("child_process");
 const spawn_cmd = {
     linux: "/bin/sh",
-    win32: "cmd"
+    win32: "cmd",
 };
 
 module.exports = new CommandBlock({
@@ -13,7 +13,7 @@ module.exports = new CommandBlock({
     usage: "[commands]",
     scope: ["dm", "text", "news"],
     locked: ["hosts"],
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
+    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, function(client, message, content, args) {
     const positive = client.config.get("metadata.reactions.positive").value();
     const negative = client.config.get("metadata.reactions.negative").value();
@@ -27,10 +27,10 @@ module.exports = new CommandBlock({
     shell.stderr.on("data", (d) => output += d + "\n");
 
     let output = "";
-    let cmds = content.split(/\r?\n/);
-    for(i = 0; i < cmds.length; i++) {
-        cmd = cmds[i].trim();
-        shell.stdin.write(cmd + "\n");
+    const cmds = content.split(/\r?\n/);
+    for(let i = 0; i < cmds.length; i++) {
+        const cmd = cmds[i].trim() + "\n";
+        shell.stdin.write(cmd);
     }
 
     // Saves current cwd as a cookie. For whatever reason, this isn't *perfect,* but its good enough from my testing.
