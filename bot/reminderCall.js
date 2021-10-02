@@ -7,7 +7,7 @@ const dt_format = DateTime.DATETIME_FULL;
 module.exports = new ListenerBlock({ event: "reminderCall" }, ({ client }, reminder) => {
     const reminderalert = `<:_:${client.config.get("metadata.reactions.reminderalert").value()}>`;
 
-    const start = DateTime.fromISO(reminder.start).toLocaleString(dt_format);
+    const start = DateTime.fromJSDate(reminder.start).toLocaleString(dt_format);
     const alert = `${reminderalert} <@${reminder.userID}>, you set a reminder on **${start}**;\n"${reminder.message}"`;
 
     if(reminder.isDM) {

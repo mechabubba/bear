@@ -40,7 +40,7 @@ module.exports = new CommandBlock({
         cleaned = await clean(result, client.token);
         message.react(positive);
         log.debug(`Eval from ${message.author.tag} resulted in:`, result);
-        output = await message.channel.send(`\`\`\`js\n${(cleaned && cleaned.length) > 1991 ? cleaned.substring(0, 1988) + "..." : (cleaned || "undefined")}\`\`\``);
+        output = await message.channel.send(`\`\`\`js\n${(typeof cleaned == "string" && cleaned.length > 1991) ? cleaned.substring(0, 1988) + "..." : (cleaned || "undefined")}\`\`\``);
     } catch (e) {
         cleaned = await clean(e, client.token);
         message.react(negative);

@@ -1,6 +1,5 @@
 /*
 # bigge todo
-  - "remove all/*": remove all of your reminders
   - handle reactions when the bot cannot react (error if theres no permission)
 */
 
@@ -14,9 +13,9 @@ const affirmations = ["Okee doke!", "Will do!", "Gotcha!", "Affirmative.", "You 
 const dt_format = DateTime.DATETIME_FULL_WITH_SECONDS;
 
 /**
- * A list of groups that can use second level granularity in cron statements.
+ * "slg" stands for "Second Level Granularity."
+ * This is a list of groups that can use second level granularity in cron statements.
  * If it equals "*", second level granularity will be available to all.
- * @readonly
  * @type {(string|Array)}
  */
 const slg = ["hosts"];
@@ -46,8 +45,8 @@ module.exports = new CommandBlock({
 
             if(reminders.size > 0) {
                 for(const value of reminders.values()) {
-                    const reminder = value.reminder;
-                    embed.addField(`"${reminder.message}"`, `• **Start:** ${DateTime.fromJSDate(reminder.start).toLocaleString(dt_format)}\n` + (reminder.iscron ? `• **Cron Statement:** \`${reminder.end}\`\n` : `• **End:** ${DateTime.fromJSDate(reminder.end).toLocaleString(dt_format)}\n`) + `• **ID:** \`${reminder.id.toUpperCase()}\``);
+                    const data = value.reminder;
+                    embed.addField(`"${data.message}"`, `• **Start:** ${DateTime.fromJSDate(data.start).toLocaleString(dt_format)}\n` + (data.iscron ? `• **Cron Statement:** \`${data.end}\`\n` + `• **Next Trigger:** ${DateTime.fromJSDate(value.job.nextDates().toDate()).toLocaleString(dt_format)}\n` : `• **End:** ${DateTime.fromJSDate(data.end).toLocaleString(dt_format)}\n`) + `• **ID:** \`${data.id.toUpperCase()}\``);
                 }
             }
             return message.channel.send(embed);
@@ -60,6 +59,10 @@ module.exports = new CommandBlock({
             if(!given) {
                 return message.channel.send(`<:_:${negative}> You must input a reminder ID!`);
             } else {
+                if(given == "*") {
+                    client.reminders.stopAll(message.author.id);
+                    return message.channel.send(`<:_:${positive}> All reminders removed successfully!`);
+                }
                 try {
                     await client.reminders.stop(message.author.id, given.toLowerCase());
                 } catch(e) {

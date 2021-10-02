@@ -12,7 +12,7 @@ module.exports = [
                 .setColor(clogging.color)
                 .setDescription(`\`\`\`\n${message.content}\`\`\``)
                 .setThumbnail(message.author.displayAvatarURL({ format: "png", dynamic: "true" }))
-                .setFooter(`${DateTime.fromMillis(message.createdTimestamp).format(DateTime.DATETIME_MED_WITH_SECONDS)} • ${message.channel.id}`);
+                .setFooter(`${DateTime.fromMillis(message.createdTimestamp).toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)} • ${message.channel.id}`);
 
             const guild = await client.guilds.fetch(clogging.guild);
             if(guild.available) {
