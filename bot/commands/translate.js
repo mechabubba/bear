@@ -37,7 +37,10 @@ module.exports = new CommandBlock({
         }
 
         message.channel.stopTyping(true);
-        return message.channel.send(debug ? `\`\`\`\n${JSON.stringify(json, null, 4)}\`\`\`` : translation);
+        return message.channel.send({
+            content: debug ? `\`\`\`\n${JSON.stringify(json, null, 4)}\`\`\`` : translation,
+            allowedMentions: { parse: [] },
+        });
     } catch(e) {
         message.channel.stopTyping(true);
         return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\`\`\``);
