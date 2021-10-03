@@ -129,7 +129,8 @@ module.exports.isNumeric = function(value) {
  * Generates a random hexadecimal color - padded with zeroes.
  * @returns {String}
  */
-module.exports.randomColor = function(w = 6) {
-  const col = Math.floor(Math.random() * ((256 ** 3) - 1)).toString(16);
-  return new Array(w + 1 - (col + "").length).join("0") + col;
+module.exports.randomColor = function(w = 6, decimal = false) {
+  const col = Math.floor(Math.random() * ((256 ** 3) - 1));
+  if(decimal) return col;
+  return new Array(w + 1 - (col.toString(16) + "").length).join("0") + col;
 };
