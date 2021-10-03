@@ -19,7 +19,9 @@ module.exports = [
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "MANAGE_MESSAGES"],
     }, async function(client, message, content, args) {
         await message.delete();
-        content = content.replace(/@/gi, "@\u200B");
-        return message.channel.send(content);
+        return message.channel.send({
+            content: content,
+            allowedMentions: { parse: [] },
+        });
     }),
 ];

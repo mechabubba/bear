@@ -122,7 +122,10 @@ module.exports = new CommandBlock({
             }
 
             message.react(positive);
-            return message.channel.send(`<:_:${positive}> ${affirmations[Math.floor(Math.random() * affirmations.length)]} I set a reminder for ${time} with the text "${reminder.message}"\nYour ID is \`${id.toUpperCase()}\`.`);
+            return message.channel.send({
+                content: `<:_:${positive}> ${affirmations[Math.floor(Math.random() * affirmations.length)]} I set a reminder for ${time} with the text "${reminder.message}"\nYour ID is \`${id.toUpperCase()}\`.`,
+                allowedMentions: { parse: [] },
+            });
         }
     }
 });
