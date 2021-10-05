@@ -1,13 +1,9 @@
 const { execSync } = require("child_process");
 const CommandBlock = require("../../modules/CommandBlock");
-const { randomColor } = require("../../modules/miscellaneous");
+const { randomColor, gitinfo } = require("../../modules/miscellaneous");
 const { MessageEmbed, Permissions } = require("discord.js");
 const djsver = require("discord.js").version;
 const { DateTime, Duration } = require("luxon");
-
-// Small helper function that gets information from the latest commit via the `git show` command.
-// For more information, see https://git-scm.com/docs/git-show.
-const gi = (placeholder) => execSync(`git show -s --format=${placeholder} HEAD`).toString().trim();
 
 // The permissions to give to the invite.
 const perms = new Permissions([ Permissions.FLAGS.ADMINISTATOR ]);
@@ -35,7 +31,7 @@ module.exports = [
                 `• **Guilds:** ${client.guilds.cache.size}`,
                 `• **Users:** ${client.users.cache.size}`,
             ].join("\n"))
-            .setFooter(`Made with \uD83D\uDC96 by mechabubba. • Commit ${gi("%h")} @ ${DateTime.fromMillis(parseInt(gi("%ct")) * 1000).toLocaleString(DateTime.DATETIME_SHORT)} \uD83C\uDF89 • #${col.toUpperCase()}`);
+            .setFooter(`Made with \uD83D\uDC96 by mechabubba. • Commit ${gitinfo("%h")} @ ${DateTime.fromMillis(parseInt(gitinfo("%ct")) * 1000).toLocaleString(DateTime.DATETIME_SHORT)} \uD83C\uDF89 • #${col.toUpperCase()}`);
         return message.channel.send(embed);
     }),
 ];

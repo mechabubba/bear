@@ -37,7 +37,7 @@ class Reminder {
         }
 
         this.start = new Date();
-        this.message = message.join(" | ").replace(/@/gi, "@\u200B") || "";
+        this.message = message.join(" | ");
 
         dateinfo = dateinfo.trim().toLowerCase();
 

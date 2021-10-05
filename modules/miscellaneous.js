@@ -7,6 +7,7 @@
 const { promisify } = require("util");
 const { isArray, isString, isFinite } = require("lodash");
 const { Permissions } = require("discord.js");
+const { execSync } = require("child_process");
 
 /**
  * Lets you "pause" for X amount of time, in milliseconds. (This is setTimeout's promise based custom variant)
@@ -129,7 +130,16 @@ module.exports.isNumeric = function(value) {
  * Generates a random hexadecimal color - padded with zeroes.
  * @returns {String}
  */
-module.exports.randomColor = function(w = 6) {
-  const col = Math.floor(Math.random() * ((256 ** 3) - 1)).toString(16);
-  return new Array(w + 1 - (col + "").length).join("0") + col;
+module.exports.randomColor = function(w = 6, decimal = false) {
+  const col = Math.floor(Math.random() * ((256 ** 3) - 1));
+  if(decimal) return col;
+  return new Array(w + 1 - (col.toString(16) + "").length).join("0") + col;
 };
+
+/**
+ * Small helper function that gets information from the latest commit via the `git show` command.
+ * For more information, see https://git-scm.com/docs/git-show.
+ * @param {string} placeholder 
+ * @returns {string} The value recieved.
+ */
+module.exports.gitinfo = (placeholder) => execSync(`git show -s --format=${placeholder} HEAD`).toString().trim();
