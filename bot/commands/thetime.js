@@ -1,7 +1,7 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const { DateTime } = require("luxon");
 
-const sdate = new Date(1993, 8, 1); // its the right date, but the month index starts at 0 :/
+const sdate = new Date(1993, 8, 1); // Month index starts at 0.
 
 module.exports = [
     new CommandBlock({
@@ -18,7 +18,7 @@ module.exports = [
         scope: ["dm", "text", "news"],
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, function(client, message, content, args) {
-        const since = Math.ceil((Date.now() - sdate.getTime()) / (1000 * 3600 * 24));
+        const since = Math.ceil((Date.now() - sdate.getTime()) / (1000 * 60 * 60 * 24));
         let suffix;
 
         let d1 = (since % 10);
