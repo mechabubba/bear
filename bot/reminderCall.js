@@ -16,7 +16,10 @@ module.exports = new ListenerBlock({ event: "reminderCall" }, ({ client }, remin
         const user = client.users.cache.get(reminder.userID);
         return user.send({
             content: alert,
-            allowedMentions: { parse: [] },
+            allowedMentions: {
+                parse: ["users"],
+                users: [reminder.userID]
+            },
         });
     } else {
         if(!client.guilds.cache.has(reminder.guildID)) return client.reminders.stop(reminder.id);
@@ -27,10 +30,12 @@ module.exports = new ListenerBlock({ event: "reminderCall" }, ({ client }, remin
 
         const channel = client.guilds.cache.get(reminder.guildID).channels.cache.get(reminder.channelID);
 
-        console.log("sending reminder");
         return channel.send({
             content: alert,
-            allowedMentions: { parse: [] },
+            allowedMentions: {
+                parse: ["users"],
+                users: [reminder.userID]
+            },
         });
     }
 });
