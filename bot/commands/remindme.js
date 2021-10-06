@@ -26,7 +26,6 @@ module.exports = new CommandBlock({
     description: "Creates a reminder that will ping you at a certain date, interval, or time. Able to use human-date statements or cron statements.\n• Steps, ranges, and asterisks are supported as cron statement elements.\n• Nonstandard entries, such as @yearly, @monthly, @weekly, etc, are also supported. These can be prefaced with a `-` instead of an `@`.\n• Triggering a reminder early will cancel it if it's not a cron statement.",
     usage: "[(date / time / cron / human-readable string) | (message)] [list] [trigger (id)] [remove (id)]",
     scope: ["dm", "text", "news"],
-    locked: ["trusted", "hosts"],
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, args) {
     const positive = client.config.get("metadata.reactions.positive").value();
@@ -112,7 +111,7 @@ module.exports = new CommandBlock({
             }
 
             if(!reminder.iscron && (reminder.end.getTime() < new Date().getTime())) return message.channel.send(`<:_:${negative}> The supplied date is before the current date!`);
-            const time = reminder.iscron ? `the cron expression \`${reminder.end}\`` : `**${DateTime.fromJSDate(reminder.end).toLocaleString(dt_format)}**`;
+            const time = reminder.iscron ? `the cron expression \`${reminder.end}\`` : `**<t:${Math.round(reminder.end.getTime() / 1000)}:f>**`;
 
             let id;
             try {

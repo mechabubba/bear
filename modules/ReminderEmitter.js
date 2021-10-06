@@ -43,10 +43,7 @@ class ReminderEmitter extends EventEmitter {
      * @param {boolean} cronremove
      */
     _trigger(reminder, cronremove) {
-        this.emit("reminderCall", reminder);
-        if(!reminder.iscron || cronremove) {
-            this.stop(reminder.userID, reminder.id);
-        }
+        this.emit("reminderCall", reminder, cronremove);
     }
 
     /**
@@ -74,7 +71,6 @@ class ReminderEmitter extends EventEmitter {
         const robj = this.reminders.get(userID).get(reminderID);
         robj.job.stop();
         this.reminders.get(userID).delete(reminderID);
-        log.debug(`done stopping ${reminderID}.`);
     }
 
     /**
@@ -84,7 +80,6 @@ class ReminderEmitter extends EventEmitter {
     stopAll(userID) {
         if(!this.reminders.has(userID)) this.reminders.set(userID, new Map());
         for(const key of this.reminders.get(userID).keys()) {
-            log.debug(`trying to remove ${key}...`);
             this.stop(userID, key);
         }
     }
