@@ -5,12 +5,8 @@
 
 const CommandBlock = require("../../modules/CommandBlock");
 const Reminder = require("../../modules/Reminder");
-const { DateTime } = require("luxon");
 const { MessageEmbed } = require("discord.js");
 const affirmations = ["Okee doke!", "Will do!", "Gotcha!", "Affirmative.", "You got it!", "Alright!", "Can do!", "Roger that.", "Okay.", "Done.", "On it!"];
-
-// Default DateTime format. Used in the reminder list and the reminder confirmation.
-const dt_format = DateTime.DATETIME_FULL_WITH_SECONDS;
 
 /**
  * "slg" stands for "Second Level Granularity."
@@ -36,17 +32,32 @@ module.exports = new CommandBlock({
     switch(args[0]) {
         case "list": {
             const embed = new MessageEmbed()
-                .setColor("#9B59B6")
-                .setTitle("Currently Active Reminders");
+                .setColor("9B59B6")
+                .setTitle(`Reminders for ${message.author.username}`);
 
             const reminders = client.reminders.activeReminders(message.author.id);
-            embed.setFooter(`${reminders.size} active reminder(s) • You can stop a reminder at any time by performing "remindme stop [id]".`);
+            embed.setFooter(`${reminders.size} active reminder(s) • See \`help remindme\` for usage information.`);
 
             if(reminders.size > 0) {
-                for(const value of reminders.values()) {
-                    const data = value.reminder;
-                    embed.addField(`"${data.message}"`, `• **Start:** ${DateTime.fromJSDate(data.start).toLocaleString(dt_format)}\n` + (data.iscron ? `• **Cron Statement:** \`${data.end}\`\n` + `• **Next Trigger:** ${DateTime.fromJSDate(value.job.nextDates().toDate()).toLocaleString(dt_format)}\n` : `• **End:** ${DateTime.fromJSDate(data.end).toLocaleString(dt_format)}\n`) + `• **ID:** \`${data.id.toUpperCase()}\``);
+                for(const data of reminders.values()) {
+                    const reminder = data.reminder;
+
+                    let location;
+                    if(reminder.isDM) {
+                        location = "the DMs";
+                    } else {
+                        const guild = client.guilds.resolve(reminder.guildID);
+                        const channel = guild === null ? guild : guild.channels.resolve(reminder.channelID);
+                        location = channel === null ? "an unknown channel?" : `#${channel.name}`; 
+                    }
+
+                    embed.addField(
+                        `\`${reminder.id.toUpperCase()}\` in ${location}`,
+                        `(started <t:${reminder.startSecs}:R>, ${reminder.iscron ? `follows statement \`${reminder.endSecs}\`, ticks <t:${Math.round(data.job.nextDates().toDate().getTime() / 1000)}:R>`: `ends <t:${reminder.endSecs}:R>`})\n${reminder.message}`
+                    );
                 }
+            } else {
+                embed.setDescription("No reminders! :)");
             }
             return message.channel.send(embed);
         }
@@ -110,8 +121,8 @@ module.exports = new CommandBlock({
                 return message.channel.send(`<:_:${negative}> An error occured.\`\`\`\n${e.message}\`\`\``);
             }
 
-            if(!reminder.iscron && (reminder.end.getTime() < new Date().getTime())) return message.channel.send(`<:_:${negative}> The supplied date is before the current date!`);
-            const time = reminder.iscron ? `the cron expression \`${reminder.end}\`` : `**<t:${Math.round(reminder.end.getTime() / 1000)}:f>**`;
+            if(!reminder.iscron && (reminder.end < Date.now())) return message.channel.send(`<:_:${negative}> The supplied date is before the current date!`);
+            const time = reminder.iscron ? `the cron expression \`${reminder.end}\`` : `**<t:${reminder.endSecs}:f>**`;
 
             let id;
             try {
@@ -122,7 +133,7 @@ module.exports = new CommandBlock({
 
             message.react(positive);
             return message.channel.send({
-                content: `<:_:${positive}> ${affirmations[Math.floor(Math.random() * affirmations.length)]} I set a reminder for ${time} with the text "${reminder.message}"\nYour ID is \`${id.toUpperCase()}\`.`,
+                content: `<:_:${positive}> ${affirmations[Math.floor(Math.random() * affirmations.length)]} I set a reminder for ${time}.\nYour ID is \`${id.toUpperCase()}\`.`,
                 allowedMentions: { parse: [] },
             });
         }

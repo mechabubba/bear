@@ -11,6 +11,7 @@ class Reminder {
      * @param {String} userID - User ID.
      * @param {String} guildID - Guild ID - undefined if DM.
      * @param {String} channelID - Channel ID - undefined if DM.
+     * @param {boolean} secondgranularity - Is second level granularity allowed?
      */
     constructor(dateinfo, userID, guildID = undefined, channelID = undefined, secondgranularity = false) {
         if(!dateinfo) throw new Error("Date info string required.");
@@ -36,7 +37,7 @@ class Reminder {
             }
         }
 
-        this.start = new Date();
+        this.start = Date.now();
         this.message = message.join(" | ");
 
         dateinfo = dateinfo.trim().toLowerCase();
@@ -92,7 +93,7 @@ class Reminder {
 
             if(parsed instanceof Date) {
                 // It's a date!
-                this.end = parsed;
+                this.end = parsed.getTime();
             } else {
                 throw new TypeError("The time given is either a malformed date or otherwise invalid!");
             }
@@ -107,6 +108,11 @@ class Reminder {
             this.end = dateinfo;
         }
     }
+
+    // Help functions to get the start and end times in seconds.
+    // Useful for Discord timestamps.
+    get startSecs() { return Math.round(this.start / 1000) }
+    get endSecs() { return this.iscron ? undefined : Math.round(this.end / 1000); }
 
     /**
      * Tests if a string is a cron expression, using the CronTime class.
