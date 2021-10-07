@@ -1,7 +1,7 @@
 const ListenerBlock = require("../modules/ListenerBlock");
 module.exports = new ListenerBlock({ event: "reminderCall" }, ({ client }, reminder, cronremove) => {
     const reminderalert = `<:_:${client.config.get("metadata.reactions.reminderalert").value()}>`;
-    const alert = `${reminderalert} <@${reminder.userID}>, you set a reminder on **<t:${Math.round(reminder.start.getTime() / 1000)}:f>**;\n${reminder.message}`;
+    const alert = `${reminderalert} <@${reminder.userID}>, you set a reminder on **<t:${reminder.startSecs}:f>**;\n${reminder.message}`;
 
     const stop = (uid, rid) => client.reminders.stop(uid, rid);
 
