@@ -36,9 +36,9 @@ module.exports = new CommandBlock({
     }
 
     const area = length * width;
-    if(maxmines > area) {
+    if(maxmines > (area - 1)) {
         message.react(negative);
-        return message.reply(`<:_:${negative}> The mines on the field outnumber the fields area.`);
+        return message.reply(`<:_:${negative}> The mines on the field outnumber the fields fillable area.`);
     } else if(area == 0) {
         message.react(negative);
         return message.reply(`<:_:${negative}> You can't create an empty board!`);
@@ -72,6 +72,7 @@ module.exports = new CommandBlock({
 
     let curmines = 0;
     while(curmines < maxmines) {
+        console.log("fuck");
         const rl = Math.floor(rng() * length);
         const rw = Math.floor(rng() * width);
         if(rl == 0 && rw == 0) continue; // Ignore the top left of the board.
