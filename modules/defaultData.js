@@ -1,7 +1,6 @@
 /**
- * Default config data
+ * Default config data. Note that in 0.0.8 and above, much of the how configuration works will change. See issue #35
  * @namespace
- * @deprecated In 0.0.8 and above, much of the how configuration works will change. See issue #35
  * @property {Object} client Config options concerning the client
  * @property {?string} client.token Token of the account to login with
  * @property {Object} commands Config options concerning commands
