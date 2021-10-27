@@ -19,10 +19,9 @@ module.exports = [
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, function(client, message, content, args) {
         const since = Math.ceil((Date.now() - sdate.getTime()) / (1000 * 60 * 60 * 24));
+        const d1 = (since % 10);
+        const d2 = (since / 10) % 10 | 0;
         let suffix;
-
-        let d1 = (since % 10);
-        let d2 = (since / 10) % 10 | 0;
         if(d2 == 1) {
             suffix = "th";
         } else {
