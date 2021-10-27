@@ -72,7 +72,6 @@ module.exports = new CommandBlock({
 
     let curmines = 0;
     while(curmines < maxmines) {
-        console.log("fuck");
         const rl = Math.floor(rng() * length);
         const rw = Math.floor(rng() * width);
         if(rl == 0 && rw == 0) continue; // Ignore the top left of the board.
