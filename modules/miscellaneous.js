@@ -142,3 +142,26 @@ module.exports.randomColor = function(w = 6) {
  * @returns {string} The value recieved.
  */
 module.exports.gitinfo = (placeholder) => execSync(`git show -s --format=${placeholder} HEAD`).toString().trim();
+
+/**
+ * Weighted random generation. Courtesy of https://stackoverflow.com/a/1761646.
+ * @param {[*]} arr The values to be randomly chosen from.
+ * @param {Object} weight An object of weights; higher values correspond to a higher likelyhood of being returned.
+ * @returns {*} The value that was generated.
+ */
+module.exports.weightedRandom = (arr, weight) => {
+  // 1) Sum all the weights.
+  // 2) Get a random value; 0 >= x > sum.
+  // 3) Subtract until we can no longer.
+  if (!arr || !weight) throw new Error("Missing an argument");
+  let sum = 0;
+  for (const val of arr) {
+    sum += weight[val] || 0;
+  }
+  let rand = Math.floor(Math.random() * sum);
+  for (const val of arr) {
+    if (rand < weight[val]) return val;
+    rand -= weight[val] || 0;
+  }
+  throw new Error("This should never happen. Prepare to die.");
+}
