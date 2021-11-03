@@ -32,51 +32,51 @@
  * @property {?[Snowflake]} guilds.allowed Used by guild access control, acts as an "allow list" where the bot will auto leave guilds not on the list
  */
 module.exports.config = {
-  "client": {
-    "token": null,
-  },
-  "commands": {
-    "directory": "./bot/commands/",
-    "prefix": null,
-    "mentions": true,
-    "parseUserMessages": true,
-    "parseBotMessages": false,
-    "parseSelfMessages": false,
-    "channelTypes": ["dm", "text", "news"],
-  },
-  "events": {
-    "directory": "./bot/listeners/",
-  },
-  "metadata": {
-    "color": null,
-    "twitch": null,
-    "reactions": {
-      "positive": "✅",
-      "negative": "❎",
-      "inquiry": "❔",
-      "alert": "❕",
-      "cooldown": "⏳",
+    "client": {
+        "token": null,
     },
-  },
-  "users": {
-    "hosts": null,
-    "trusted": null,
-    "blocked": null,
-    "allowed": null,
-  },
-  "guilds": {
-    "blocked": null,
-    "allowed": null,
-  },
+    "commands": {
+        "directory": "./bot/commands/",
+        "prefix": null,
+        "mentions": true,
+        "parseUserMessages": true,
+        "parseBotMessages": false,
+        "parseSelfMessages": false,
+        "channelTypes": ["dm", "text", "news"],
+    },
+    "events": {
+        "directory": "./bot/listeners/",
+    },
+    "metadata": {
+        "color": null,
+        "twitch": null,
+        "reactions": {
+            "positive": "✅",
+            "negative": "❎",
+            "inquiry": "❔",
+            "alert": "❕",
+            "cooldown": "⏳",
+        },
+    },
+    "users": {
+        "hosts": null,
+        "trusted": null,
+        "blocked": null,
+        "allowed": null,
+    },
+    "guilds": {
+        "blocked": null,
+        "allowed": null,
+    },
 };
 
 /**
  * Paths of modules to be disabled by default when creating modules.json
  */
 module.exports.disabledModules = [
-  "bot/commands/template.js",
-  "bot/commands/templateMultiple.js",
-  "bot/commands/eval.js",
+    "bot/commands/template.js",
+    "bot/commands/templateMultiple.js",
+    "bot/commands/eval.js",
 ];
 
 /**
@@ -85,16 +85,16 @@ module.exports.disabledModules = [
  * See documentation for these properties in ./modules/CommandBlock.js
  */
 module.exports.defaultCommandData = {
-  summary: null,
-  description: null,
-  usage: null,
-  channelTypes: ["dm", "text", "news"],
-  nsfw: false,
-  locked: false,
-  clientPermissions: null,
-  clientChannelPermissions: null,
-  userPermissions: null,
-  userChannelPermissions: null,
+    summary: null,
+    description: null,
+    usage: null,
+    channelTypes: ["dm", "text", "news"],
+    nsfw: false,
+    locked: false,
+    clientPermissions: null,
+    clientChannelPermissions: null,
+    userPermissions: null,
+    userChannelPermissions: null,
 };
 
 /**

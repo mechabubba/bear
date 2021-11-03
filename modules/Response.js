@@ -13,16 +13,16 @@ const { has, isNil } = require("lodash");
  * Intended as a simple way for functions to provide their caller with data about their result
  */
 class Response {
-  /**
-   * @param {ResponseData} data
-   */
-  constructor(data) {
-    this.message = has(data, "message") && !isNil(data.message) ? data.message : "No Message Provided";
-    this.success = has(data, "success") && !isNil(data.success) ? data.success : true;
-    this.error = has(data, "error") && !isNil(data.error) && data.error instanceof Error ? data.error : null;
-    this.value = has(data, "value") && !isNil(data.value) ? data.value : null;
-    this.code = has(data, "code") && !isNil(data.code) ? data.code : null;
-  }
+    /**
+     * @param {ResponseData} data
+     */
+    constructor(data) {
+        this.message = has(data, "message") && !isNil(data.message) ? data.message : "No Message Provided";
+        this.success = has(data, "success") && !isNil(data.success) ? data.success : true;
+        this.error = has(data, "error") && !isNil(data.error) && data.error instanceof Error ? data.error : null;
+        this.value = has(data, "value") && !isNil(data.value) ? data.value : null;
+        this.code = has(data, "code") && !isNil(data.code) ? data.code : null;
+    }
 }
 
 module.exports = Response;

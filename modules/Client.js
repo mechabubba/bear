@@ -15,57 +15,57 @@ const { config } = require("./defaultData");
  * @extends {Discord.Client}
  */
 class Client extends Discord.Client {
-  /**
-   * @param {ClientOptions} options Options for the client
-   */
-  constructor(options) {
-    super(options);
-
     /**
-     * Replace this.guilds with our extended GuildManager
+     * @param {ClientOptions} options Options for the client
      */
-    this.guilds = new GuildManager(this);
+    constructor(options) {
+        super(options);
 
-    /**
-     * Full file path used for the configuration file
-     * @type {string}
-     * @readonly
-     */
-    this.dbPath = path.join(__dirname, "..", "data", "config.json");
+        /**
+         * Replace this.guilds with our extended GuildManager
+         */
+        this.guilds = new GuildManager(this);
 
-    // Log to the console if the config will be created
-    if (!fse.pathExistsSync(this.dbPath)) log.info(`A default config file will be generated at ./data/config.json`);
+        /**
+         * Full file path used for the configuration file
+         * @type {string}
+         * @readonly
+         */
+        this.dbPath = path.join(__dirname, "..", "data", "config.json");
 
-    /**
-     * Config database via lowdb
-     */
-    this.config = low(new FileSync(this.dbPath));
-    this.config.defaultsDeep(config).write();
+        // Log to the console if the config will be created
+        if (!fse.pathExistsSync(this.dbPath)) log.info(`A default config file will be generated at ./data/config.json`);
 
-    /**
-     * Arbitrary Collection
-     * @type {Discord.Collection<*, *>}
-     */
-    this.cookies = new Discord.Collection();
+        /**
+         * Config database via lowdb
+         */
+        this.config = low(new FileSync(this.dbPath));
+        this.config.defaultsDeep(config).write();
 
-    /**
-     * Handler framework
-     * @type {Handler}
-     */
-    this.handler = new Handler();
+        /**
+         * Arbitrary Collection
+         * @type {Discord.Collection<*, *>}
+         */
+        this.cookies = new Discord.Collection();
 
-    /**
-     * Commands
-     * @type {CommandConstruct}
-     */
-    this.commands = new CommandConstruct(this, "bot command construct");
+        /**
+         * Handler framework
+         * @type {Handler}
+         */
+        this.handler = new Handler();
 
-    /**
-     * Events
-     * @type {EventConstruct}
-     */
-    this.events = new EventConstruct(this, "discord.js event construct");
-  }
+        /**
+         * Commands
+         * @type {CommandConstruct}
+         */
+        this.commands = new CommandConstruct(this, "bot command construct");
+
+        /**
+         * Events
+         * @type {EventConstruct}
+         */
+        this.events = new EventConstruct(this, "discord.js event construct");
+    }
 }
 
 module.exports = Client;

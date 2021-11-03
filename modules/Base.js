@@ -4,32 +4,32 @@ const { SnowflakeUtil, Util } = require("discord.js");
  * @abstract
  */
 class Base {
-  constructor() {
+    constructor() {
+        /**
+         * @type {Snowflake}
+         */
+        this.id = SnowflakeUtil.generate();
+    }
+
     /**
-     * @type {Snowflake}
+     * The date this was initialized at
+     * @type {Date}
      */
-    this.id = SnowflakeUtil.generate();
-  }
+    get initializedAt() {
+        return new Date(SnowflakeUtil.deconstruct(this.id).timestamp);
+    }
 
-  /**
-   * The date this was initialized at
-   * @type {Date}
-   */
-  get initializedAt() {
-    return new Date(SnowflakeUtil.deconstruct(this.id).timestamp);
-  }
+    toJSON(...props) {
+        return Util.flatten(this, ...props);
+    }
 
-  toJSON(...props) {
-    return Util.flatten(this, ...props);
-  }
+    valueOf() {
+        return this.id;
+    }
 
-  valueOf() {
-    return this.id;
-  }
-
-  toString() {
-    return this.id;
-  }
+    toString() {
+        return this.id;
+    }
 }
 
 module.exports = Base;

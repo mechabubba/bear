@@ -28,8 +28,8 @@ module.exports.sleep = promisify(setTimeout);
  * lovely(car, 4, true); // returns string wrapped in discord codeBlock, uses 4 spaces of whitespace
  */
 module.exports.lovely = function(object, whitespace = 2, codeBlock = false) {
-  const formatted = JSON.stringify(object, null, whitespace);
-  return codeBlock ? `\`\`\`json\n${formatted}\n\`\`\`` : formatted;
+    const formatted = JSON.stringify(object, null, whitespace);
+    return codeBlock ? `\`\`\`json\n${formatted}\n\`\`\`` : formatted;
 };
 
 /**
@@ -39,13 +39,13 @@ module.exports.lovely = function(object, whitespace = 2, codeBlock = false) {
  * @returns {boolean} Returns `true` if value is an array that only contains strings, else `false`
  */
 module.exports.isArrayOfStrings = function(value, checkLength = true) {
-  if (!isArray(value)) return false;
-  if (checkLength) {
-    if (!value.length) return false;
-  } else if (!value.length) {
-    return true;
-  }
-  return !value.some(element => !isString(element));
+    if (!isArray(value)) return false;
+    if (checkLength) {
+        if (!value.length) return false;
+    } else if (!value.length) {
+        return true;
+    }
+    return !value.some(element => !isString(element));
 };
 
 /**
@@ -54,11 +54,11 @@ module.exports.isArrayOfStrings = function(value, checkLength = true) {
  * @returns {boolean} Returns `true` if value is resolvable as a permission, else `false`
  */
 module.exports.isPermissionResolvable = function(value) {
-  if (isString(value) || isArray(value) || isFinite(value) || value instanceof Permissions) {
-    return true;
-  } else {
-    return false;
-  }
+    if (isString(value) || isArray(value) || isFinite(value) || value instanceof Permissions) {
+        return true;
+    } else {
+        return false;
+    }
 };
 
 /**
@@ -68,11 +68,11 @@ module.exports.isPermissionResolvable = function(value) {
  * @param {...*} values
  */
 module.exports.collectionArrayPush = function(collection, key, ...values) {
-  if (collection.has(key)) {
-    collection.set(key, collection.get(key).concat([...values]));
-  } else {
-    collection.set(key, [...values]);
-  }
+    if (collection.has(key)) {
+        collection.set(key, collection.get(key).concat([...values]));
+    } else {
+        collection.set(key, [...values]);
+    }
 };
 
 /**
@@ -82,16 +82,16 @@ module.exports.collectionArrayPush = function(collection, key, ...values) {
  * @param {...*} values
  */
 module.exports.collectionArrayFilter = function(collection, key, ...values) {
-  if (!values.length) return;
-  if (collection.has(key)) {
-    const data = collection.get(key);
-    if (!isArray(data)) return;
-    if (data.length === 1 && values.includes(data[0])) {
-      collection.delete(key);
-    } else {
-      collection.set(key, data.filter(element => !values.includes(element)));
+    if (!values.length) return;
+    if (collection.has(key)) {
+        const data = collection.get(key);
+        if (!isArray(data)) return;
+        if (data.length === 1 && values.includes(data[0])) {
+            collection.delete(key);
+        } else {
+            collection.set(key, data.filter(element => !values.includes(element)));
+        }
     }
-  }
 };
 
 /**
@@ -110,11 +110,11 @@ module.exports.collectionArrayFilter = function(collection, key, ...values) {
  * @param {...*} args
  */
 module.exports.forAny = function(callback, value, ...params) {
-  if (isArray(value)) {
-    for (const element of value) {
-      callback(element, ...params);
+    if (isArray(value)) {
+        for (const element of value) {
+            callback(element, ...params);
+        }
+    } else {
+        callback(value, ...params);
     }
-  } else {
-    callback(value, ...params);
-  }
 };

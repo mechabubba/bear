@@ -2,22 +2,22 @@ const chalk = require("chalk");
 
 // Label names
 const labels = {
-  0: "fatal",
-  1: "error",
-  2: " warn",
-  3: " info",
-  4: "debug",
-  5: "trace",
+    0: "fatal",
+    1: "error",
+    2: " warn",
+    3: " info",
+    4: "debug",
+    5: "trace",
 };
 
 // Label styles
 const styles = {
-  0: chalk.bgRed.black,
-  1: chalk.red,
-  2: chalk.yellow,
-  3: chalk.white.bold,
-  4: chalk.green,
-  5: chalk.gray,
+    0: chalk.bgRed.black,
+    1: chalk.red,
+    2: chalk.yellow,
+    3: chalk.white.bold,
+    4: chalk.green,
+    5: chalk.gray,
 };
 
 // If you would prefer accurate stack tracing when using
@@ -28,8 +28,8 @@ const styles = {
 
 const moment = require("moment");
 const print = function(level, ...args) {
-  const prefix = `${chalk.gray(moment().format("HH:mm:ss.SSS"))} ${styles[level](labels[level])}`;
-  return level > 1 ? console.log(prefix, ...args) : console.error(prefix, ...args);
+    const prefix = `${chalk.gray(moment().format("HH:mm:ss.SSS"))} ${styles[level](labels[level])}`;
+    return level > 1 ? console.log(prefix, ...args) : console.error(prefix, ...args);
 };
 module.exports = (...args) => print(3, ...args);
 module.exports.trace = (...args) => print(5, ...args);

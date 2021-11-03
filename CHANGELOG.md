@@ -6,7 +6,8 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
 
 - ⚠️ Bumped minimum node.js version from v12 to v16.6, matching the minimum for discord.js v13, and updated eslint's configuration to support es2021
 
-- ⚠️ Updated several eslint rules, most notably space indentation from 2 to 4
+- ⚠️ Updated the eslint rule "indent" to use 4 spaces rather than 2, so all js files were re-linted with the new spacing and comments manually corrected.
+  - This does not include various files such as the package.json, .eslintrc.json, etc. which will remain at two spaces
 
 - ⚠️ In 0.0.8 and above, much of the how configuration works will change. See [issue #35](https://github.com/06000208/sandplate/issues/35) for details.
 

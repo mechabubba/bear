@@ -19,51 +19,51 @@ const { has, isPlainObject, isFunction, isString, isNil, isBoolean } = require("
  * @extends {BaseBlock}
  */
 class ListenerBlock extends BaseBlock {
-  /**
-   * @param {ListenerData} data
-   * @param {listener} run
-   */
-  constructor(data = {}, run) {
-    super();
-    ListenerBlock.validateParameters(data, run);
+    /**
+     * @param {ListenerData} data
+     * @param {listener} run
+     */
+    constructor(data = {}, run) {
+        super();
+        ListenerBlock.validateParameters(data, run);
 
-    // Data
+        // Data
+
+        /**
+         * The name of the event this listener is for
+         * @type {string}
+         */
+        this.event = data.event;
+
+        /**
+         * Whether the listener should only trigger once (whether .on() or .once() is used)
+         * @type {boolean}
+         */
+        this.once = Boolean(data.once);
+
+        // Methods
+        // Note that bind() isn't used here in favor of doing it in EventConstruct's load method, so that it can bind parameters as well
+
+        /**
+         * Callback function called when the event named by the ListenerBlock.event property is emitted
+         * @type {listener}
+         * @abstract
+         */
+        this.run = run;
+    }
 
     /**
-     * The name of the event this listener is for
-     * @type {string}
+     * @param {ListenerData} data
+     * @param {listener} run
+     * @private
+     * @todo May be worth looking into schema based validation
      */
-    this.event = data.event;
-
-    /**
-     * Whether the listener should only trigger once (whether .on() or .once() is used)
-     * @type {boolean}
-     */
-    this.once = Boolean(data.once);
-
-    // Methods
-    // Note that bind() isn't used here in favor of doing it in EventConstruct's load method, so that it can bind parameters as well
-
-    /**
-     * Callback function called when the event named by the ListenerBlock.event property is emitted
-     * @type {listener}
-     * @abstract
-     */
-    this.run = run;
-  }
-
-  /**
-   * @param {ListenerData} data
-   * @param {listener} run
-   * @private
-   * @todo May be worth looking into schema based validation
-   */
-  static validateParameters(data, run) {
-    if (!isPlainObject(data)) throw new TypeError("Listener data parameter must be an Object.");
-    if (!isFunction(run)) throw new TypeError("Listener run parameter must be a function.");
-    if (!isString(data.event)) throw new TypeError("Listener data.event must be a string.");
-    if (has(data, "once") && !isNil(data.once)) if (!isBoolean(data.once)) throw new TypeError("Listener data.once name must be a boolean if included.");
-  }
+    static validateParameters(data, run) {
+        if (!isPlainObject(data)) throw new TypeError("Listener data parameter must be an Object.");
+        if (!isFunction(run)) throw new TypeError("Listener run parameter must be a function.");
+        if (!isString(data.event)) throw new TypeError("Listener data.event must be a string.");
+        if (has(data, "once") && !isNil(data.once)) if (!isBoolean(data.once)) throw new TypeError("Listener data.once name must be a boolean if included.");
+    }
 
 }
 
