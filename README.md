@@ -21,7 +21,7 @@ This way, you don't need to write these things in full yourself, they're availab
 
 However, the idea is *not* to skip learning how to code what sandplate does for you. Rather, to make use of sandplate properly, you'll need to know how things are implemented and familiarize yourself with the internals.
 
-Sandplate is currently in initial development, during which anything may change at any time. This includes breaking changes, and while minimized by our use of branches (ie. stuff isn't usually committed to main on it's own), is important to be aware of.
+Sandplate is currently in initial development, during which anything may change at any time.
 
 ## Contributing & Contact
 
@@ -29,11 +29,13 @@ Bug reports, issues, and suggestions are welcome via our [issue tracker](https:/
 
 <a href="https://discord.gg/xErQY6M"><img src="https://discordapp.com/api/guilds/273550655673860106/embed.png" alt="Discord Server" /></a>
 
-Pull requests/code contributions are welcome as well, but share your intentions via making an issue, commenting on one that exists, or joining the the discord so we can discuss it.
+If you've made something using sandplate, feel free to share it on our [discussions forum](https://github.com/06000208/sandplate/discussions/categories/projects-using-sandplate)!
+
+Pull requests/code contributions are accepted & encouraged, but share your intentions via making an issue, commenting on one that exists, or joining the discord so we can discuss it beforehand 👍
 
 More details in may be found in our [contributing file](./github/CONTRIBUTING.md).
 
-This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in its development, you're expected to abide by its terms. Please report unacceptable behavior to [a0600208@protonmail.com](mailto:a0600208@protonmail.com)
+This project is released with a [Contributor Code of Conduct](./github/CODE_OF_CONDUCT.md). By participating in its development, you're expected to abide by its terms. Please report unacceptable behavior to [a0600208@protonmail.com](mailto:a0600208@protonmail.com)
 
 ## Installation
 

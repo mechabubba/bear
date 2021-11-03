@@ -4,7 +4,9 @@ Bug reports, issues, and suggestions are welcome via our [issue tracker](https:/
 
 <a href="https://discord.gg/xErQY6M"><img src="https://discordapp.com/api/guilds/273550655673860106/embed.png" alt="Discord Server" /></a>
 
-Pull requests/code contributions are welcome as well, but share your intentions via making an issue, commenting on one that exists, or joining the the discord so we can discuss it.
+If you've made something using sandplate, feel free to share it on our [discussions forum](https://github.com/06000208/sandplate/discussions/categories/projects-using-sandplate)!
+
+Pull requests/code contributions are accepted & encouraged, but share your intentions and get in touch via making an issue, commenting on one that exists, or joining the discord so we can discuss it beforehand 👍
 
 If you don't have something to specific in mind, but want to help out, these labels are a good place to start:
 
@@ -15,8 +17,6 @@ If you don't have something to specific in mind, but want to help out, these lab
 ### [Branches](https://github.com/06000208/sandplate/branches)
 
 The main branch is treated as the latest stable version. Future versions have their own "in development" branches, awaiting their completion and merge into `main`.
-
-While sandplate is undergoing initial development, [releases](https://github.com/06000208/sandplate/releases/) for each version aren't being published, but they may be in the future.
 
 ### ESLint
 
