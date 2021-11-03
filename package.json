@@ -17,16 +17,16 @@
   },
   "homepage": "https://github.com/06000208/sandplate#readme",
   "dependencies": {
-    "bufferutil": "^4.0.3",
+    "bufferutil": "^4.0.5",
     "chalk": "^4.1.2",
     "discord.js": "^12.5.3",
-    "filehound": "^1.17.4",
+    "filehound": "^1.17.5",
     "fs-extra": "^10.0.0",
     "lodash": "^4.17.21",
     "lowdb": "^1.0.0",
     "moment": "^2.29.1",
-    "node-fetch": "^2.6.1",
-    "utf-8-validate": "^5.0.4"
+    "node-fetch": "^2.6.6",
+    "utf-8-validate": "^5.0.7"
   },
   "engines": {
     "node": ">=16.6.0"
