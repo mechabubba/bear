@@ -1,8 +1,6 @@
 *Changes which act as deprecation warnings or are breaking changes are prefixed with* ⚠️ 
 
-## 0.0.7 (2021-XX-XX)
-
-_The changelog for this version is incomplete/w.i.p and currently being written in tandem with the development of this version. Things may be incorrect._
+## 0.0.7 (2021-11-03)
 
 - ⚠️ Bumped minimum node.js version from v12 to v16.6, matching the minimum for discord.js v13, and updated eslint's configuration to support es2021
 
