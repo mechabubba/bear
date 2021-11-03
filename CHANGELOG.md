@@ -1,10 +1,12 @@
 *Changes which act as deprecation warnings or are breaking changes are prefixed with* ⚠️ 
 
-## `0.0.7` / `2021-XX-XX`
+## 0.0.7 (2021-XX-XX)
 
 _The changelog for this version is incomplete/w.i.p and currently being written in tandem with the development of this version. Things may be incorrect._
 
-- ⚠️ Bumped minimum node.js version from v12 to v16.6, matching the minimum for discord.js v13
+- ⚠️ Bumped minimum node.js version from v12 to v16.6, matching the minimum for discord.js v13, and updated eslint's configuration to support es2021
+
+- ⚠️ Updated several eslint rules, most notably space indentation from 2 to 4
 
 - ⚠️ In 0.0.8 and above, much of the how configuration works will change. See [issue #35](https://github.com/06000208/sandplate/issues/35) for details.
 
@@ -98,15 +100,15 @@ _The changelog for this version is incomplete/w.i.p and currently being written 
   - The `isArrayOfStrings()` function from `./modules/miscellaneous.js`
   - Markdown files such as CONTRIBUTING.md, README.md, etc
 
-- Updated old references here in CHANGELOG.md and elsewhere so people won't go looking for a file that doesn't exist
+- Updated old references here in CHANGELOG.md and elsewhere so people won't go looking for a file that doesn't exist. Won't happen again in this file considering these are marked with major version zero.
 
-## `0.0.6` / `2020-08-12`
+## 0.0.6 (2020-08-12)
 
 - When merging the branches, some minor stuff went awry. The /temp/ folder has been restored, and a merge conflict left over in CONTRIBUTING.md has been fixed.
 
 - Fixed a bunch of mistakes in the various markdown files and clarified something in README.md
 
-## `0.0.5` / `2020-07-31`
+## 0.0.5 (2020-07-31)
 
 In regards to the github repository, It's about time to give it a fresh new coat of paint, updating the README and adding templates, etc.
 
@@ -289,7 +291,7 @@ Several new commands as described in [issue #5](https://github.com/06000208/sand
   - `set activity streaming Bob Ross`
   - Using `activity` or `set activity` will clear activity
 
-## `0.0.4` / `2020-06-18`
+## 0.0.4 (2020-06-18)
 
 - Changed `log.js` to use a wrapper function, included the alternative approach commented out, and simplified the default export to be the same as `log.info()`
 
@@ -297,7 +299,7 @@ Several new commands as described in [issue #5](https://github.com/06000208/sand
 
 - Removed a broken check from `run.bat` as a temporary fix
 
-## `0.0.3` / `2020-06-16`
+## 0.0.3 (2020-06-16)
 
 With this update, sandplate can now login!
 
@@ -384,7 +386,7 @@ I'm going to keep this brief and refrain from explaining too much (particularly 
 
 - Config for jsdoc to ignore `./node_modules` (may need to be improved)
 
-## `0.0.2` / `2020-05-22`
+## 0.0.2 (2020-05-22)
 
 - Folder and app structure changes:
 
@@ -409,7 +411,7 @@ I'm going to keep this brief and refrain from explaining too much (particularly 
 
   As a side note, splitting interactions with discord.js and the client off into it's own file like this is a practice that was adopted from how discord.js's [ShardingManager](https://discord.js.org/#/docs/main/stable/class/ShardingManager) works.
 
-## `0.0.1` / `2020-05-08`
+## 0.0.1 (2020-05-08)
 
 First version!
 
