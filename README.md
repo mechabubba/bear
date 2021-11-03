@@ -1,91 +1,58 @@
 # Sandplate (Initial Development)
 
-Sandplate is an opinionated boilerplate/template [discord.js](https://discord.js.org) bot, and can be used as a base to expand upon.
+Sandplate is an opinionated boilerplate/template [discord.js](https://discord.js.org) bot, intended to be used as a base to expand upon.
 
 It's purpose is to cover all the basics of a discord bot's internals, such as, but not limited to:
 
-- Automatically generating the configuration file
-- Logging in with either a persisted token (stored in the config) or non-persisted (command prompt argument)
+<!-- Command line application frontend -->
+<!-- Modular structure with optional features; only make use of what you want -->
+- Logging in with either a persisted token (stored in the config) or non-persisted (command prompt argument) <!-- (via environment file)>
 - Framework for commands and event modules (also known as a command handler)
 - Reloadable command and event modules
 - Command access control
 - Blocking users or guilds from interacting with the bot
 - Supporting any number of command prefixes alongside @mention support
+- A full set of default commands and event listeners written in the framework
 - Improved console logging (timestamps and labels)
-- Batch script for running & automatically restarting the bot
-- A full set of default commands written in the framework
+<!-- Logging to file -->
+<!-- Bash and batch scripts for setting up your bot as a service on linux and windows -->
 
-This way, you don't need to write these things in full yourself, they're available to expand upon and use, whatever your purpose, and you can merge fixes/improvements from this repository into your project as they occur.
+This way, you don't need to write these things in full yourself, they're available to expand upon and use whatever your purpose, and you can merge fixes/improvements from this repository as they occur.
 
 However, the idea is *not* to skip learning how to code what sandplate does for you. Rather, to make use of sandplate properly, you'll need to know how things are implemented and familiarize yourself with the internals.
 
-Sandplate is currently in initial development, during which anything may change at any time, and releases are not being utilized.
+Sandplate is currently in initial development, during which anything may change at any time. This includes breaking changes, and while minimized by our use of branches (ie. stuff isn't usually committed to main on it's own), is important to be aware of.
 
-## Installation
-**NOTE: If you want sandplate to be usable through a systemd service and gain it's features, see: <a href="systemd-service-setup"> Setup systemd sandplate service</a> post-installation**
+## Contributing & Contact
 
-```
-USAGE: setup.sh <args>
-
-Default: setup.sh
-    Installs npm packages for sandplate only
-    
-==== Args ====
-
--h | --help -> The current help menu
--i | --install -> complete install of nvm, npm, nodejs
-```
-First make the script executable via ```sudo chmod +x setup.sh```
-**Default behaviour**
-```bash
-$ ./setup.sh
-```
-This will presume that you have Nodejs and npm installed, and ignores nvm. In turn, it will only install the npm packages for sandplate. 
-
-**Installing Nodejs & npm through nvm if not installed already**
-
-```bash
-$ ./setup.sh --install
-```
-**Supported systems:**
-- [**Arch**](https://archlinux.org/)
-- [**Debian**](https://www.debian.org/)
-- [**Ubuntu**](https://ubuntu.com/)
-
-### <a href="systemd-service-setup"></a> Setup systemd sandplate service
-
-**Be sure you're inside the root directory of the project and the sandplate.service file is visible:**
-
-![Imgur](http://i.imgur.com/Bx91m4C.gif)
-
-```bash
-sudo cp sandplate.service /etc/systemd/system
-sudo systemctl daemon-reload
-sudo systemctl enable sandplate
-```
-**IMPORTANT NOTES:**
-- the ``sandplate.service`` file can be renamed to _anything_ you want, i.e renaming the file to mybot.service would change the command structure to ``sudo systemctl enable mybot``
-
-- Make sure to change the following in the service file **_before enabling the service or reloading the daemon_**:
-  - ``User`` > Change to the linux user you want the bot processes to run as
-  - ``Group`` > Optional parameter, can either be removed or you can define the linux user group ``User`` is part of
-  - ``WorkingDirectory`` > The absolute path of the bot's root directory
-  - ``ExecStart`` > Provide the command you want the bot to run with when you the service is started
-
-If you want to learn what you can do more with the service file, check the <a href="https://www.digitalocean.com/community/tutorials/understanding-systemd-units-and-unit-files" target="_blank" rel="noopener noreferrer">overview by Digital Ocean</a>
-## Contributing
-
-If you'd like to contribute to sandplate or get involved, read our [contributing](CONTRIBUTING.md) file! Reporting issues, bugs, and requesting features are also described there.
-
-## Contact
-
-While sandplate uses it's [issue section](https://github.com/06000208/sandplate/issues) for collaboration and project planning, for real time communication, the preferred method is [this discord server](https://discord.gg/xErQY6M).
+Bug reports, issues, and suggestions are welcome via our [issue tracker](https://github.com/06000208/sandplate/issues), and the preferred method for real time communication is [this discord server](https://discord.gg/xErQY6M).
 
 <a href="https://discord.gg/xErQY6M"><img src="https://discordapp.com/api/guilds/273550655673860106/embed.png" alt="Discord Server" /></a>
 
-Additionally, you can get in touch with the project lead directly by emailing [`a06000208@protonmail.com`](mailto:a06000208@protonmail.com) if necessary.
+Pull requests/code contributions are welcome as well, but share your intentions via making an issue, commenting on one that exists, or joining the the discord so we can discuss it.
 
-## Code Of Conduct
+More details in may be found in our [contributing file](./github/CONTRIBUTING.md).
 
-This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating, you're expected to abide by its terms. Please report unacceptable behavior to [`a06000208@protonmail.com`](mailto:a06000208@protonmail.com).
+This project is released with a [Contributor Code of Conduct](CODE_OF_CONDUCT.md). By participating in its development, you're expected to abide by its terms. Please report unacceptable behavior to [a0600208@protonmail.com](mailto:a0600208@protonmail.com)
 
+## Installation
+
+- Install [node.js](https://nodejs.org), [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) or [pnpm](https://pnpm.io/installation), and [git](https://git-scm.com/downloads)
+- Navigate to your repository of choice and clone sandplate via `git clone https://github.com/06000208/sandplate.git`
+- Optional: If you want to use sandplate as an upstream...
+  - In your cloned directory, use `git remote -v` to check if the `origin` remote is sandplate's repository. If it is, use `git remote rm origin` to remove it.
+  - Use `git remote add upstream https://github.com/06000208/sandplate.git` to add sandplate's repository as a new remote named upstream
+  - If you want, you can overwrite the push url for the upstream remote via `git remote set-url --push upstream no_push_for_upstream` to prevent accidental attempted pushes
+  - Use `git fetch upstream` to fetch upstream branch info
+- Optional: If you want your project on github...
+  - Create a github repository and don't initialize it with any files (readme, gitignore, etc.)
+  - In your cloned directory, use `git remote -v` to check if the `origin` remote is sandplate's repository. If it is, use `git remote rm origin` to remove it.
+  - Use `git remote add origin <url>`, with `<url>` being the git link for the repository you created
+  - Use `git branch -M main` and `git push -u origin main` to push your local repository to the one you created
+- Run `npm install` or `pnpm install` in the root to install dependencies
+- I strongly recommend repurposing the the package.json and README.md files to be about your project, and deleting or doing the same with the files in the `/.github/` folder and CHANGELOG.md
+- Use `node index.js` or `npm start` to run your project
+
+## License
+
+This project is licensed under the [unlicense](https://unlicense.org)
