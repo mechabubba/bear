@@ -1,5 +1,15 @@
 /**
  * This module contains useful regular expressions
+ *
+ * Note that there are also useful regexes in discord.js accessible as static properties, specifically:
+ *
+ * - [GuildTemplate.GUILD_TEMPLATES_PATTERN](https://discord.js.org/#/docs/main/stable/class/GuildTemplate?scrollTo=GUILD_TEMPLATES_PATTERN)
+ * - [Invite.INVITES_PATTERN](https://discord.js.org/#/docs/main/stable/class/Invite?scrollTo=INVITES_PATTERN)
+ * - [MessageMentions.EVERYONE_PATTERN](https://discord.js.org/#/docs/main/stable/class/MessageMentions?scrollTo=EVERYONE_PATTERN)
+ * - [MessageMentions.USERS_PATTERN](https://discord.js.org/#/docs/main/stable/class/MessageMentions?scrollTo=USERS_PATTERN)
+ * - [MessageMentions.ROLES_PATTERN](https://discord.js.org/#/docs/main/stable/class/MessageMentions?scrollTo=ROLES_PATTERN)
+ * - [MessageMentions.CHANNELS_PATTERN](https://discord.js.org/#/docs/main/stable/class/MessageMentions?scrollTo=CHANNELS_PATTERN)
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_Expressions#creating_a_regular_expression
  * @module regexes
  */
 
@@ -24,25 +34,8 @@ module.exports.alphanumeric = /^[A-Za-z\d]+$/;
 module.exports.token = /^[\w]{24}\.[\w-]{6}\.[\w-]{27}$/;
 
 /**
- * Diego Perini's url validation regex
+ * Matches discord message URLs with capturing groups for the three ids (guild, channel, and message)
  *
- * Note that TLDs are mandatory, so single names like "localhost" fails, and protocols are restricted to ftp, http and https only
- * @see https://gist.github.com/dperini/729294
- * @see https://mathiasbynens.be/demo/url-regex
- * @license
- * MIT
- * Copyright (c) 2010-2018 Diego Perini (http://www.iport.it)
+ * The latter two ids may be omitted (ie. `https://discord.com/channels/1` is valid), as some purposes only require certain ids
  */
-module.exports.url = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?$/i;
-
-/**
- * Diego Perini's url validation regex modified to work with [match()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/match)
- *
- * Note that TLDs are mandatory, so single names like "localhost" won't be matched, and protocols are restricted to ftp, http and https only
- * @see https://gist.github.com/dperini/729294
- * @see https://mathiasbynens.be/demo/url-regex
- * @license
- * MIT
- * Copyright (c) 2010-2018 Diego Perini (http://www.iport.it)
- */
-module.exports.urlMatch = /(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+(?:[a-z\u00a1-\uffff]{2,}\.?))(?::\d{2,5})?(?:[/?#]\S*)?/gi;
+module.exports.messageURL = /^https?:\/\/discord(?:app)?\.com\/channels\/(\d+)\/?(\d+)?\/?(\d+)?\/?$/i;
