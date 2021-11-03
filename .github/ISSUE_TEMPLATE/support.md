@@ -1,5 +1,5 @@
 ---
 name: Support
-about: Questions, support, and assistance
+about: Questions, help, and assistance
 labels: support
 ---
