@@ -1,5 +1,5 @@
 ---
 name: Support
-about: Questions, support, and assistance regarding sandplate
+about: Questions, support, and assistance
 labels: support
 ---
