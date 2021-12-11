@@ -1,23 +1,10 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const log = require("../../modules/log");
 const { inspect } = require("util");
-const _ = require("lodash");
+const { isNil, isString, isError } = require("lodash");
 const { sleep } = require("../../modules/miscellaneous");
 
 const save = "\uD83D\uDCBE"; // The reaction used to indicate saving the output of the eval in the chat.
-
-const clean = async function(input, token) {
-    let value = input;
-    if (_.isNil(value)) return null;
-    if (value && value instanceof Promise) {
-        value = await value;
-    }
-    if (!_.isString(value)) value = inspect(value);
-    // This next line is just a basic precaution to prevent the bot from accidentally posting it
-    // It **does not** make eval safe!
-    value = value.replace(token, "<client.token>");
-    return value;
-};
 
 module.exports = new CommandBlock({
     identity: ["eval", "evaluate", "js"],
@@ -32,35 +19,36 @@ module.exports = new CommandBlock({
     const negative = client.config.get("metadata.reactions.negative").value();
 
     if (!code) return message.react(client.config.get("metadata.reactions.negative").value());
-    log.debug(`Code provided to eval from ${message.author.tag}:`, "\n" + code);
-    let cleaned = null;
     let output;
     try {
         const result = eval(code);
-        cleaned = await clean(result, client.token);
+        const cleaned = (isString(result) ? result : inspect(result)).replace(client.token, "<client.token>"); // This is *only* a basic precaution. 
         message.react(positive);
         log.debug(`Eval from ${message.author.tag} resulted in:`, result);
-        output = await message.channel.send(`\`\`\`js\n${(typeof cleaned == "string" && cleaned.length > 1991) ? cleaned.substring(0, 1988) + "..." : (cleaned || "undefined")}\`\`\``);
+        output = await message.channel.send(`\`\`\`js\n${cleaned.length > 1991 ? cleaned.substring(0, 1988) + "..." : (cleaned || "undefined")}\`\`\``);
     } catch (e) {
-        cleaned = await clean(e, client.token);
+        const result = (isError(e) ? e.stack : e);
+        const cleaned = result.replace(client.token, "<client.token>");
         message.react(negative);
-        log.error(`Eval from ${message.author.tag} caused an error:`, e);
-        output = await message.channel.send(`<:_:${negative}> An evaluation error occurred;\`\`\`\n${(e.stack.length > 1940) ? e.stack.substring(0, 1937) + "..." : e.stack}\`\`\``);
+        log.error(`Eval from ${message.author.tag} caused an error:`, cleaned);
+        output = await message.channel.send(`<:_:${negative}> An evaluation error occurred;\`\`\`\n${(cleaned.length > 1940) ? cleaned.substring(0, 1937) + "..." : cleaned}\`\`\``);
     }
 
     // This is the shittiest solution ever... but it works!
     // Truth be told, I don't like Discords new additions to their platform, but I might be inclined to start using buttons just because their reaction API is the worst API on the fucking planet.
     // awaitReactions() is the worst function in discord.js.
-    await sleep(500);
-    await output.react(save);
-    await sleep(10000);
+    if(output.deletable) {
+        await sleep(500);
+        await output.react(save);
+        await sleep(10 * 1000); // Change this to how many seconds you want to wait before checking if we should save the output.
 
-    if (!output.deleted && output.reactions.cache.has(save)) {
-        const reaction = output.reactions.cache.get(save);
-        if (reaction.count <= 1 && output.deletable) {
-            await output.delete();
-        } else {
-            await reaction.remove();
+        if (!output.deleted && output.reactions.cache.has(save)) {
+            const reaction = output.reactions.resolve(save);
+            if (reaction.count <= 1 || isNil(reaction.users.resolve(message.author.id))) {
+                await output.delete();
+            } else {
+                await reaction.remove();
+            }
         }
     }
 });

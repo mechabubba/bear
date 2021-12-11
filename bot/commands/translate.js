@@ -1,5 +1,6 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const fetch = require("node-fetch");
+const log = require("../../modules/log");
 
 const debug = false; // Set to true to send the JSON output over the regular output.
 
@@ -36,9 +37,12 @@ module.exports = new CommandBlock({
             translation += json[0][i][0];
         }
 
+        let sjson = JSON.stringify(json, null, 4);
+        if(debug) log.debug(sjson);
+
         message.channel.stopTyping(true);
         return message.channel.send({
-            content: debug ? `\`\`\`\n${JSON.stringify(json, null, 4)}\`\`\`` : translation,
+            content: debug ? `\`\`\`\n${sjson.length > 1993 ? sjson.substr(0, 1990) + "..." : sjson}\`\`\`` : translation,
             allowedMentions: { parse: [] },
         });
     } catch(e) {

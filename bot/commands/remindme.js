@@ -1,8 +1,4 @@
-/*
-# bigge todo
-  - handle reactions when the bot cannot react (error if theres no permission)
-*/
-
+// @todo Handle reactions when the bot can't react to messages (throws).
 const CommandBlock = require("../../modules/CommandBlock");
 const Reminder = require("../../modules/Reminder");
 const { MessageEmbed } = require("discord.js");
@@ -53,7 +49,7 @@ module.exports = new CommandBlock({
 
                     embed.addField(
                         `\`${reminder.id.toUpperCase()}\` in ${location}`,
-                        `(started <t:${reminder.startSecs}:R>, ${reminder.iscron ? `follows statement \`${reminder.endSecs}\`, ticks <t:${Math.round(data.job.nextDates().toDate().getTime() / 1000)}:R>`: `ends <t:${reminder.endSecs}:R>`})\n${reminder.message}`
+                        `(started <t:${reminder.startSecs}:R>, ${reminder.iscron ? `follows statement \`${reminder.end}\`, ticks <t:${Math.round(data.job.nextDates().toDate().getTime() / 1000)}:R>`: `ends <t:${reminder.endSecs}:R>`})\n${reminder.message}`
                     );
                 }
             } else {
