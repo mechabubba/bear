@@ -4,15 +4,14 @@ const ListenerBlock = require("../../modules/ListenerBlock");
 const { DateTime } = require("luxon");
 
 module.exports = [
-    new ListenerBlock({ event: "command" }, async (client, message) => {
+    new ListenerBlock({ event: "command" }, async (client, message, name, content) => {
         const clogging = client.config.get("commands.channellogging").value();
         if(clogging.enabled) {
             const embed = new MessageEmbed()
-                .setTitle(`@${message.author.tag} (\`${message.author.id}\`)`)
+                .setTitle(`\`${message.author.id}\``)
                 .setColor(clogging.color)
-                .setDescription(`\`\`\`\n${message.content}\`\`\``)
-                .setThumbnail(message.author.displayAvatarURL({ format: "png", dynamic: "true" }))
-                .setFooter(`${DateTime.fromMillis(message.createdTimestamp).toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)} • ${message.channel.id}`);
+                .setDescription(`\`\`\`\n${name} ${content || ""}\`\`\``)
+                .setFooter(`${DateTime.fromMillis(message.createdTimestamp).toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}`);
 
             const guild = await client.guilds.fetch(clogging.guild);
             if(guild.available) {
