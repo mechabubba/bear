@@ -165,3 +165,59 @@ module.exports.weightedRandom = (arr, weight) => {
   }
   throw new Error("This should never happen. Prepare to die.");
 }
+
+const entities = {
+  "amp":    "&",
+  "lt":     "<",
+  "gt":     ">",
+  "nbsp":   "\u00A0",
+  "quot":   "\"",
+  "apos":   "'",
+  "cent":   "¢",
+  "pound":  "£",
+  "yen":    "¥",
+  "euro":   "€",
+  "copy":   "©",
+  "reg":    "®",
+  "trade":  "™",
+  "hellip": "…",
+  "mdash":  "—",
+  "bull":   "•",
+  "ldquo":  "“",
+  "rdquo":  "”",
+  "lsquo":  "‘",
+  "rsquo":  "’",
+  "larr":   "←",
+  "rarr":   "→",
+  "darr":   "↓",
+  "uarr":   "↑",
+}
+
+/**
+ * Takes an input, and unescapes the HTML entities inside.
+ * Handles certain named entities (only some, see above) and codepoint entities. 
+ * @param {string} input 
+ * @returns {string}
+ */
+module.exports.unescapeHTML = (input = "") => {
+  const ex = /&[A-Za-z0-9#]+;/;
+  while(ex.test(input)) {
+    const res = input.match(ex);
+    let ent = res[0];
+    if(ent[1] == "#") {
+      let index = 2;
+      if(ent[2] == "x") index++;
+      const codepoint = ent.substr(index, ent.length - (index + 1));
+      ent = String.fromCharCode(codepoint);
+    } else {
+      const code = ent.substr(1, ent.length - 2);
+      if(code in entities) {
+        ent = entities[code];
+      } else {
+        ent = `&${code};`; // Visually similar but distinct from the above regex.
+      }
+    }
+    input = input.replace(res[0], ent);
+  }
+  return input;
+}
