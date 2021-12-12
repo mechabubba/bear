@@ -5,6 +5,8 @@ const _ = require("lodash");
 const { MessageEmbed } = require("discord.js");
 const { DateTime } = require("luxon");
 
+const snowflake = new RegExp("^(\\d{17,21})$");
+
 module.exports = new ListenerBlock({
     event: "ready",
     once: true,
@@ -19,6 +21,7 @@ module.exports = new ListenerBlock({
         client.storage.set("users.hosts", [owner]).write();
     }
 
+    // Notify channel log
     const clogging = client.config.get("commands.channellogging").value();
     if(clogging.enabled) {
         const embed = new MessageEmbed()
@@ -31,6 +34,20 @@ module.exports = new ListenerBlock({
             const channel = guild.channels.cache.get(clogging.channel);
             channel.send(embed);
         }
+    }
+
+    // Set up reactions object so we dont have to get it from the config every time
+    client.reactions = {};
+    const reactions = client.config.get("metadata.reactions").value();
+    for(const [key, value] of Object.entries(reactions)) {
+        client.reactions[key] = {};
+        log.debug(snowflake.test(value))
+        if(snowflake.test(value)) {
+            client.reactions[key].emote = `<:_:${value}>`; // safe for chat usage
+        } else {
+            client.reactions[key].emote = value;
+        }
+        client.reactions[key].id = value; // safe for reactions
     }
 
     log.info(`App is now fully functional!`);
