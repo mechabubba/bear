@@ -39,7 +39,6 @@ module.exports = [
         usage: "(...tags)",
         nsfw: true,
         scope: ["dm", "text", "news"],
-        locked: "hosts",
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"],
     }, async function(client, message, content, args) {
         const _now = Date.now();
@@ -88,7 +87,6 @@ module.exports = [
         usage: "(...tags)",
         nsfw: true,
         scope: ["dm", "text", "news"],
-        locked: "hosts",
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"],
     }, async function(client, message, contents, args) {
         const _now = Date.now();
