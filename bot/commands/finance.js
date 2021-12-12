@@ -19,9 +19,7 @@ module.exports = new CommandBlock({
     usage: "[symbol]",
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, function(client, message, content, [symbol, ...args]) {
-    const negative = client.config.get("metadata.reactions.negative").value();
-    const positive = client.config.get("metadata.reactions.positive").value();
-    if(!symbol) return message.channel.send(`<:_:${negative}> You must use a valid symbol. See \`help finance\` for more information.`);
+    if(!symbol) return message.channel.send(`${client.reactions.negative.emote} You must use a valid symbol. See \`help finance\` for more information.`);
     if(!client.storage.has(["local", "finance_aliases"]).value()) {
         client.storage.set(["local", "finance_aliases"], {}).write();
     }
@@ -31,7 +29,7 @@ module.exports = new CommandBlock({
             if(!isallowed(client, message.author.id)) return;
             const [alias, sym] = [args[0], args[1]];
             client.storage.set(["local", "finance_aliases", alias], sym).write();
-            return message.channel.send(`<:_:${positive}> Set alias \`${alias}\` for symbol \`${sym}\`.`);
+            return message.channel.send(`${client.reactions.positive.emote} Set alias \`${alias}\` for symbol \`${sym}\`.`);
         }
 
         case "removealias": {
@@ -39,7 +37,7 @@ module.exports = new CommandBlock({
             const alias = args[0];
             if(!client.storage.has(["local", "finance_aliases", alias]).value()) return message.channel.send(`<:_:${negative}> This alias doesn't exist!`);
             client.storage.get(["local", "finance_aliases"]).unset(alias).value();
-            return message.channel.send(`<:_:${positive}> Removed alias \`${alias}\`.`);
+            return message.channel.send(`${client.reactions.positive.emote} Removed alias \`${alias}\`.`);
         }
 
         default: {
@@ -51,7 +49,7 @@ module.exports = new CommandBlock({
                 symbol: symbol,
             }, (e, quotes) => {
                 message.channel.stopTyping(true);
-                if(e) return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e}\`\`\``);
+                if(e) return message.channel.send(`${client.reactions.positive.emote} An error occured;\`\`\`\n${e}\`\`\``);
 
                 const [sd, p] = [quotes.summaryDetail, quotes.price];
                 if(p.regularMarketPrice == null || p.regularMarketChange == null || p.regularMarketChangePercent == null) return message.channel.send(`<:_:${negative}> The ticker symbol was not found.`);
@@ -77,7 +75,7 @@ module.exports = new CommandBlock({
                        (sd.marketCap != null ? `Market Cap:    ${sd.marketCap}\n` : "") +
                        (sd.volume != null ? `Volume:        ${sd.volume}` : "");
                 embed.setDescription(`\`\`\`\n${desc.trim()}\`\`\``);
-                return message.channel.send({ embed });
+                return message.channel.send(embed);
             });
         }
     }

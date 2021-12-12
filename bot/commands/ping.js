@@ -21,36 +21,28 @@ module.exports = [
         usage: "[...text]",
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, async function(client, message, content, args) {
-        await message.channel.send({
-            content: content,
-            allowedMentions: { parse: [] },
-        });
+        await message.channel.send({ content: content, allowedMentions: { parse: [] } });
         return message.delete();
     }),
     new CommandBlock({
         identity: ["wecho"],
-        description: "Echoes text via a Discord webhook.\n\n**Note:** This is not secure; if used publicly, people WILL be able to get your webhooks ID and token, which will let them use it aswell! Use only as a utility!",
+        description: "Echoes text via a Discord webhook.\n\n**Warning:** This is not secure; if used publicly, people WILL be able to get your webhooks ID and token, which will let them use it aswell! Use only as a utility!",
         usage: "[hook_url] [...text]",
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "MANAGE_MESSAGES"],
         locked: ["hosts"],
     }, async function(client, message, content, [hook_url, ...args]) {
-        const negative = client.config.get("metadata.reactions.negative").value();
-        
         const matched = hook_url.match(/discord.com\/api\/webhooks\/([^\/]+)\/([^\/]+)/);
         if(!matched[1] || !matched[2]) {
-            return message.channel.send(`<:_:${negative}> Invalid webhook url provided.`);
+            return message.channel.send(`${client.reactions.negative.emote} Invalid webhook url provided.`);
         }
 
         try {
             const hook = new WebhookClient(matched[1], matched[2]);
-            await hook.send({
-                content: args.join(" "),
-                allowedMentions: { parse: [] },
-            });
+            await hook.send({ content: args.join(" "), allowedMentions: { parse: [] } });
             return message.delete();
         } catch(e) {
-            message.react(negative);
-            return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e}\`\`\``);
+            message.react(client.reactions.negative.id);
+            return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e}\`\`\``);
         }
     })
 ];

@@ -8,7 +8,6 @@ module.exports = [
         description: "Gets a shibe. Images fetched from [shibe.online](https://shibe.online/).",
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"]
     }, async function(client, message, content, args) {
-        const negative = client.config.get("metadata.reactions.negative").value();
         message.channel.startTyping();
 
         try {
@@ -20,7 +19,7 @@ module.exports = [
 
             message.channel.send({ files: json });
         } catch(e) {
-            message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e}\`\`\``);
+            message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e}\`\`\``);
         }
 
         message.channel.stopTyping(true);

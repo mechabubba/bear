@@ -23,7 +23,7 @@ module.exports = new CommandBlock({
     const positive = client.config.get("metadata.reactions.positive").value();
     const negative = client.config.get("metadata.reactions.negative").value();
 
-    if(!args[0]) return message.channel.send(`<:_:${negative}> Not enough parameters! Perform \`help ${this.firstName}\` for more information.`);
+    if(!args[0]) return message.channel.send(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
 
     switch(args[0]) {
         case "list": {
@@ -63,30 +63,30 @@ module.exports = new CommandBlock({
         case "remove": {
             const given = args[1];
             if(!given) {
-                return message.channel.send(`<:_:${negative}> You must input a reminder ID!`);
+                return message.channel.send(`${client.reactions.negative.emote} You must input a reminder ID!`);
             } else {
                 if(given == "*") {
                     client.reminders.stopAll(message.author.id);
-                    return message.channel.send(`<:_:${positive}> All reminders removed successfully!`);
+                    return message.channel.send(`${client.reactions.positive.emote} All reminders removed successfully!`);
                 }
                 try {
                     await client.reminders.stop(message.author.id, given.toLowerCase());
                 } catch(e) {
-                    return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
+                    return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
                 }
-                return message.channel.send(`<:_:${positive}> The reminder was removed successfully!`);
+                return message.channel.send(`${client.reactions.positive.emote} The reminder was removed successfully!`);
             }
         }
 
         case "trigger": {
             const given = args[1];
             if(!given) {
-                return message.channel.send(`<:_:${negative}> You must input a reminder ID!`);
+                return message.channel.send(`${client.reactions.negative.emote} You must input a reminder ID!`);
             } else {
                 try {
                     await client.reminders.trigger(message.author.id, given.toLowerCase());
                 } catch(e) {
-                    return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
+                    return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
                 }
             }
             break;
@@ -114,22 +114,22 @@ module.exports = new CommandBlock({
                     reminder = new Reminder(content, message.author.id, message.guild.id, message.channel.id, ishost); // pain.
                 }
             } catch(e) {
-                return message.channel.send(`<:_:${negative}> An error occured.\`\`\`\n${e.message}\`\`\``);
+                return message.channel.send(`${client.reactions.negative.emote} An error occured.\`\`\`\n${e.message}\`\`\``);
             }
 
-            if(!reminder.iscron && (reminder.end < Date.now())) return message.channel.send(`<:_:${negative}> The supplied date is before the current date!`);
+            if(!reminder.iscron && (reminder.end < Date.now())) return message.channel.send(`${client.reactions.negative.emote} The supplied date is before the current date!`);
             const time = reminder.iscron ? `the cron expression \`${reminder.end}\`` : `**<t:${reminder.endSecs}:f>**`;
 
             let id;
             try {
                 id = await client.reminders.start(reminder);
             } catch(e) {
-                return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\`\`\``); // should never be seen
+                return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``); // should never be seen
             }
 
-            message.react(positive);
+            message.react(client.reactions.positive.emote);
             return message.channel.send({
-                content: `<:_:${positive}> ${affirmations[Math.floor(Math.random() * affirmations.length)]} I set a reminder for ${time}.\nYour ID is \`${id.toUpperCase()}\`.`,
+                content: `${client.reactions.positive.emote} ${affirmations[Math.floor(Math.random() * affirmations.length)]} I set a reminder for ${time}.\nYour ID is \`${id.toUpperCase()}\`.`,
                 allowedMentions: { parse: [] },
             });
         }

@@ -1,7 +1,7 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const { DateTime } = require("luxon");
 
-const sdate = new Date(1993, 8, 1); // Month index starts at 0.
+const sdate = new Date(1993, 8, 1); // The beginning of Eternal September. Month index starts at 0.
 
 module.exports = [
     new CommandBlock({

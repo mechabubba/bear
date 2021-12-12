@@ -11,10 +11,7 @@ module.exports = new CommandBlock({
     usage: `(source) [foreign text]`,
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, args) {
-    const positive = client.config.get("metadata.reactions.positive").value();
-    const negative = client.config.get("metadata.reactions.negative").value();
-
-    if(!content) return message.channel.send(`<:_:${negative}> You gave me nothing to translate!`);
+    if(!content) return message.channel.send(`${client.reactions.negative.emote} You gave me nothing to translate!`);
 
     message.channel.startTyping();
 
@@ -47,7 +44,7 @@ module.exports = new CommandBlock({
         });
     } catch(e) {
         message.channel.stopTyping(true);
-        return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e.message}\`\`\``);
+        return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
     }
 });
 

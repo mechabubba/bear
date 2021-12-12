@@ -11,11 +11,7 @@ module.exports = new CommandBlock({
     scope: ["dm", "text", "news"],
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, [ip, port]) {
-    const online = client.config.get("metadata.reactions.online").value();
-    const offline = client.config.get("metadata.reactions.offline").value();
-    const negative = client.config.get("metadata.reactions.negative").value();
-
-    if(!ip) return message.channel.send(`<:_:${negative}> You must input a server IP. Perform \`help ${this.firstName}\` for more information.`);
+    if(!ip) return message.channel.send(`${client.reactions.negative.emote} You must input a server IP. Perform \`help ${this.firstName}\` for more information.`);
     ip = ip.toLowerCase();
 
     message.channel.startTyping();
@@ -38,7 +34,7 @@ module.exports = new CommandBlock({
     } catch(e) {
         embed.setTitle(vanity)
             .setColor("#F04747")
-            .setFooter("This server is offline.", `https://cdn.discordapp.com/emojis/${offline}.png`);
+            .setFooter("This server is offline.", `https://cdn.discordapp.com/emojis/${client.reactions.offline.id}.png`);
         message.channel.stopTyping(true);
         return message.channel.send(embed);
     }
@@ -46,7 +42,7 @@ module.exports = new CommandBlock({
     embed.setTitle(info.name)
         .setColor("#43B581")
         .addField(`Basic Info`, `IP: \`${vanity}\`\nConnect: steam://connect/${vanity}`)
-        .setFooter("This server is online!", `https://cdn.discordapp.com/emojis/${online}.png`);
+        .setFooter("This server is online!", `https://cdn.discordapp.com/emojis/${client.reactions.online.id}.png`);
 
     let players = "";
     info.players.sort((a, b) => (a.score < b.score) ? 1 : -1);

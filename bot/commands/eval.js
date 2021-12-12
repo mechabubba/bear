@@ -15,23 +15,21 @@ module.exports = new CommandBlock({
     locked: ["hosts", "trusted"],
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"],
 }, async function(client, message, code, args) {
-    const positive = client.config.get("metadata.reactions.positive").value();
-    const negative = client.config.get("metadata.reactions.negative").value();
-
-    if (!code) return message.react(client.config.get("metadata.reactions.negative").value());
+    if (!code) return message.react(client.reactions.negative.id);
+    
     let output;
     try {
         const result = eval(code);
         const cleaned = (isString(result) ? result : inspect(result)).replace(client.token, "<client.token>"); // This is *only* a basic precaution. 
-        message.react(positive);
+        message.react(client.reactions.positive.id);
         log.debug(`Eval from ${message.author.tag} resulted in:`, result);
         output = await message.channel.send(`\`\`\`js\n${cleaned.length > 1991 ? cleaned.substring(0, 1988) + "..." : (cleaned || "undefined")}\`\`\``);
     } catch (e) {
         const result = (isError(e) ? e.stack : e);
         const cleaned = result.replace(client.token, "<client.token>");
-        message.react(negative);
+        message.react(client.reactions.negative.id);
         log.error(`Eval from ${message.author.tag} caused an error:`, cleaned);
-        output = await message.channel.send(`<:_:${negative}> An evaluation error occurred;\`\`\`\n${(cleaned.length > 1940) ? cleaned.substring(0, 1937) + "..." : cleaned}\`\`\``);
+        output = await message.channel.send(`${client.reactions.positive.emote} An evaluation error occurred;\`\`\`\n${(cleaned.length > 1940) ? cleaned.substring(0, 1937) + "..." : cleaned}\`\`\``);
     }
 
     // This is the shittiest solution ever... but it works!
