@@ -50,7 +50,6 @@ module.exports = [
 
         message.channel.startTyping();
         try {
-            log.debug(`https://api.rule34.xxx/index.php?page=dapi&s=post&json=1&q=index&limit=${r34_post_limit}&tags=${[...args].join("+")}`);
             const resp = await fetch(`https://api.rule34.xxx/index.php?page=dapi&s=post&json=1&q=index&limit=${r34_post_limit}&tags=${[...args].join("+")}`, {
                 headers: { "User-Agent": `bear/${gitinfo("%h")} (by mechabubba)` }
             })
@@ -98,7 +97,6 @@ module.exports = [
         
         message.channel.startTyping();
         try {
-            log.debug(`https://e621.net/posts.json?limit=1&tags=${encodeURIComponent([...args, "order:random"].join(" "))}`);
             const resp = await fetch(`https://e621.net/posts.json?limit=1&tags=${encodeURIComponent([...args, "order:random"].join(" "))}`, {
                 headers: { "User-Agent": `bear/${gitinfo("%h")} (by mechabubba)` }
             })
@@ -138,7 +136,7 @@ module.exports = [
         if(board == "update") {
             let canupdate = false;
             for(const group of chan_canupdate) {
-                const g = client.storage.get(["users", group]).value();
+                const g = await client.storage.get(["users", group]).value();
                 if(Array.isArray(g) && g.includes(message.author.id)) {
                     canupdate = true;
                     break;
@@ -155,14 +153,13 @@ module.exports = [
                 return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e}\`\`\``);
             }
 
-            client.storage.set(["local", "4chan", "boards"], boards).write();
+            await client.storage.set(["local", "4chan", "boards"], boards).write();
             return message.channel.send(`${client.reactions.positive.emote} Board list updated.`);
         }
 
         // @todo on bot/command init, keep these in memory.
-        const boards = client.storage.get(["local", "4chan", "boards"]).value();
-
-        if(!board || !boards.any.includes(board)) {
+        const boards = await client.storage.get(["local", "4chan", "boards"]).value();
+        if(!board || !boards.all.includes(board)) {
             return message.channel.send(`${client.reactions.negative.emote} A board was not provided or doesn't exist.`);
         }
 
