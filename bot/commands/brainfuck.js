@@ -9,11 +9,7 @@ module.exports = new CommandBlock({
     usage: "[bf code] or [(input text) | (bf code)]",
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, function(client, message, content, args) {
-    const positive = client.config.get("metadata.reactions.positive").value();
-    const negative = client.config.get("metadata.reactions.negative").value();
-    const alert = client.config.get("metadata.reactions.alert").value();
-
-    if(!content) return message.channel.send(`<:_:${negative}> You didn't send any code! Perform \`help ${this.firstName}\` for more information.`);
+    if(!content) return message.channel.send(`${client.reactions.negative.emote} You didn't send any code! Perform \`help ${this.firstName}\` for more information.`);
 
     const index = content.indexOf("|") || 0;
     let [input, code] = [content.substring(0, index), content.substring(index + 1)].map(x => x.trim()); // eslint-disable-line prefer-const
@@ -26,13 +22,22 @@ module.exports = new CommandBlock({
         let output = data.output;
         if(output.length > 1993) output = output.substring(0, 1990) + "...";
 
-        let reaction;
-        if(data.level == "warning") reaction = alert;
-        else if(data.level == "error") reaction = negative;
-        else reaction = positive;
-        message.react(reaction);
+        let reaction, emote;
+        if(data.level == "warning") {
+            reaction = client.reactions.alert.id;
+            emote = client.reactions.alert.emote;
+        }
+        else if(data.level == "error") {
+            reaction = client.reactions.negative.id;
+            emote = client.reactions.negative.emote;
+        }
+        else {
+            reaction = client.reactions.positive.id;
+            emote = client.reactions.positive.emote;
+        }
 
-        message.channel.send(`<:_:${reaction}> ${data.log}`);
+        message.react(reaction);
+        message.channel.send(`${emote} ${data.log}`);
         return message.channel.send(`\`\`\`\n${output}\`\`\``);
     });
 });

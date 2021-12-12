@@ -24,27 +24,24 @@ module.exports = new CommandBlock({
     scope: ["dm", "text", "news"],
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, [length, width, maxmines, hasseed, ...args]) {
-    const positive = client.config.get("metadata.reactions.positive").value();
-    const negative = client.config.get("metadata.reactions.negative").value();
-
     const seed = hasseed == "-seed" ? args.join(" ") : undefined;
     const rng = seedrandom(seed);
 
     if(!length || !width || !maxmines) {
-        message.react(negative);
-        return message.channel.send(`<:_:${negative}> Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
+        message.react(client.reactions.negative.id);
+        return message.channel.send(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
     }
 
     const area = length * width;
     if(maxmines > (area - 1)) {
-        message.react(negative);
-        return message.reply(`<:_:${negative}> The mines on the field outnumber the fields fillable area.`);
+        message.react(client.reactions.negative.id);
+        return message.reply(`${client.reactions.negative.emote} The mines on the field outnumber the fields fillable area.`);
     } else if(area == 0) {
-        message.react(negative);
-        return message.reply(`<:_:${negative}> You can't create an empty board!`);
+        message.react(client.reactions.negative.id);
+        return message.reply(`${client.reactions.negative.emote} You can't create an empty board!`);
     } else if(area > discordsux) {
-        message.react(negative);
-        return message.reply(`<:_:${negative}> The board exceeds a maximum of ${discordsux} cells.`);
+        message.react(client.reactions.negative.id);
+        return message.reply(`${client.reactions.negative.emote} The board exceeds a maximum of \`${discordsux}\` cells.`);
     }
 
     // This implementation of minesweeper is a little weird, and here's why.
@@ -72,7 +69,6 @@ module.exports = new CommandBlock({
 
     let curmines = 0;
     while(curmines < maxmines) {
-        console.log("fuck");
         const rl = Math.floor(rng() * length);
         const rw = Math.floor(rng() * width);
         if(rl == 0 && rw == 0) continue; // Ignore the top left of the board.
@@ -108,12 +104,12 @@ module.exports = new CommandBlock({
         tab += "\n";
     }
 
-    message.react(positive);
+    message.react(client.reactions.positive.id);
     const embed = new MessageEmbed()
         .setColor("#C0C0C0")
         .setTitle("Minesweeper")
         .setDescription(tab)
         .attachFiles(["assets/mine.png"])
-        .setFooter(`${length} × ${width} tiles • ${maxmines} mines${seed ? ` • ${seed}` : ``}`, "attachment://mine.png");
+        .setFooter(`${length} \u00D7 ${width} tiles • ${maxmines} mines${seed ? ` • ${seed}` : ``}`, "attachment://mine.png");
     return message.channel.send(embed);
 });

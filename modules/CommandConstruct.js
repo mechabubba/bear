@@ -154,8 +154,8 @@ class CommandConstruct extends BaseConstruct {
         content = null;
       }
     }
-    log.debug(`${chalk.gray("[command]")} ${message.author.tag} ran "${name}${(!content ? "\"" : `" with "${content}"`)}`);
-    this.client.emit("command", message);
+    log.debug(`${chalk.gray("[command]")} ${message.author.id} ran "${name}${(!content ? "\"" : `" with "${content}"`)}`);
+    this.client.emit("command", message, name, content);
     command.run(message, content, args, ...passThrough);
   }
 }

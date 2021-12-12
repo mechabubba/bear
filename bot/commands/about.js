@@ -1,4 +1,3 @@
-const { execSync } = require("child_process");
 const CommandBlock = require("../../modules/CommandBlock");
 const { randomColor, gitinfo } = require("../../modules/miscellaneous");
 const { MessageEmbed, Permissions } = require("discord.js");
@@ -24,7 +23,7 @@ module.exports = [
                 `\u26A1 Powered by **[node.js](https://nodejs.org/en/) v${process.versions["node"]}**, **[discord.js](https://discord.js.org) v${djsver}**, and **[sandplate](https://github.com/06000208/sandplate)**.\n`,
                 `**[Invite](https://discord.com/oauth2/authorize?client_id=${client.user.id}&scope=bot&permissions=${perms.bitfield})** | **[Website](https://goon.haus/bear/)** | **[Source](https://github.com/mechabubba/bear/)** | **[Support Server](https://discord.gg/9gdMpBR6bK)**`,
             ].join("\n"))
-            .attachFiles(["assets/bear.gif"])
+            .attachFiles(["assets/bears/bear.gif"])
             .setThumbnail("attachment://bear.gif")
             .addField("Statistics", [
                 `• **Uptime:** ${Duration.fromMillis(client.uptime).toISOTime()}`,

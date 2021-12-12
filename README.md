@@ -1,10 +1,9 @@
-<img align="right" src="assets/bear_static_small.png">
+<img align="right" src="assets/icon_static_small.png">
 
 # <a href="https://goon.haus/bear/">bear</a>
 <a href="https://discord.gg/9gdMpBR6bK">![Join the server!](https://discordapp.com/api/guilds/525773944351883304/widget.png?style=shield)</a>
 
-*"the best discord bot"*<br>
-&nbsp;&nbsp;&nbsp;&nbsp;— @everyone
+*"the best discord bot"* — @everyone
 
 bear [stylized accordingly] is my Discord bot. Invite the bot [here;](https://discord.com/oauth2/authorize?client_id=435224030459723776&scope=bot&permissions=8) this link will automatically give it the "administrator" permission.
 

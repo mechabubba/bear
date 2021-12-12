@@ -142,3 +142,82 @@ module.exports.randomColor = function(w = 6) {
  * @returns {string} The value recieved.
  */
 module.exports.gitinfo = (placeholder) => execSync(`git show -s --format=${placeholder} HEAD`).toString().trim();
+
+/**
+ * Weighted random generation. Courtesy of https://stackoverflow.com/a/1761646.
+ * @param {[*]} arr The values to be randomly chosen from.
+ * @param {Object} weight An object of weights; higher values correspond to a higher likelyhood of being returned.
+ * @returns {*} The value that was generated.
+ */
+module.exports.weightedRandom = (arr, weight) => {
+  // 1) Sum all the weights.
+  // 2) Get a random value; 0 >= x > sum.
+  // 3) Subtract until we can no longer.
+  if (!arr || !weight) throw new Error("Missing an argument");
+  let sum = 0;
+  for (const val of arr) {
+    sum += weight[val] || 0;
+  }
+  let rand = Math.floor(Math.random() * sum);
+  for (const val of arr) {
+    if (rand < weight[val]) return val;
+    rand -= weight[val] || 0;
+  }
+  throw new Error("This should never happen. Prepare to die.");
+}
+
+const entities = {
+  "amp":    "&",
+  "lt":     "<",
+  "gt":     ">",
+  "nbsp":   "\u00A0",
+  "quot":   "\"",
+  "apos":   "'",
+  "cent":   "¢",
+  "pound":  "£",
+  "yen":    "¥",
+  "euro":   "€",
+  "copy":   "©",
+  "reg":    "®",
+  "trade":  "™",
+  "hellip": "…",
+  "mdash":  "—",
+  "bull":   "•",
+  "ldquo":  "“",
+  "rdquo":  "”",
+  "lsquo":  "‘",
+  "rsquo":  "’",
+  "larr":   "←",
+  "rarr":   "→",
+  "darr":   "↓",
+  "uarr":   "↑",
+}
+
+/**
+ * Takes an input, and unescapes the HTML entities inside.
+ * Handles certain named entities (only some, see above) and codepoint entities. 
+ * @param {string} input 
+ * @returns {string}
+ */
+module.exports.unescapeHTML = (input = "") => {
+  const ex = /&[A-Za-z0-9#]+;/;
+  while(ex.test(input)) {
+    const res = input.match(ex);
+    let ent = res[0];
+    if(ent[1] == "#") {
+      let index = 2;
+      if(ent[2] == "x") index++;
+      const codepoint = ent.substr(index, ent.length - (index + 1));
+      ent = String.fromCharCode(codepoint);
+    } else {
+      const code = ent.substr(1, ent.length - 2);
+      if(code in entities) {
+        ent = entities[code];
+      } else {
+        ent = `&${code};`; // Visually similar but distinct from the above regex.
+      }
+    }
+    input = input.replace(res[0], ent);
+  }
+  return input;
+}

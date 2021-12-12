@@ -8,8 +8,7 @@ module.exports = new CommandBlock({
     description: "Makes really awesome burning text. Generated from https://cooltext.com/.",
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"],
 }, async function(client, message, content, args) {
-    const negative = client.config.get("metadata.reactions.negative").value();
-    if(content.length > charlimit) return message.channel.send(`<:_:${negative}> There is a character limit of ${charlimit} per image.`);
+    if(content.length > charlimit) return message.channel.send(`${client.reactions.negative.emote} There is a character limit of ${charlimit} per image.`);
 
     message.channel.startTyping();
 
@@ -39,6 +38,6 @@ module.exports = new CommandBlock({
 
     } catch(e) {
         message.channel.stopTyping(true);
-        return message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e}\`\`\``);
+        return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e}\`\`\``);
     }
 });

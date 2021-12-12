@@ -9,7 +9,6 @@ module.exports = new CommandBlock({
     scope: ["dm", "text", "news"],
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, function(client, message, content, args) {
-    const negative = client.config.get("metadata.reactions.negative").value();
     https.get("https://2b2t.io/api/queue?last=true", (resp) => {
         let data = "";
         resp.on("data", (chunk) => data += chunk);
@@ -21,6 +20,6 @@ module.exports = new CommandBlock({
             message.channel.send(embed);
         });
     }).on("error", (e) => {
-        message.channel.send(`<:_:${negative}> An error occured;\`\`\`\n${e}\`\`\``);
+        message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e}\`\`\``);
     });
 });

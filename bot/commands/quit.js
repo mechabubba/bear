@@ -8,7 +8,7 @@ module.exports = new CommandBlock({
     locked: "hosts",
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"]
 }, async function(client, message, content, args) {
-    await message.react(client.config.get("metadata.reactions.positive").value());
+    await message.react(client.reactions.positive.id);
     client.destroy();
     process.exit(0);
 });

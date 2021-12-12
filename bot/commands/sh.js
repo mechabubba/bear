@@ -15,9 +15,7 @@ module.exports = new CommandBlock({
     locked: ["hosts"],
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, function(client, message, content, args) {
-    const positive = client.config.get("metadata.reactions.positive").value();
-    const negative = client.config.get("metadata.reactions.negative").value();
-    if(!spawn_cmd[os.platform()]) return message.channel.send(`<:_:${negative}> You must set the shell for your OS in the \`spawn_cmd\` object at \`bot/commands/sh.js\`. See https://nodejs.org/api/os.html#os_os_platform for more information.`);
+    if(!spawn_cmd[os.platform()]) return message.channel.send(`${client.reactions.negative.emote} You must set the shell for your OS in the \`spawn_cmd\` object at \`bot/commands/sh.js\`. See https://nodejs.org/api/os.html#os_os_platform for more information.`);
 
     const userinfo = os.userInfo();
     const cwd = (`shell_cwd_${message.author.id}` in client.cookies) ? client.cookies[`shell_cwd_${message.author.id}`] : userinfo["homedir"];
@@ -43,7 +41,7 @@ module.exports = new CommandBlock({
     shell.stdin.end();
 
     shell.on("close", (c) => {
-        message.react(positive);
+        message.react(client.reactions.positive.emote);
         if(output) {
             if(output.length > 1993) output = output.substring(0, 1990) + "...";
             message.channel.send(`\`\`\`\n${output}\`\`\``);
