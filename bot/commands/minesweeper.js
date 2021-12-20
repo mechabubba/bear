@@ -28,19 +28,15 @@ module.exports = new CommandBlock({
     const rng = seedrandom(seed);
 
     if(!length || !width || !maxmines) {
-        message.react(client.reactions.negative.id);
         return message.channel.send(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
     }
 
     const area = length * width;
     if(maxmines > (area - 1)) {
-        message.react(client.reactions.negative.id);
         return message.reply(`${client.reactions.negative.emote} The mines on the field outnumber the fields fillable area.`);
     } else if(area == 0) {
-        message.react(client.reactions.negative.id);
         return message.reply(`${client.reactions.negative.emote} You can't create an empty board!`);
     } else if(area > discordsux) {
-        message.react(client.reactions.negative.id);
         return message.reply(`${client.reactions.negative.emote} The board exceeds a maximum of \`${discordsux}\` cells.`);
     }
 
@@ -104,7 +100,6 @@ module.exports = new CommandBlock({
         tab += "\n";
     }
 
-    message.react(client.reactions.positive.id);
     const embed = new MessageEmbed()
         .setColor("#C0C0C0")
         .setTitle("Minesweeper")

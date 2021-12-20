@@ -41,7 +41,6 @@ module.exports = new CommandBlock({
     shell.stdin.end();
 
     shell.on("close", (c) => {
-        message.react(client.reactions.positive.emote);
         if(output) {
             if(output.length > 1993) output = output.substring(0, 1990) + "...";
             message.channel.send(`\`\`\`\n${output}\`\`\``);

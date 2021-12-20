@@ -22,21 +22,17 @@ module.exports = new CommandBlock({
         let output = data.output;
         if(output.length > 1993) output = output.substring(0, 1990) + "...";
 
-        let reaction, emote;
+        let emote;
         if(data.level == "warning") {
-            reaction = client.reactions.alert.id;
             emote = client.reactions.alert.emote;
         }
         else if(data.level == "error") {
-            reaction = client.reactions.negative.id;
             emote = client.reactions.negative.emote;
         }
         else {
-            reaction = client.reactions.positive.id;
             emote = client.reactions.positive.emote;
         }
 
-        message.react(reaction);
         message.channel.send(`${emote} ${data.log}`);
         return message.channel.send(`\`\`\`\n${output}\`\`\``);
     });

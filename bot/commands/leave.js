@@ -18,11 +18,11 @@ module.exports = new CommandBlock({
     } catch (error) {
         log.error("[leave]", error);
         message.react(client.reactions.negative.id);
-        return message.channel.send(`${client.reactions.negative.emote} Failed to leave guild "${guild.name}" (${guild.id}) due to an error: \`${error.message}\``);
+        return message.channel.send(`${client.reactions.negative.emote} Failed to leave guild "${guild.name}" (\`${guild.id}\`) due to an error:\`\`\`\n${error.message}\`\`\``);
     }
     log.info(`${client.user.tag} left guild "${guild.name}" (${guild.id}) as instructed by ${message.author.tag}`);
     if (message.channel.guild.id !== guild.id) {
         message.react(client.reactions.negative.id);
-        message.channel.send(`${client.reactions.positive.emote} Left guild \`${guild.name}\` (id \`${guild.id}\`)`);
+        message.channel.send(`${client.reactions.positive.emote} Left guild "${guild.name}" (\`${guild.id}\`).`);
     }
 });

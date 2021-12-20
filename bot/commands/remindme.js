@@ -20,9 +20,6 @@ module.exports = new CommandBlock({
     scope: ["dm", "text", "news"],
     clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, args) {
-    const positive = client.config.get("metadata.reactions.positive").value();
-    const negative = client.config.get("metadata.reactions.negative").value();
-
     if(!args[0]) return message.channel.send(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
 
     switch(args[0]) {
@@ -109,9 +106,9 @@ module.exports = new CommandBlock({
                     ishost = true;
                 }
                 if(message.channel.type == "dm") {
-                    reminder = new Reminder(content, message.author.id, null, null, ishost); // pain.
+                    reminder = new Reminder(content, message.author.id, null, null, ishost);
                 } else {
-                    reminder = new Reminder(content, message.author.id, message.guild.id, message.channel.id, ishost); // pain.
+                    reminder = new Reminder(content, message.author.id, message.guild.id, message.channel.id, ishost);
                 }
             } catch(e) {
                 return message.channel.send(`${client.reactions.negative.emote} An error occured.\`\`\`\n${e.message}\`\`\``);
@@ -127,7 +124,6 @@ module.exports = new CommandBlock({
                 return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``); // should never be seen
             }
 
-            message.react(client.reactions.positive.emote);
             return message.channel.send({
                 content: `${client.reactions.positive.emote} ${affirmations[Math.floor(Math.random() * affirmations.length)]} I set a reminder for ${time}.\nYour ID is \`${id.toUpperCase()}\`.`,
                 allowedMentions: { parse: [] },
