@@ -1,6 +1,6 @@
 const ListenerBlock = require("../../modules/ListenerBlock");
 const log = require("../../modules/log");
-const _ = require("lodash");
+const { has } = require("lodash");
 
 const { MessageEmbed } = require("discord.js");
 const { DateTime } = require("luxon");
@@ -17,20 +17,20 @@ module.exports = new ListenerBlock({
     // Add bot owner to hosts user group
     if (client.storage.get("users.hosts").value() === null) {
         const application = await client.fetchApplication();
-        const owner = _.has(application, "owner.members") ? application.owner.ownerID : application.owner.id;
+        const owner = has(application, "owner.members") ? application.owner.ownerID : application.owner.id;
         client.storage.set("users.hosts", [owner]).write();
     }
 
     // Notify channel log
     const clogging = client.config.get("commands.channellogging").value();
     if(clogging.enabled) {
-        const embed = new MessageEmbed()
-            .setTitle(`\uD83C\uDF89 Bot is now fully functional!`)
-            .setColor("#43B581")
-            .setFooter(`${DateTime.now().toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}`);
-
         const guild = await client.guilds.fetch(clogging.guild);
         if(guild.available) {
+            const embed = new MessageEmbed()
+                .setTitle(`\uD83C\uDF89 Bot is now fully functional!`)
+                .setColor("#43B581")
+                .setFooter(`${DateTime.now().toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}`);
+
             const channel = guild.channels.cache.get(clogging.channel);
             channel.send(embed);
         }
@@ -41,7 +41,6 @@ module.exports = new ListenerBlock({
     const reactions = client.config.get("metadata.reactions").value();
     for(const [key, value] of Object.entries(reactions)) {
         client.reactions[key] = {};
-        log.debug(snowflake.test(value))
         if(snowflake.test(value)) {
             client.reactions[key].emote = `<:_:${value}>`; // safe for chat usage
         } else {
