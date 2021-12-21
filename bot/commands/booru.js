@@ -186,14 +186,17 @@ module.exports = [
                 post = json[0].threads[++i];
             }
 
-            const desc = unescapeHTML(post.com.replace(/\<br\>/g, "\n").replace(/(<([^>]+)>)/gi, ""));
             const embed = new MessageEmbed()
                 .setColor(nsfw ? "FED6AF" : "D1D5EE")
                 .setAuthor(post.trip ?? post.name)
                 .setTitle((post.sub ? `"${unescapeHTML(post.sub)}" - ` : "") + `No. ${post.no}`)
                 .setURL(`https://boards.4chan.org/${board}/thread/${post.no}`)
-                .setDescription(`\`\`\`\n${desc.length > 4089 ? desc.substring(0, 4086) + "..." : desc}\`\`\``)
                 .setTimestamp(post.time * 1000);
+
+            if(post.com) {
+                const desc = unescapeHTML(post.com.replace(/\<br\>/g, "\n").replace(/(<([^>]+)>)/gi, ""));
+                embed.setDescription(`\`\`\`\n${desc.length > 4089 ? desc.substring(0, 4086) + "..." : desc}\`\`\``);
+            }
 
             if(post.tim && !post.filedeleted) {
                 embed.setImage(`https://i.4cdn.org/${board}/${post.tim}${post.ext}`)
