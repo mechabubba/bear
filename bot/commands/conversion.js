@@ -30,7 +30,7 @@ module.exports = [
         identity: ["base64"],
         description: "Converts text to base64.",
         usage: "[text]",
-        clientPermissions: ["VIEW_CHANNEL, SEND_MESSAGES"],
+        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, async function(client, message, content = "", args) {
         let buf = Buffer.from(content).toString("base64");
         return message.channel.send(`\`\`\`\n${buf.length > 1993 ? buf.substring(0, 1990) + "..." : buf}\`\`\``);
@@ -39,7 +39,7 @@ module.exports = [
         identity: ["unbase64"],
         description: "Converts base64 to text.",
         usage: "[base64]",
-        clientPermissions: ["VIEW_CHANNEL, SEND_MESSAGES"],
+        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, async function(client, message, content = "", args) {
         let buf = Buffer.from(content, "base64").toString();
         return message.channel.send(`\`\`\`\n${buf.length > 1993 ? buf.substring(0, 1990) + "..." : buf}\`\`\``);
