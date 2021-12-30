@@ -1,4 +1,3 @@
-// i missed out on doge at 2 cents i want to kill myself. if anyone gets rich on doge and likes my discord bot my address is DCSfdzhZGG9RdTeSaH7sR2iq3FkhHw4jZn
 const CommandBlock = require("../../modules/CommandBlock");
 const { MessageEmbed } = require("discord.js");
 const finance = require("yahoo-finance");
@@ -49,10 +48,10 @@ module.exports = new CommandBlock({
                 symbol: symbol,
             }, (e, quotes) => {
                 message.channel.stopTyping(true);
-                if(e) return message.channel.send(`${client.reactions.positive.emote} An error occured;\`\`\`\n${e}\`\`\``);
+                if(e) return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e}\`\`\``);
 
                 const [sd, p] = [quotes.summaryDetail, quotes.price];
-                if(p.regularMarketPrice == null || p.regularMarketChange == null || p.regularMarketChangePercent == null) return message.channel.send(`<:_:${negative}> The ticker symbol was not found.`);
+                if(p.regularMarketPrice == null || p.regularMarketChange == null || p.regularMarketChangePercent == null) return message.channel.send(`${client.reactions.negative.emote} The ticker symbol was not found.`);
 
                 const embed = new MessageEmbed();
                 const gain = p.regularMarketChangePercent >= 0;
