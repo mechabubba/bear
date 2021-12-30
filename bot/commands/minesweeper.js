@@ -14,7 +14,7 @@ const tiles = [
     "８",
     "＠", // Mine
 ];
-const discordsux = 199; // The limit to how many mines can be viewed on the Discord client app. (read the comment below)
+const minesweeper_limit = 199; // The limit to how many mines can be viewed on the Discord client app. (read the comment below)
 
 module.exports = new CommandBlock({
     identity: ["minesweeper", "ms"],
@@ -36,8 +36,8 @@ module.exports = new CommandBlock({
         return message.reply(`${client.reactions.negative.emote} The mines on the field outnumber the fields fillable area.`);
     } else if(area == 0) {
         return message.reply(`${client.reactions.negative.emote} You can't create an empty board!`);
-    } else if(area > discordsux) {
-        return message.reply(`${client.reactions.negative.emote} The board exceeds a maximum of \`${discordsux}\` cells.`);
+    } else if(area > minesweeper_limit) {
+        return message.reply(`${client.reactions.negative.emote} The board exceeds a maximum of \`${minesweeper_limit}\` cells.`);
     }
 
     // This implementation of minesweeper is a little weird, and here's why.

@@ -1,6 +1,7 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const fetch = require("node-fetch");
 
+// An (albeit arbitrary) character limit, so to respect the site and its administrators.
 const charlimit = 64;
 
 module.exports = new CommandBlock({

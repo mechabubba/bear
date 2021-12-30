@@ -2,14 +2,8 @@ const CommandBlock = require("../../modules/CommandBlock");
 const { MessageEmbed } = require("discord.js");
 const finance = require("yahoo-finance");
 
+// Groups who can create aliases for ticker symbols.
 const canalias = ["hosts"];
-const isallowed = (client, userID) => {
-    for(const group of canalias) {
-        const g = client.storage.get(["users", group]).value();
-        if(Array.isArray(g) && g.includes(userID)) return true;
-    }
-    return false;
-};
 
 module.exports = new CommandBlock({
     identity: ["finance", "f"],
@@ -22,6 +16,14 @@ module.exports = new CommandBlock({
     if(!client.storage.has(["local", "finance_aliases"]).value()) {
         client.storage.set(["local", "finance_aliases"], {}).write();
     }
+
+    const isallowed = (client, userID) => {
+        for(const group of canalias) {
+            const g = client.storage.get(["users", group]).value();
+            if(Array.isArray(g) && g.includes(userID)) return true;
+        }
+        return false;
+    };
 
     switch(symbol) {
         case "addalias": {

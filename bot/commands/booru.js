@@ -165,7 +165,7 @@ module.exports = [
 
         const nsfw = boards.nsfw.includes(board);
         if(nsfw && !message.channel.nsfw) {
-            return message.channel.send(`${client.reactions.negative.emote} This board is only viewable in a NSFW channel.`);
+            return message.channel.send(`${client.reactions.negative.emote} Red boards are only viewable in NSFW channels.`);
         }
 
         const _now = Date.now();

@@ -14,7 +14,7 @@ module.exports = [
     }),
     new CommandBlock({
         identity: ["sdate"],
-        description: "Gets the date from eternal september.",
+        description: "Gets the date with respect to [the September that never ended.](https://en.wikipedia.org/wiki/Eternal_September).",
         scope: ["dm", "text", "news"],
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, function(client, message, content, args) {

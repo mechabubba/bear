@@ -45,8 +45,12 @@ module.exports = new CommandBlock({
     if (!content) {
         const commands = client.commands.cache.filter(command => validator(client, message, command));
         const names = commands.map(command => command.firstName);
+        
         const text = `\`\`\`\n${names.join(", ")}\n\`\`\``;
-        if (text.length > 1900) return log.warn("[help] The command list has exceeded 1990 characters in length and is no longer usable!");
+        if (text.length > 1900) {
+            return log.warn("[help] The command list has exceeded 1990 characters in length and is no longer usable!");
+        }
+
         const embed = new MessageEmbed()
             .setTitle("Command List")
             .setColor(client.config.get("metadata.color").value())
@@ -55,14 +59,21 @@ module.exports = new CommandBlock({
         return message.channel.send(embed);
     } else {
         const name = content.toLowerCase();
-        if (!client.commands.index.has(name)) return message.channel.send(`${client.reactions.negative.emote} Command \`${content}\` not found.`);
+        if (!client.commands.index.has(name)) {
+            return message.channel.send(`${client.reactions.negative.emote} Command \`${content}\` not found.`);
+        }
+
         const id = client.commands.index.get(name);
         if (!client.commands.cache.has(id)) {
             log.warn(`Command name "${name}" was mapped in command index but corresponding id "${id}" isn't mapped in command cache`);
             return message.channel.send(`${client.reactions.negative.emote} Command \`${content}\` not found.`);
         }
+
         const command = client.commands.cache.get(id);
-        if (!validator(client, message, command)) return message.channel.send(`${client.reactions.negative.emote} Command \`${content}\` not found.`);
+        if (!validator(client, message, command)) {
+            return message.channel.send(`${client.reactions.negative.emote} Command \`${content}\` not found.`);
+        }
+        
         const embed = new MessageEmbed()
             .setTitle(command.firstName)
             .setColor(client.config.get("metadata.color").value())

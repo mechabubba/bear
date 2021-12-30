@@ -9,7 +9,6 @@ module.exports = [
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"]
     }, async function(client, message, content, args) {
         message.channel.startTyping();
-
         try {
             const resp = await fetch("http://shibe.online/api/shibes", { method: "get" });
             if(!resp.ok) throw new Error(resp.statusText);
@@ -31,6 +30,10 @@ module.exports = [
         usage: "(code)",
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"],
     }, async function(client, message, content, [code]) {
-        return message.channel.send({ files: [`https://http.cat/${code}.jpg`] });
+        try {
+            await message.channel.send({ files: [`https://http.cat/${code}.jpg`] });
+        } catch(e) { // just in case ;)
+            message.channel.send({ files: [{ attachment: "../../assets/service_unavailable.jpg", name: "service_unavailable.jpg" }] })
+        }
     }),
 ];
