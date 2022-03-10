@@ -18,7 +18,7 @@ module.exports = [
         usage: "[...text]",
         clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, async function(client, message, content, args) {
-        await message.channel.send({ content: content, allowedMentions: { parse: [] } });
+        await message.channel.send({ content: content || "** **", allowedMentions: { parse: [] } });
         return message.delete();
     }),
     new CommandBlock({
@@ -35,7 +35,8 @@ module.exports = [
 
         try {
             const hook = new WebhookClient(matched[1], matched[2]);
-            await hook.send({ content: args.join(" "), allowedMentions: { parse: [] } });
+            await hook.send({ content: args.join(" ") || "** **", allowedMentions: { parse: [] } });
+            message.react(client.reactions.positive.id);
             return message.delete();
         } catch(e) {
             message.react(client.reactions.negative.id);
