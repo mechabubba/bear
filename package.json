@@ -24,7 +24,7 @@
     "chalk": "^4.1.0",
     "chrono-node": "^2.2.7",
     "cron": "^1.8.2",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.6.0",
     "filehound": "^1.17.4",
     "fs-extra": "^9.0.1",
     "gamedig": "^2.0.23",
