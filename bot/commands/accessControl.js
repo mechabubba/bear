@@ -39,87 +39,79 @@ module.exports = [
         identity: ["block", "deny"],
         description: "Prohibits a user or guild from interacting with the bot.",
         usage: "user/guild [ID]",
-        scope: ["dm", "text", "news"],
         locked: "hosts",
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
     }, async function(client, message, content, [type, id, ...args]) {
         if (!content) {
-            return message.channel.send(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
+            return message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
         }
 
         const group = determineType(type);
         if (!group) {
-            return message.channel.send(`${client.reactions.negative.emote} Unrecognized type \`type\`! This must be either \`user\` or \`guild\`.`);
+            return message.reply(`${client.reactions.negative.emote} Unrecognized type \`type\`! This must be either \`user\` or \`guild\`.`);
         }
         if (!isNumeric(id)) {
-            return message.channel.send(`${client.reactions.negative.emote} A valid ID is required!`);
+            return message.reply(`${client.reactions.negative.emote} A valid ID is required!`);
         }
         
         if (client.storage.get(group.path).value() === null) {
             client.storage.set(group.path, []).write();
         } else if (client.storage.get(group.path).includes(id).value()) {
             message.react(client.reactions.inquiry.id);
-            return message.channel.send(`${client.reactions.inquiry.emote} ${startCase(group.type)} \`${id}\` is already blocked!`);
+            return message.reply(`${client.reactions.inquiry.emote} ${startCase(group.type)} \`${id}\` is already blocked!`);
         }
 
         client.storage.get(group.path).push(id).write();
         log.info(`${message.author.tag} blocked ${group.type} "${id}" from accessing ${client.user.tag}`);
-        return message.channel.send(`${client.reactions.positive.emote} Blocked ${group.type} \`${id}\`!`);
+        return message.reply({ content: `${client.reactions.positive.emote} Blocked ${group.type} \`${id}\`!`, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
         identity: ["unblock", "allow"],
         description: "Restore a user or guild's access to the bot.",
         usage: "user/guild [ID]",
-        scope: ["dm", "text", "news"],
         locked: "hosts",
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
     }, async function(client, message, content, [type, id, ...args]) {
         if (!content) {
-            return message.channel.send(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
+            return message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
         }
 
         const group = determineType(type);
         if (!group) {
-            return message.channel.send(`${client.reactions.negative.emote} Unrecognized type \`type\`! This must be either \`user\` or \`guild\`.`);
+            return message.reply(`${client.reactions.negative.emote} Unrecognized type \`type\`! This must be either \`user\` or \`guild\`.`);
         }
         if (!isNumeric(id)) {
-            return message.channel.send(`${client.reactions.negative.emote} A valid ID is required!`);
+            return message.reply(`${client.reactions.negative.emote} A valid ID is required!`);
         }
 
         if (client.storage.get(group.path).value() === null || !client.storage.get(group.path).includes(id).value()) {
-            return message.channel.send(`${client.reactions.inquiry.emote} ${startCase(group.type)} \`${id}\` is not blocked!`);
+            return message.reply(`${client.reactions.inquiry.emote} ${startCase(group.type)} \`${id}\` is not blocked!`);
         }
         client.storage.get(group.path).pull(id).write();
         log.info(`${message.author.tag} unblocked ${group.type} "${id}"`);
         if (!client.storage.get(group.path).value().length) {
             client.storage.set(group.path, null).write();
         }
-        return message.channel.send(`${client.reactions.positive.emote} Unblocked ${group.type} \`${id}\`!`);
+        return message.reply({ content: `${client.reactions.positive.emote} Unblocked ${group.type} \`${id}\`!`, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
         identity: ["groups", "usergroups"],
         description: "Lists all registered usergroups.",
-        scope: ["dm", "text", "news"],
         locked: "hosts",
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
     }, async function(client, message, content, args) {
-        return message.channel.send(`\`\`\`\n${Object.keys(client.storage.get("users").value()).join(", ")}\`\`\``);
+        return message.reply({ content: `\`\`\`\n${Object.keys(client.storage.get("users").value()).join(", ")}\`\`\``, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
         identity: ["group", "usergroup"],
         description: "Creates user groups and toggles given IDs in and out of them.",
         usage: "[group] (userID)",
-        scope: ["dm", "text", "news"],
         locked: "hosts",
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
     }, async function(client, message, content, args) {
         if (!content) {
-            return message.channel.send(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
+            return message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
         }
 
         const name = args[0].toLowerCase();
         if (forbiddenGroups.includes(name)) {
-            return message.channel.send(`${client.reactions.negative.emote} Interacting with this group is forbidden.`);
+            return message.reply(`${client.reactions.negative.emote} Interacting with this group is forbidden.`);
         }
 
         const group = ["users", name];
@@ -140,10 +132,10 @@ module.exports = [
         }
 
         // regardless of the above, if there's no id, we're done
-        if (!id) return message.channel.send(reply); // the id doesn't exist regardless if the group exists.
+        if (!id) return message.reply({ content: reply, allowedMentions: { repliedUser: false } }); // the id doesn't exist regardless if the group exists.
         if (!isNumeric(id)) {
             reply += `\nThe ID \`${id}\` was invalid.`;
-            return message.channel.send(reply);
+            return message.reply({ content: reply });
         }
 
         // if the group is disabled, prepare it
@@ -154,12 +146,12 @@ module.exports = [
             client.storage.get(group).pull(id).write();
             reply += `\nRemoved ID \`${id}\` from group \`${name}\`.`;
             if (!client.storage.get(group).value().length) client.storage.set(group, null).write();
-            return message.channel.send(reply);
+            return message.reply({ content: reply, allowedMentions: { repliedUser: false } });
         }
 
         // if this code is reached it's safe to assume we have an id, the group is ready, and the id doesn't already exist in the group
         client.storage.get(group).push(id).write();
         reply += `\nAdded ID \`${id}\` to group \`${name}\`.`;
-        return message.channel.send(reply);
+        return message.reply({ content: reply, allowedMentions: { repliedUser: false } });
     }),
 ];

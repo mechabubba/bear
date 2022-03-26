@@ -1,19 +1,16 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const fetch = require("node-fetch");
 const log = require("../../modules/log");
+const { useragents } = require("../../modules/miscellaneous");
 
 const debug = false; // Set to true to send the JSON output over the regular output.
 
 module.exports = new CommandBlock({
     identity: ["translate", "trans"],
-    summary: "Translates text.",
     description: "Translates text using the Google Translate API.\n\n**Language settings:** By default, the command takes given text and translates it to english. The `source` parameter can override this in one of two ways;\n• Set it to an (optional) ISO 639-1 language code to translate the text to a different language.\n• Force it to translate between different languages by placing an underscore `_` in between the source and the destination language; for example, `zh-cn_es` would attempt to translate from simplified chinese to spanish.\n\nView all supported languages [here!](https://cloud.google.com/translate/docs/languages)",
     usage: `(source) [foreign text]`,
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, args) {
-    if(!content) return message.channel.send(`${client.reactions.negative.emote} You gave me nothing to translate!`);
-
-    message.channel.startTyping();
+    if(!content) return message.reply(`${client.reactions.negative.emote} You gave me nothing to translate!`);
 
     const langs = getlang(args[0]);
     if(langs !== undefined) args.shift();
@@ -22,7 +19,7 @@ module.exports = new CommandBlock({
     try {
         const resp = await fetch(api, {
             headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.104 Safari/537.36",
+                "User-Agent": Math.floor(Math.random() * useragents.random.length),
             },
         });
         if(!resp.ok) throw new Error(resp.statusText);
@@ -37,14 +34,12 @@ module.exports = new CommandBlock({
         let sjson = JSON.stringify(json, null, 4);
         if(debug) log.debug(sjson);
 
-        message.channel.stopTyping(true);
-        return message.channel.send({
+        return message.reply({
             content: debug ? `\`\`\`\n${sjson.length > 1993 ? sjson.substr(0, 1990) + "..." : sjson}\`\`\`` : translation,
-            allowedMentions: { parse: [] },
+            allowedMentions: { parse: [], repliedUser: false }, 
         });
     } catch(e) {
-        message.channel.stopTyping(true);
-        return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
+        return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
     }
 });
 

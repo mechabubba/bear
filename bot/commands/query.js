@@ -8,13 +8,11 @@ module.exports = new CommandBlock({
     summary: "Querys a source engine server.",
     description: "Querys a source engine server. The port is optional and defaults to `27015`.",
     usage: "ip:port",
-    scope: ["dm", "text", "news"],
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
+    locked: "hosts",
 }, async function(client, message, content, [ip, port]) {
-    if(!ip) return message.channel.send(`${client.reactions.negative.emote} You must input a server IP. Perform \`help ${this.firstName}\` for more information.`);
+    if(!ip) return message.reply(`${client.reactions.negative.emote} You must input a server IP. Perform \`help ${this.firstName}\` for more information.`);
     ip = ip.toLowerCase();
 
-    message.channel.startTyping();
     if(ip.match(/:/g)) {
         const split = ip.split(":");
         ip = split[0];
@@ -34,15 +32,14 @@ module.exports = new CommandBlock({
     } catch(e) {
         embed.setTitle(vanity)
             .setColor("#F04747")
-            .setFooter("This server is offline.", `https://cdn.discordapp.com/emojis/${client.reactions.offline.id}.png`);
-        message.channel.stopTyping(true);
-        return message.channel.send(embed);
+            .setFooter({ text: "This server is offline.", iconURL: `https://cdn.discordapp.com/emojis/${client.reactions.offline.id}.png` });
+        return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
     }
 
     embed.setTitle(info.name)
         .setColor("#43B581")
         .addField(`Basic Info`, `IP: \`${vanity}\`\nConnect: steam://connect/${vanity}`)
-        .setFooter("This server is online!", `https://cdn.discordapp.com/emojis/${client.reactions.online.id}.png`);
+        .setFooter({ text: "This server is online!", iconURL: `https://cdn.discordapp.com/emojis/${client.reactions.online.id}.png` });
 
     let players = "";
     info.players.sort((a, b) => (a.score < b.score) ? 1 : -1);
@@ -56,6 +53,5 @@ module.exports = new CommandBlock({
     embed.addField(`Current Players (${info.players.length} / ${info.maxplayers}${info.players.length >= info.maxplayers ? " - full!" : ``})`, players)
         .addField(`Current Map`, `\`${info.map}\``);
 
-    message.channel.stopTyping(true);
-    return message.channel.send(embed);
+    return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
 });

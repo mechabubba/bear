@@ -11,11 +11,9 @@ module.exports = new CommandBlock({
     identity: "sh",
     description: "Executes terminal commands. Multiple commands can be split by newlines.",
     usage: "[commands]",
-    scope: ["dm", "text", "news"],
     locked: ["hosts"],
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, function(client, message, content, args) {
-    if(!spawn_cmd[os.platform()]) return message.channel.send(`${client.reactions.negative.emote} You must set the shell for your OS in the \`spawn_cmd\` object at \`bot/commands/sh.js\`. See https://nodejs.org/api/os.html#os_os_platform for more information.`);
+    if(!spawn_cmd[os.platform()]) return message.reply(`${client.reactions.negative.emote} You must set the shell for your OS in the \`spawn_cmd\` object at \`bot/commands/sh.js\`. See https://nodejs.org/api/os.html#os_os_platform for more information.`);
 
     const userinfo = os.userInfo();
     const cwd = (`shell_cwd_${message.author.id}` in client.cookies) ? client.cookies[`shell_cwd_${message.author.id}`] : userinfo["homedir"];
@@ -43,7 +41,7 @@ module.exports = new CommandBlock({
     shell.on("close", (c) => {
         if(output) {
             if(output.length > 1993) output = output.substring(0, 1990) + "...";
-            message.channel.send(`\`\`\`\n${output}\`\`\``);
+            message.reply({ content: `\`\`\`\n${output}\`\`\``, allowedMentions: { repliedUser: false } });
         }
     });
 });

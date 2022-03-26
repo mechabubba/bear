@@ -5,9 +5,7 @@ module.exports = new CommandBlock({
     identity: ["8ball", "8"],
     description: "Shakes a magic 8 ball.",
     usage: "[query]",
-    scope: ["dm", "text", "news"],
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, args) {
-    if(!content) return message.channel.send(`${client.reactions.negative.emote} You need to ask it something!`);
-    return message.channel.send(`\uD83C\uDFB1 ${responses[Math.floor(Math.random() * responses.length)]}`); // if you're reading this, im sorry for ruining the magic
+    if(!content) return message.reply(`${client.reactions.negative.emote} You need to ask it something!`);
+    return message.reply({ content: `\uD83C\uDFB1 ${responses[Math.floor(Math.random() * responses.length)]}`, allowedMentions: { repliedUser: false } }); // if you're reading this, im sorry for ruining the magic
 });

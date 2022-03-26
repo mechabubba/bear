@@ -11,12 +11,12 @@ module.exports = [
                 .setTitle(`\`${message.author.id}\``)
                 .setColor(clogging.color)
                 .setDescription(`\`\`\`\n${name} ${content || ""}\`\`\``)
-                .setFooter(`${DateTime.fromMillis(message.createdTimestamp).toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}`);
+                .setFooter({ text: `${DateTime.fromMillis(message.createdTimestamp).toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}` });
 
             const guild = await client.guilds.fetch(clogging.guild);
             if(guild.available) {
                 const channel = guild.channels.cache.get(clogging.channel);
-                channel.send(embed);
+                channel.send({ embeds: [embed] });
             }
         }
     }),

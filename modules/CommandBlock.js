@@ -12,7 +12,7 @@ const _ = require("lodash");
  * @property {?[string]} [scope=["dm", "text", "news"]] - An array of channel types where the command is allowed https://discord.js.org/#/docs/main/stable/class/Channel?scrollTo=type
  * @property {?boolean} [nsfw=false] - Whether or not the command is nsfw
  * @property {?(boolean|string|[string])} [locked=false] - Powerful command access control. `false` command is not locked, `true` command is locked, `string` command is locked to a user group name or an account id, `Array` command is locked to any number of group names or account ids
- * @property {?PermissionResolvable} [clientPermissions=null] - PermissionResolvable the client must have in the scope of a guild for the command to work
+ * @property {?PermissionResolvable} [clientPermissions=null] - PermissionResolvable the client must have in the scope of a guild for the command to work. By default, it checks if you can view the channel and send messages in it.
  * @property {?PermissionResolvable} [userPermissions=null] - PermissionResolvable the user of the command must have in the scope of a guild to use the command
  */
 
@@ -65,7 +65,7 @@ class CommandBlock extends BaseBlock {
     /**
      * @type {[string]}
      */
-    this.scope = _.has(data, "scope") && !_.isNil(data.scope) ? data.scope : ["dm", "text", "news"];
+    this.scope = _.has(data, "scope") && !_.isNil(data.scope) ? data.scope : ["DM", "GUILD_TEXT", "GUILD_NEWS"];
 
     /**
      * @type {boolean}

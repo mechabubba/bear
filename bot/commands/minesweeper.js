@@ -18,17 +18,14 @@ const minesweeper_limit = 199; // The limit to how many mines can be viewed on t
 
 module.exports = new CommandBlock({
     identity: ["minesweeper", "ms"],
-    summary: "Generates a Minesweeper board.",
     description: "Generates a playable Minesweeper board, using spoiler tags. The seed is optional and is random by default.\n\n**Tip:** The upper left corner will never be a mine; start there!",
     usage: "[length] [width] [mines] (-seed [...values])",
-    scope: ["dm", "text", "news"],
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
 }, async function(client, message, content, [length, width, maxmines, hasseed, ...args]) {
     const seed = hasseed == "-seed" ? args.join(" ") : undefined;
     const rng = seedrandom(seed);
 
     if(!length || !width || !maxmines) {
-        return message.channel.send(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
+        return message.reply(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
     }
 
     const area = length * width;
@@ -105,6 +102,6 @@ module.exports = new CommandBlock({
         .setTitle("Minesweeper")
         .setDescription(tab)
         .attachFiles(["assets/mine.png"])
-        .setFooter(`${length} \u00D7 ${width} tiles • ${maxmines} mines${seed ? ` • ${seed}` : ``}`, "attachment://mine.png");
-    return message.channel.send(embed);
+        .setFooter({ text: `${length} \u00D7 ${width} tiles • ${maxmines} mines${seed ? ` • ${seed}` : ``}`, iconURL: "attachment://mine.png" });
+    return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
 });

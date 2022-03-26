@@ -7,16 +7,12 @@ module.exports = [
     new CommandBlock({
         identity: ["thetime", "time"],
         description: "Tells the time.",
-        scope: ["dm", "text", "news"],
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, (client, message, content, args) => {
-        return message.channel.send(`It is currently **${DateTime.now().toLocaleString(DateTime.DATETIME_FULL)}.**`);
+        return message.reply({ content: `It is currently **${DateTime.now().toLocaleString(DateTime.DATETIME_FULL)}.**`, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
         identity: ["sdate"],
         description: "Gets the date with respect to [the September that never ended](https://en.wikipedia.org/wiki/Eternal_September).",
-        scope: ["dm", "text", "news"],
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, function(client, message, content, args) {
         const since = Math.ceil((Date.now() - sdate.getTime()) / (1000 * 60 * 60 * 24));
         const d1 = (since % 10);
@@ -32,7 +28,6 @@ module.exports = [
                 default: suffix = "th"; break;
             }
         }
-        
-        return message.channel.send(`Today is **September ${since + suffix}, 1993.**`);
+        return message.reply({ content: `Today is **September ${since + suffix}, 1993.**`, allowedMentions: { repliedUser: false } });
     }),
 ];

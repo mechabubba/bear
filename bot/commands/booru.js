@@ -2,7 +2,7 @@
 const { MessageEmbed } = require("discord.js");
 const fetch = require("node-fetch");
 const CommandBlock = require("../../modules/CommandBlock");
-const { sleep, gitinfo, unescapeHTML } = require("../../modules/miscellaneous");
+const { sleep, gitinfo, unescapeHTML, useragents } = require("../../modules/miscellaneous");
 
 const log = require("../../modules/log");
 
@@ -38,8 +38,7 @@ module.exports = [
         description: "Gets (pseudo)random posts from [rule34](https://rule34.xxx).",
         usage: "(...tags)",
         nsfw: true,
-        scope: ["dm", "text", "news"],
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"],
+        clientPermissions: ["ATTACH_FILES"],
     }, async function(client, message, content, args) {
         const _now = Date.now();
         client.cookies["r34_cd"] = client.cookies["r34_cd"] ?? _now;
@@ -48,10 +47,9 @@ module.exports = [
         }
         client.cookies["r34_cd"] = Date.now() + r34_cooldown;
 
-        message.channel.startTyping();
         try {
             const resp = await fetch(`https://api.rule34.xxx/index.php?page=dapi&s=post&json=1&q=index&limit=${r34_post_limit}&tags=${[...args].join("+")}`, {
-                headers: { "User-Agent": `bear/${gitinfo("%h")} (by mechabubba)` }
+                headers: { "User-Agent": useragents.bear }
             })
             if(!resp.ok) throw new Error(resp.statusText);
 
@@ -73,11 +71,9 @@ module.exports = [
                     .setImage(img.file_url);
             }
 
-            message.channel.stopTyping(true);
-            return message.channel.send(embed);
+            return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
         } catch(e) {
-            message.channel.stopTyping(true);
-            return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e}\`\`\``);
+            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
     }),
     new CommandBlock({
@@ -85,8 +81,7 @@ module.exports = [
         description: "Gets random posts from [e621](https://e621.net).",
         usage: "(...tags)",
         nsfw: true,
-        scope: ["dm", "text", "news"],
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"],
+        clientPermissions: ["ATTACH_FILES"],
     }, async function(client, message, contents, args) {
         const _now = Date.now();
         client.cookies["e621_cd"] = client.cookies["e621_cd"] ?? _now;
@@ -95,10 +90,9 @@ module.exports = [
         }
         client.cookies["chan_cd"] = Date.now() + e621_cooldown;
         
-        message.channel.startTyping();
         try {
             const resp = await fetch(`https://e621.net/posts.json?limit=1&tags=${encodeURIComponent([...args, "order:random"].join(" "))}`, {
-                headers: { "User-Agent": `bear/${gitinfo("%h")} (by mechabubba)` }
+                headers: { "User-Agent": useragents.bear }
             })
             if(!resp.ok) throw new Error(resp.statusText);
 
@@ -118,19 +112,16 @@ module.exports = [
                     .setImage(img.file.url);
             }
 
-            message.channel.stopTyping(true);
-            return message.channel.send(embed);
+            return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
         } catch(e) {
-            message.channel.stopTyping(true);
-            return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e}\`\`\``);
+            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
     }),
     new CommandBlock({
         identity: ["4chan", "4c"],
         description: "Pulls the latest op from a 4chan board.",
         usage: "[board]",
-        scope: ["dm", "text", "news"],
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"],
+        clientPermissions: ["ATTACH_FILES"],
     }, async function(client, message, contents, [board, ...args]) {
         // Updates our board cache.
         if(board == "update") {
@@ -143,29 +134,29 @@ module.exports = [
                 };
             }
             if(!canupdate) {
-                return message.channel.send(`${client.reactions.negative.emote} You do not have permission to do this.`);
+                return message.reply(`${client.reactions.negative.emote} You do not have permission to do this.`);
             }
 
             let boards;
             try {
                 boards = get4chanBoards(client);
             } catch(e) {
-                return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e}\`\`\``);
+                return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
             }
 
             await client.storage.set(["local", "4chan", "boards"], boards).write();
-            return message.channel.send(`${client.reactions.positive.emote} Board list updated.`);
+            return message.reply({ content: `${client.reactions.positive.emote} Board list updated.`, allowedMentions: { repliedUser: false } });
         }
 
         // @todo on bot/command init, keep these in memory.
         const boards = await client.storage.get(["local", "4chan", "boards"]).value();
         if(!board || !boards.all.includes(board)) {
-            return message.channel.send(`${client.reactions.negative.emote} A board was not provided or doesn't exist.`);
+            return message.reply(`${client.reactions.negative.emote} A board was not provided or doesn't exist.`);
         }
 
         const nsfw = boards.nsfw.includes(board);
         if(nsfw && !message.channel.nsfw) {
-            return message.channel.send(`${client.reactions.negative.emote} Red boards are only viewable in NSFW channels.`);
+            return message.reply(`${client.reactions.negative.emote} Red boards are only viewable in NSFW channels.`);
         }
 
         const _now = Date.now();
@@ -175,7 +166,6 @@ module.exports = [
         }
         client.cookies["chan_cd"] = Date.now() + chan_cooldown;
 
-        message.channel.startTyping();
         try {
             const resp = await fetch(`https://a.4cdn.org/${board}/catalog.json`);
             if(!resp.ok) throw new Error(resp.statusText);
@@ -200,25 +190,21 @@ module.exports = [
 
             if(post.tim && !post.filedeleted) {
                 embed.setImage(`https://i.4cdn.org/${board}/${post.tim}${post.ext}`)
-                    .setFooter(post.filename + post.ext);
+                    .setFooter({ text: post.filename + post.ext });
             }
 
-            message.channel.stopTyping(true);
-            return message.channel.send(embed);
+            return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
 
         } catch(e) {
-            message.channel.stopTyping(true);
-            return message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e}\`\`\``);
+            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
     }),
     new CommandBlock({
         identity: ["bible"],
         description: "Pulls scriptures and psalms from the catholic bible.",
         usage: "[excerpt]",
-        scope: ["dm", "text", "news"],
         locked: "hosts",
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, async function(client, message, contents, args) {
-        return message.channel.send("todo because after the above two i need jesus");
+        return message.reply("todo because after the above two i need jesus");
     })
 ];
