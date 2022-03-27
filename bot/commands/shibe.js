@@ -4,11 +4,9 @@ const fetch = require("node-fetch");
 module.exports = [
     new CommandBlock({
         identity: ["shibe"],
-        summary: "Gets a shibe.",
         description: "Gets a shibe. Images fetched from [shibe.online](https://shibe.online/).",
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"]
+        clientPermissions: ["ATTACH_FILES"]
     }, async function(client, message, content, args) {
-        message.channel.startTyping();
         try {
             const resp = await fetch("http://shibe.online/api/shibes", { method: "get" });
             if(!resp.ok) throw new Error(resp.statusText);
@@ -16,24 +14,21 @@ module.exports = [
             const json = await resp.json();
             if(!json) throw new Error("Recieved malformed json.");
 
-            message.channel.send({ files: json });
+            message.reply({ files: json, allowedMentions: { repliedUser: false } });
         } catch(e) {
-            message.channel.send(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e}\`\`\``);
+            message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
-
-        message.channel.stopTyping(true);
     }),
     new CommandBlock({
         identity: ["httpcat", "cattp"],
-        summary: "Gets an HTTP cat code.",
         description: "Gets an HTTP cat code. Images fetched from [http.cat](https://http.cat).",
         usage: "(code)",
-        clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES", "ATTACH_FILES"],
+        clientPermissions: ["ATTACH_FILES"],
     }, async function(client, message, content, [code]) {
         try {
-            await message.channel.send({ files: [`https://http.cat/${code}.jpg`] });
+            await message.reply({ files: [`https://http.cat/${code}.jpg`], allowedMentions: { repliedUser: false } });
         } catch(e) { // just in case ;)
-            message.channel.send({ files: [{ attachment: "../../assets/service_unavailable.jpg", name: "service_unavailable.jpg" }] })
+            message.reply({ files: [{ attachment: "../../assets/service_unavailable.jpg", name: "service_unavailable.jpg" }], allowedMentions: { repliedUser: false } })
         }
     }),
 ];

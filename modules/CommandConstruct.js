@@ -123,10 +123,10 @@ class CommandConstruct extends BaseConstruct {
         if (message.channel.nsfw === false) return;
       }
       if (command.clientPermissions) {
-        if (!message.guild.me.hasPermission(command.clientPermissions, false, true, true)) return;
+        if (!message.guild.me.permissions.has([...command.clientPermissions, "VIEW_CHANNEL", "SEND_MESSAGES"], true)) return;
       }
       if (command.userPermissions) {
-        if (!message.member.hasPermission(command.userPermissions, false, true, true)) return;
+        if (!message.member.permissions.has(command.userPermissions, true)) return;
       }
     }
     if (command.locked !== false) {

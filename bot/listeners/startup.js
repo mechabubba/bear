@@ -29,10 +29,10 @@ module.exports = new ListenerBlock({
             const embed = new MessageEmbed()
                 .setTitle(`\uD83C\uDF89 Bot is now fully functional!`)
                 .setColor("#43B581")
-                .setFooter(`${DateTime.now().toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}`);
+                .setFooter({ text: `${DateTime.now().toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}` });
 
             const channel = guild.channels.cache.get(clogging.channel);
-            channel.send(embed);
+            channel.send({ embeds: [embed] });
         }
     }
 

@@ -39,8 +39,6 @@ module.exports = new CommandBlock({
     summary: "Lists commands & provides command info.",
     description: "Provides a list of commands or info about individual commands when queried.",
     usage: "[command name]",
-    scope: ["dm", "text", "news"],
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"]
 }, async function(client, message, content, args) {
     if (!content) {
         const commands = client.commands.cache.filter(command => validator(client, message, command));
@@ -55,23 +53,23 @@ module.exports = new CommandBlock({
             .setTitle("Command List")
             .setColor(client.config.get("metadata.color").value())
             .setDescription(text)
-            .setFooter(`\uD83D\uDD0D To query command info, perform "${this.firstName} ${this.usage}".`);
-        return message.channel.send(embed);
+            .setFooter({ text: `\uD83D\uDD0D To query command info, perform "${this.firstName} ${this.usage}".` });
+        return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
     } else {
         const name = content.toLowerCase();
         if (!client.commands.index.has(name)) {
-            return message.channel.send(`${client.reactions.negative.emote} Command \`${content}\` not found.`);
+            return message.reply(`${client.reactions.negative.emote} Command \`${content}\` not found.`);
         }
 
         const id = client.commands.index.get(name);
         if (!client.commands.cache.has(id)) {
             log.warn(`Command name "${name}" was mapped in command index but corresponding id "${id}" isn't mapped in command cache`);
-            return message.channel.send(`${client.reactions.negative.emote} Command \`${content}\` not found.`);
+            return message.reply(`${client.reactions.negative.emote} Command \`${content}\` not found.`);
         }
 
         const command = client.commands.cache.get(id);
         if (!validator(client, message, command)) {
-            return message.channel.send(`${client.reactions.negative.emote} Command \`${content}\` not found.`);
+            return message.reply(`${client.reactions.negative.emote} Command \`${content}\` not found.`);
         }
         
         const embed = new MessageEmbed()
@@ -80,6 +78,6 @@ module.exports = new CommandBlock({
             .setDescription(command.description || command.summary || "No description provided")
             .addField("Usage", `\`${command.firstName}${command.usage ? " " + command.usage : ""}\``, true);
         if (command.nsfw) embed.addField("NSFW", "True", true);
-        return message.channel.send(embed);
+        return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
     }
 });

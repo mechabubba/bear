@@ -3,7 +3,7 @@ const { weightedRandom } = require("../../modules/miscellaneous");
 const { MessageEmbed } = require("discord.js");
 
 /**
- * Polar bear weights. The keys correspond to the images in `assets/bears/`. Higher numbers correspond to more rare bears.
+ * Polar bear weights. The keys correspond to the images in `assets/bears/`. Higher numbers correspond to more common bears.
  * @todo I would like to credit whoever made these edits but I'm genuinely uncertain who did. I will look into it.
  */
 const bears = {
@@ -17,9 +17,8 @@ const bears = {
 
 module.exports = new CommandBlock({
     identity: "bear",
-    description: "the man can run",
-    scope: ["dm", "text", "news"],
-    clientPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
+    description: "<a:_:588518103814504490>",
+    clientPermissions: ["ATTACH_FILES"],
 }, function(client, message, content, args) {
     if(!client.storage.has("local.bear").value()) {
         client.storage.set("local.bear", { points: 0 }).write();
@@ -31,10 +30,9 @@ module.exports = new CommandBlock({
     const embed = new MessageEmbed()
         .setColor("#FEFEFE")
         .setTitle("he's here...")
-        .attachFiles([`assets/bears/${img}`])
         .setImage(`attachment://${img}`)
-        .setFooter(`\uD83D\uDC3B ${bearpoints}`);
-    message.channel.send(embed);
+        .setFooter({ text: `\uD83D\uDC3B ${bearpoints}` });
+    message.reply({ embeds: [embed], files: [`assets/bears/${img}`], allowedMentions: { repliedUser: false } });
 
     client.storage.set("local.bear.points", bearpoints).write();
 });
