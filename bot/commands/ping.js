@@ -24,7 +24,6 @@ module.exports = [
         identity: ["wecho"],
         description: "Echoes text via a Discord webhook.\n\n**Warning:** This is not secure; if used publicly, people WILL be able to get your webhooks ID and token, which will let them use it aswell! Use only as a utility!",
         usage: "[hook_url] [...text]",
-        clientPermissions: ["MANAGE_MESSAGES"],
         locked: ["hosts"],
     }, async function(client, message, content, [hook_url, ...args]) {
         const matched = hook_url.match(/discord.com\/api\/webhooks\/([^\/]+)\/([^\/]+)/);
@@ -33,7 +32,7 @@ module.exports = [
         }
 
         try {
-            const hook = new WebhookClient(matched[1], matched[2]);
+            const hook = new WebhookClient({ id: matched[1], token: matched[2] });
             await hook.send({ content: args.join(" ") || "** **", allowedMentions: { parse: [] } });
             return message.react(client.reactions.positive.id);
         } catch(e) {
