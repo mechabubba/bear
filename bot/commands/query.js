@@ -65,7 +65,7 @@ module.exports = new CommandBlock({
     if(!plys) plys = "Dead server. :(";
     plys = Util.escapeMarkdown(plys);
 
-    embed.addField(`Current Players (${info.players}/${info.maxplayers}${info.players >= info.maxplayers ? " - full!" : ``})`, plys)
+    embed.addField(`Current Players (${info.players}/${info.max_players}${info.players >= info.max_players ? " - full!" : ``})`, plys)
         .addField(`Current Map`, `\`${info.map}\``);
 
     return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
