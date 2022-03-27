@@ -50,8 +50,6 @@ module.exports = new CommandBlock({
             .setFooter({ text: "This server is offline.", iconURL: `https://cdn.discordapp.com/emojis/${client.reactions.offline.id}.png` });
         return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
     }
-    console.log(info);
-    console.log(players);
 
     embed.setTitle(info.name)
         .setColor("#43B581")
