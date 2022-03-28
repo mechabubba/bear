@@ -1,5 +1,5 @@
 const CommandBlock = require("../../modules/CommandBlock");
-const { MessageEmbed } = require("discord.js");
+const { MessageAttachment, MessageEmbed } = require("discord.js");
 const seedrandom = require("seedrandom");
 
 const tiles = [
@@ -15,6 +15,7 @@ const tiles = [
     "＠", // Mine
 ];
 const minesweeper_limit = 199; // The limit to how many mines can be viewed on the Discord client app. (read the comment below)
+const icon = new MessageAttachment("assets/mine.png");
 
 module.exports = new CommandBlock({
     identity: ["minesweeper", "ms"],
@@ -101,7 +102,6 @@ module.exports = new CommandBlock({
         .setColor("#C0C0C0")
         .setTitle("Minesweeper")
         .setDescription(tab)
-        .attachFiles(["assets/mine.png"])
         .setFooter({ text: `${length} \u00D7 ${width} tiles • ${maxmines} mines${seed ? ` • ${seed}` : ``}`, iconURL: "attachment://mine.png" });
-    return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
+    return message.reply({ embeds: [embed], files: [icon], allowedMentions: { repliedUser: false } });
 });
