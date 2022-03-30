@@ -5,6 +5,7 @@ const CommandBlock = require("../../modules/CommandBlock");
 const { sleep, unescapeHTML } = require("../../modules/miscellaneous");
 
 const chan_canupdate = ["hosts"]; // A list of groups that can use the "4chan update" subcommand.
+const chan_cooldown = 1000;  // Rate-limited to 1 request per second.
 
 /**
  * Gets a list of 4chan boards and organizes them based on if they're red or blue boards.
@@ -96,7 +97,7 @@ module.exports = [
 
             const embed = new MessageEmbed()
                 .setColor(nsfw ? "FED6AF" : "D1D5EE")
-                .setAuthor(post.trip ?? post.name)
+                .setAuthor({ name: post.trip ?? post.name })
                 .setTitle((post.sub ? `"${unescapeHTML(post.sub)}" - ` : "") + `No. ${post.no}`)
                 .setURL(`https://boards.4chan.org/${board}/thread/${post.no}`)
                 .setTimestamp(post.time * 1000);

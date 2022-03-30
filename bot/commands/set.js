@@ -22,8 +22,8 @@ const statuses = {
     dnd: ["dnd", "busy", "do", "do not", "do not disturb", "disturb", "occupied"],
 };
 
-// Aliases to shorten the activity text.
-const activityTypes = ["playing", "game", "watching", "video", "listening", "music", "streaming", "twitch"];
+// Aliases to shorten the activity type.
+const activityTypes = ["playing", "play", "game", "watching", "watch", "video", "listening", "listen", "music", "streaming", "stream", "twitch", "competing", "compete"];
 
 const isValidUsername = function(input) {
     if (input.length < 2 || input.length > 32) return false;
@@ -67,24 +67,27 @@ const resolveInputToImage = function(message, input) {
 };
 
 const resolveActivity = function(client, content, args) {
-    const data = { "activity": { "name": "" } };
-    if (!content) return data;
+    if (!content) return { "activities": [] };
+    const activity = {}
     const type = args[0].toLowerCase();
-    data.activity.name = content;
+    activity.name = content;
     if (activityTypes.includes(type)) {
-        data.activity.name = content.substring(type.length).trim();
-        if (!data.activity.name.length) return data;
-        if (type === "watching" || type === "video") {
-            data.activity.type = "WATCHING";
-        } else if (type === "listening" || type === "music") {
-            data.activity.type = "LISTENING";
-        } else if (type === "streaming" || type === "twitch") {
-            data.activity.type = "STREAMING";
-            data.activity.url = "https://twitch.tv/" + client.config.get("metadata.twitch").value();
+        activity.name = content.substring(type.length).trim();
+        if (activity.name.length > 0) {
+            if (type === "watching" || type === "watch" || type === "video") {
+                activity.type = "WATCHING";
+            } else if (type === "listening" || type === "listen" || type === "music") {
+                activity.type = "LISTENING";
+            } else if (type === "streaming" || type === "stream" || type === "twitch") {
+                activity.type = "STREAMING";
+                activity.url = "https://twitch.tv/" + client.config.get("metadata.twitch").value();
+            } else if (type === "competing" || type === "compete") {
+                activity.type = "COMPETING";
+            }
         }
     }
-    if (data.activity.name.length > 128) return null;
-    return data;
+    if (activity.name.length > 128) return null;
+    return { "activities": [activity] };
 };
 
 module.exports = [
@@ -130,7 +133,7 @@ module.exports = [
     }),
     new CommandBlock({
         identity: ["setavatar", "seticon"],
-        description: "Changes the bot's avatar. Be aware that this has a strict cooldown (shared with changing the bot's name) in the Discord API.",
+        description: "Changes the bot's avatar. Be aware that this has a **very** strict cooldown (shared with changing the bot's name, around two requests per hour) in the Discord API.",
         usage: "[attachment/link]",
         locked: "hosts",
     }, async function(client, message, content, args) {
@@ -152,7 +155,7 @@ module.exports = [
     }),
     new CommandBlock({
         identity: ["setname", "setusername"],
-        description: "Changes the bot's username. Be aware that this has a strict cooldown (shared with changing the bot's avatar) in the Discord API.",
+        description: "Changes the bot's username. Be aware that this has a **very** strict cooldown (shared with changing the bot's avatar, around two requests per hour) in the Discord API.",
         usage: "[text]",
         locked: "hosts",
     }, async function(client, message, content, args) {
@@ -206,7 +209,7 @@ module.exports = [
     }),
     new CommandBlock({
         identity: ["status", "setstatus"],
-        description: "Sets the bot's status. All four statuses are supported (online, idle, do not disturb, and invisible)",
+        description: "Sets the bot's status. All four statuses are supported; `online`, `idle`, `dnd`, and `invisible`.",
         usage: "[status]",
         locked: "hosts",
     }, async function(client, message, content, args) {
@@ -233,8 +236,8 @@ module.exports = [
     }),
     new CommandBlock({
         identity: ["activity", "setactivity"],
-        description: "Sets the bot's activity. All four activities are supported (playing, watching, listening, and streaming)",
-        usage: "[type] [text]",
+        description: "Sets the bot's activity. All activities are supported; `playing`, `watching`, `listening`, `streaming`, and `competing`.",
+        usage: "(type) [text]",
         locked: "hosts",
     }, async function(client, message, content, args) {
         if (!content) {
