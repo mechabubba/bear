@@ -6,7 +6,7 @@ const { useragents } = require("../../modules/miscellaneous");
 const debug = false; // Set to true to send the JSON output over the regular output.
 
 module.exports = new CommandBlock({
-    identity: ["translate", "trans"],
+    names: ["translate", "trans"],
     description: "Translates text using the Google Translate API.\n\n**Language settings:** By default, the command takes given text and translates it to english. The `source` parameter can override this in one of two ways;\n• Set it to an (optional) ISO 639-1 language code to translate the text to a different language.\n• Force it to translate between different languages by placing an underscore `_` in between the source and the destination language; for example, `zh-cn_es` would attempt to translate from simplified chinese to spanish.\n\nView all supported languages [here!](https://cloud.google.com/translate/docs/languages)",
     usage: `(source) [foreign text]`,
 }, async function(client, message, content, args) {

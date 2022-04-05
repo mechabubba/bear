@@ -1,19 +1,19 @@
 const CommandBlock = require("../../modules/CommandBlock");
-const { isNumeric } = require("../../modules/miscellaneous");
+const { numeric } = require("../../modules/regexes");
 
 const dice_expression = /(\d+)?[dD](\d+)/;
 const max_dice = 200;
 const max_sides = 1000;
 
 module.exports = new CommandBlock({
-    identity: "roll",
-    description: "Rolls some dice.\n• Default roll bound is 100.",
+    names: "roll",
+    description: "Rolls some dice. Default roll bound is 100.",
     usage: "[sides] or [die_count]d[sides]",
 }, async function(client, message, content, [bound = "100"]) {
     let rolls = [];
     let total = amount = sides = 0;
     
-    if(isNumeric(bound)) {
+    if(numeric.test(bound)) {
         amount = 1;
         sides = parseInt(bound);
     } else if(dice_expression.test(bound)) {

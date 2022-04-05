@@ -5,19 +5,28 @@
  * const log = require("./util/logger");
  */
 const chalk = require("chalk");
-const { DateTime } = require("luxon");
-const color = {
-    "fatal": chalk.bgRed.black,
-    "error": chalk.red,
-    " warn": chalk.yellow,
-    " info": chalk.white.bold,
-    " http": chalk.blue,
-    "debug": chalk.green,
-    "trace": chalk.gray,
-};
-const errors = ["fatal", "error"];
-const timestamp = "HH:mm:ss.SSS";
 
+// Label names
+const labels = {
+    0: "fatal",
+    1: "error",
+    2: " warn",
+    3: " info",
+    4: "debug",
+    5: "trace",
+};
+
+// Label styles
+const styles = {
+    0: chalk.bgRed.black,
+    1: chalk.red,
+    2: chalk.yellow,
+    3: chalk.white.bold,
+    4: chalk.green,
+    5: chalk.gray,
+};
+
+const timestamp = "HH:mm:ss.SSS";
 /**
  * Logger's timestamp format
  * @readonly
@@ -32,8 +41,8 @@ module.exports.timestamp = timestamp;
  * @private
  */
 const print = function(level, ...args) {
-    const prefix = `${chalk.gray(DateTime.now().toFormat(timestamp))} ${color[level](level)}`;
-    return errors.includes(level) ? console.error(prefix, ...args) : console.log(prefix, ...args);
+    const prefix = `${chalk.gray(moment().format("HH:mm:ss.SSS"))} ${styles[level](labels[level])}`;
+    return level > 1 ? console.log(prefix, ...args) : console.error(prefix, ...args);
 };
 
 /**

@@ -1,16 +1,7 @@
-<!--
-If you haven't already, before opening your pull request, read through our contributing file:
-https://github.com/06000208/sandplate/blob/master/CONTRIBUTING.md
--->
+**Please describe the changes this PR makes:**
+
+
 
 **Relevant Issues:**
 
-<!-- 
-Link the issue(s) relevant to your pull request here. As described in our contributing file, our issue tracker is used for communication, so linking at least one issue is expected!
--->
-
-**Proposed Changes:**
-
-<!-- 
-Describe the changes here. Does this fix bugs/issues, is this introducing new features, is this a breaking change, etc.
--->
+<!-- Link the issue(s) on the issue tracker relevant to your pull request here -->

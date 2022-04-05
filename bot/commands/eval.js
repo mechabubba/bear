@@ -7,11 +7,11 @@ const { sleep } = require("../../modules/miscellaneous");
 const save = "\uD83D\uDCBE"; // The reaction used to indicate saving the output of the eval in the chat.
 
 module.exports = new CommandBlock({
-    identity: ["eval", "evaluate", "js"],
-    description: "Evaluates arbitrary javascript. A huge security hole/risk for development purposes: arbitrary javascript evaluation. Should only be allowed to those who already possess the bot's token.",
+    names: ["eval", "evaluate", "js"],
+    description: "A huge security hole/risk for development purposes, this command evaluates arbitrary javascript evaluation. This command should only be allowed to those who already possess the bot's token.",
     usage: "[javascript]",
     locked: ["hosts", "trusted"],
-    clientPermissions: ["USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"],
+    clientChannelPermissions: ["USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"],
 }, async function(client, message, code, args) {
     if (!code) return message.react(client.reactions.negative.id);
     

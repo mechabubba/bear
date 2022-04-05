@@ -34,7 +34,7 @@ const get4chanBoards = async (client) => {
 
 module.exports = [
     new CommandBlock({
-        identity: ["4chan", "4c"],
+        names: ["4chan", "4c"],
         description: "Pulls the latest op from a 4chan board.",
         usage: "[board]",
         clientPermissions: ["ATTACH_FILES"],

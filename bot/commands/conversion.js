@@ -3,7 +3,7 @@ const CommandBlock = require("../../modules/CommandBlock");
 
 module.exports = [
     new CommandBlock({
-        identity: ["hex"],
+        names: ["hex"],
         description: "Converts text to hexadecimal.",
         usage: "[text]",
     }, async function(client, message, content = "", args) {
@@ -14,7 +14,7 @@ module.exports = [
         return message.reply({ content: `\`\`\`\n${(buf.length > 1993 ? buf.substring(0, 1990) + "..." : buf).toUpperCase()}\`\`\``, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
-        identity: ["unhex"],
+        names: ["unhex"],
         description: "Converts hexadecimal to text.",
         usage: "[hex]",
     }, async function(client, message, content = "", ...args) {
@@ -25,7 +25,7 @@ module.exports = [
         return message.reply({ content: `\`\`\`\n${buf.length > 1993 ? buf.substring(0, 1990) + "..." : buf}\`\`\``, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
-        identity: ["base64"],
+        names: ["base64"],
         description: "Converts text to base64.",
         usage: "[text]",
     }, async function(client, message, content = "", args) {
@@ -33,7 +33,7 @@ module.exports = [
         return message.reply({ content: `\`\`\`\n${buf.length > 1993 ? buf.substring(0, 1990) + "..." : buf}\`\`\``, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
-        identity: ["unbase64"],
+        names: ["unbase64"],
         description: "Converts base64 to text.",
         usage: "[base64]",
     }, async function(client, message, content = "", args) {

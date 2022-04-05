@@ -7,10 +7,10 @@ const charlimit = 64;
 const cooldown = 500; // two requests per second
 
 module.exports = new CommandBlock({
-    identity: ["burning"],
+    names: ["burning"],
     description: "Makes really awesome burning text. Generated from https://cooltext.com/.",
     usage: "[text]",
-    clientPermissions: ["ATTACH_FILES"],
+    clientChannelPermissions: ["ATTACH_FILES"],
 }, async function(client, message, content, args) {
     if(!content) return message.reply(`${client.reactions.negative.emote} You didn't provide any text.`);
     if(content.length > charlimit) return message.reply(`${client.reactions.negative.emote} There is a character limit of ${charlimit} per image.`);

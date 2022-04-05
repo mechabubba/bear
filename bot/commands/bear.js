@@ -16,7 +16,7 @@ const bears = {
 };
 
 module.exports = new CommandBlock({
-    identity: "bear",
+    names: ["bear"],
     description: "<a:_:588518103814504490>",
     clientPermissions: ["ATTACH_FILES"],
 }, function(client, message, content, args) {

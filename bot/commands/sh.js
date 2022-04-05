@@ -8,7 +8,7 @@ const spawn_cmd = {
 };
 
 module.exports = new CommandBlock({
-    identity: "sh",
+    names: ["sh"],
     description: "Executes terminal commands. Multiple commands can be split by newlines.",
     usage: "[commands]",
     locked: ["hosts"],

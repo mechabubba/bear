@@ -4,7 +4,7 @@ const { WebhookClient } = require("discord.js");
 /** @todo May want to look into how the bot reacts when it cant `message.delete()` or `message.react()` */
 module.exports = [
     new CommandBlock({
-        identity: ["ping", "latency"],
+        names: ["ping", "latency"],
         summary: "Simple connection test.",
         description: "Provides the time it took to recieve the message. Generally used to check if the bot is responsive.",
     }, async function(client, message, content, args) {
@@ -12,16 +12,16 @@ module.exports = [
         msg.edit({ content: `\uD83C\uDFD3 Pong!\nResponse time is \`${msg.createdTimestamp - message.createdTimestamp}ms\`.`, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
-        identity: ["echo", "e"],
+        names: ["echo", "e"],
         description: "Echoes text.",
         usage: "[...text]",
-        clientPermissions: ["MANAGE_MESSAGES"],
+        clientChannelPermissions: ["MANAGE_MESSAGES"],
     }, async function(client, message, content, args) {
         await message.channel.send({ content: content || "** **", allowedMentions: { parse: [] } });
         return message.delete();
     }),
     new CommandBlock({
-        identity: ["wecho"],
+        names: ["wecho"],
         description: "Echoes text via a Discord webhook.\n\n**Warning:** This is not secure; if used publicly, people WILL be able to get your webhooks ID and token, which will let them use it aswell! Use only as a utility!",
         usage: "[hook_url] [...text]",
         locked: ["hosts"],

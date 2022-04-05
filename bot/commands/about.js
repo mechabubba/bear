@@ -2,14 +2,14 @@ const CommandBlock = require("../../modules/CommandBlock");
 const { randomColor, gitinfo } = require("../../modules/miscellaneous");
 const { MessageEmbed, Permissions } = require("discord.js");
 const djsver = require("discord.js").version;
-const { DateTime, Duration } = require("luxon");
+const { DateTime } = require("luxon");
 
 // The permissions to give to the invite.
 const perms = new Permissions(["ADMINISTRATOR"]);
 
 module.exports = [
     new CommandBlock({
-        identity: ["about"],
+        names: ["about"],
         description: "Displays information about the bot.",
         clientPermissions: ["ATTACH_FILES"],
     }, function(client, message, content, args) {
@@ -24,7 +24,7 @@ module.exports = [
             ].join("\n"))
             .setThumbnail("attachment://bear.gif")
             .addField("Statistics", [
-                `• **Uptime:** ${getUptime(client.uptime)}`,
+                `• **Uptime:** ${getDuration(client.uptime)}`,
                 `• **Guilds:** ${client.guilds.cache.size}`,
                 `• **Users:** ${client.users.cache.size}`,
             ].join("\n"))
@@ -35,9 +35,9 @@ module.exports = [
 
 /**
  * Luxons Duration class doesn't format uptimes very well (or at all?) above 24 hours, so this function does that.
- * @param {number} millis - Taken from client.uptime.
+ * @param {number} millis - The amount of milliseconds to convert to a string duration.
  */
-const getUptime = (millis) => {
+const getDuration = (millis) => {
     const periods = [
         ["year",   60 * 60 * 24 * 365 * 1000],
         ["month",  60 * 60 * 24 * 30 * 1000],

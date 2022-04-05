@@ -1,5 +1,5 @@
 ---
 name: Enhancement
-about: This introduces a new feature or improves sandplate
+about: This introduces a new feature or improvement
 labels: enhancement
 ---

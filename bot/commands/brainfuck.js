@@ -2,7 +2,7 @@ const CommandBlock = require("../../modules/CommandBlock");
 const { fork } = require("child_process");
 
 module.exports = new CommandBlock({
-    identity: "brainfuck",
+    names: "brainfuck",
     description: "Evaluates code for the esoteric programming language [brainfuck](https://esolangs.org/wiki/Brainfuck), created by Urban Müller.\n• Memory is limited to 30,000 unsigned byte cells.",
     usage: "[bf code] or [(input text) | (bf code)]",
 }, function(client, message, content, args) {

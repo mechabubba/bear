@@ -5,13 +5,13 @@ const sdate = new Date(1993, 8, 1); // The beginning of Eternal September. Month
 
 module.exports = [
     new CommandBlock({
-        identity: ["thetime", "time"],
+        names: ["thetime", "time"],
         description: "Tells the time.",
     }, (client, message, content, args) => {
         return message.reply({ content: `It is currently **${DateTime.now().toLocaleString(DateTime.DATETIME_FULL)}.**`, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
-        identity: ["sdate"],
+        names: ["sdate"],
         description: "Gets the date with respect to [the September that never ended](https://en.wikipedia.org/wiki/Eternal_September).",
     }, function(client, message, content, args) {
         const since = Math.ceil((Date.now() - sdate.getTime()) / (1000 * 60 * 60 * 24));

@@ -3,9 +3,9 @@ const fetch = require("node-fetch");
 
 module.exports = [
     new CommandBlock({
-        identity: ["shibe"],
+        names: ["shibe"],
         description: "Gets a shibe. Images fetched from [shibe.online](https://shibe.online/).",
-        clientPermissions: ["ATTACH_FILES"]
+        clientChannelPermissions: ["ATTACH_FILES"]
     }, async function(client, message, content, args) {
         try {
             const resp = await fetch("http://shibe.online/api/shibes", { method: "get" });

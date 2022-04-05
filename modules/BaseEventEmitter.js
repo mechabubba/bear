@@ -1,10 +1,13 @@
+const EventEmitter = require("events");
 const { SnowflakeUtil, Util } = require("discord.js");
 
 /**
  * @abstract
  */
-class Base {
-    constructor() {
+class BaseEventEmitter extends EventEmitter {
+    constructor(...args) {
+        super(...args);
+
         /**
          * @type {Snowflake}
          */
@@ -32,4 +35,4 @@ class Base {
     }
 }
 
-module.exports = Base;
+module.exports = BaseEventEmitter;

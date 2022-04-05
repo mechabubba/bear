@@ -25,7 +25,7 @@ const statuses = {
 // Aliases to shorten the activity type.
 const activityTypes = ["playing", "play", "game", "watching", "watch", "video", "listening", "listen", "music", "streaming", "stream", "twitch", "competing", "compete"];
 
-const isValidUsername = function(input) {
+const validateUsername = function(input) {
     if (input.length < 2 || input.length > 32) return false;
     if (input.includes("@")) return false;
     if (input.includes("#")) return false;
@@ -34,20 +34,20 @@ const isValidUsername = function(input) {
     return true;
 };
 
-const isValidAttachment = function(attachments) {
+const validateAttachment = function(attachments) {
     if (!attachments.size) return false;
     const url = attachments.get(attachments.firstKey()).url;
     if (!fileTypes.includes(url.toLowerCase().substring(url.lastIndexOf(".")))) return false;
     return true;
 };
 
-const isValidImageEmbed = function(embeds) {
+const validateEmbed = function(embeds) {
     if (!embeds.length) return false;
     if (embeds[0].type !== "image") return false;
     return true;
 };
 
-const isValidImageLink = function(input) {
+const validateImageLink = function(input) {
     if (!input) return false;
     if (!input.length) return false;
     if (!fileTypes.includes(input.toLowerCase().substring(input.lastIndexOf(".")))) return false;
@@ -55,11 +55,11 @@ const isValidImageLink = function(input) {
 };
 
 const resolveInputToImage = function(message, input) {
-    if (isValidAttachment(message.attachments)) {
+    if (validateAttachment(message.attachments)) {
         return message.attachments.get(message.attachments.firstKey()).url;
-    } else if (isValidImageEmbed(message.embeds)) {
+    } else if (validateEmbed(message.embeds)) {
         return message.embeds[0].url;
-    } else if (isValidImageLink(input)) {
+    } else if (validateImageLink(input)) {
         return input;
     } else {
         return null;
@@ -77,11 +77,15 @@ const resolveActivity = function(client, content, args) {
             if (type === "watching" || type === "watch" || type === "video") {
                 activity.type = "WATCHING";
             } else if (type === "listening" || type === "listen" || type === "music") {
+                if (activity.name.toLowerCase().startsWith("to")) activity.name = activity.name.substring(2).trim();
+                if (!activity.name.length) return { "activities": [] };
                 activity.type = "LISTENING";
             } else if (type === "streaming" || type === "stream" || type === "twitch") {
                 activity.type = "STREAMING";
                 activity.url = "https://twitch.tv/" + client.config.get("metadata.twitch").value();
             } else if (type === "competing" || type === "compete") {
+                if (activity.name.toLowerCase().startsWith("in")) activity.name = activity.name.substring(2).trim();
+                if (activity.name.length) return { "activities": [] };
                 activity.type = "COMPETING";
             }
         }
@@ -92,15 +96,12 @@ const resolveActivity = function(client, content, args) {
 
 module.exports = [
     new CommandBlock({
-        identity: "set",
+        names: ["set"],
         description: "Acts as an advanced shortcut to the `setavatar`, `setname`, `presence`, `status`, and `activity` commands.",
         usage: "[action] [input]",
         locked: "hosts",
-    }, async function(client, message, content, args) {
-        if (!content) {
-            message.react(client.reactions.negative.id);
-            return message.reply(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
-        }
+    }, function(client, message, content, args) {
+        if (!content) return message.reply(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
 
         const action = args[0].toLowerCase();
         const input = {
@@ -111,38 +112,36 @@ module.exports = [
         if (!input.content.length) input.content = null;
         if (actions.avatar.includes(action)) {
             // Avatar
-            return client.commands.run("setavatar", message, input.content, input.args);
+            return client.commands.runByName("setavatar", message, input.content, input.args);
         } else if (actions.username.includes(action)) {
             // Username
-            return client.commands.run("setname", message, input.content, input.args);
+            return client.commands.runByName("setname", message, input.content, input.args);
         } else if (actions.presence.includes(action)) {
             // Presence
-            return client.commands.run("setpresence", message, input.content, input.args);
+            return client.commands.runByName("setpresence", message, input.content, input.args);
         } else if (actions.status.includes(action)) {
             // Status
-            return client.commands.run("setstatus", message, input.content, input.args);
+            return client.commands.runByName("setstatus", message, input.content, input.args);
         } else if (actions.activity.includes(action) || activityTypes.includes(action)) {
             // Activity
             const useParsed = !activityTypes.includes(action);
-            return client.commands.run("setactivity", message, useParsed ? input.content : content, useParsed ? input.args : args);
+            return client.commands.runByName("setactivity", message, useParsed ? input.content : content, useParsed ? input.args : args);
         } else {
             // Unrecognized
-            message.react(client.reactions.negative.id);
             return message.reply(`${client.reactions.negative.emote} Unrecognized action. Perform \`help ${this.firstName}\` for more information.`);
         }
     }),
     new CommandBlock({
-        identity: ["setavatar", "seticon"],
+        names: ["setavatar", "seticon"],
         description: "Changes the bot's avatar. Be aware that this has a **very** strict cooldown (shared with changing the bot's name, around two requests per hour) in the Discord API.",
-        usage: "[attachment/link]",
+        usage: "[image attachment/link]",
         locked: "hosts",
     }, async function(client, message, content, args) {
         await sleep(2000); // Wait 2 seconds to give image links a higher chance of embedding
+        
         const url = resolveInputToImage(await message.fetch(), content);
-        if (!url) {
-            return message.reply(`${client.reactions.negative.emote} No image detected; you need to attatch or link to an image. Perform \`help ${this.firstName}\` for more information.`);
-        }
-
+        if (!url) return message.reply(`${client.reactions.negative.emote} No image detected; you need to attatch or link to an image. Perform \`help ${this.firstName}\` for more information.`);
+        
         try {
             await client.user.setAvatar(url);
         } catch (error) {
@@ -154,19 +153,14 @@ module.exports = [
         return message.react(client.reactions.positive.id);
     }),
     new CommandBlock({
-        identity: ["setname", "setusername"],
-        description: "Changes the bot's username. Be aware that this has a **very** strict cooldown (shared with changing the bot's avatar, around two requests per hour) in the Discord API.",
+        names: ["setname", "setusername"],
+        description: "Changes the bot's username. Be aware that this has a strict cool down (shared with changing the bot's avatar) in the discord api.",
         usage: "[text]",
         locked: "hosts",
     }, async function(client, message, content, args) {
-        if (!content) {
-            return message.reply(`${client.reactions.negative.emote} No text provided. Perform \`help ${this.firstName}\` for more information.`);
-        }
-        if (!isValidUsername(content)) {
-            return message.reply(`${client.reactions.negative.emote} Username must be 2 to 32 characters long and not contain \`@\`, \`#\`, \`:\`, or \` \`\`\` \`.`);
-        }
-
-        const tag = client.user.tag;
+        if (!content) return message.reply(`${client.reactions.negative.emote} No text provided. Perform \`help ${this.firstName}\` for more information.`);
+        if (!validateUsername(content)) return message.reply(`${client.reactions.negative.emote} Username must be 2 to 32 characters long and not contain \`@\`, \`#\`, \`:\`, or \` \`\`\` \`.`);
+        
         try {
             await client.user.setUsername(content);
         } catch (error) {
@@ -174,21 +168,17 @@ module.exports = [
             return message.reply(`${client.reactions.negative.emote} Failed to change username, an error occurred;\`\`\`\n${error.message}\`\`\``);
         }
 
-        log.info(`${tag}'s username has been changed to ${client.user.tag} by ${message.author.tag}`);
+        log.info(`${client.user.tag}'s username has been changed to ${client.user.tag} by ${message.author.tag}`);
         return message.react(client.reactions.positive.id);
     }),
     new CommandBlock({
-        identity: ["presence", "setpresence"],
-        description: "Sets the bot's presence with raw JSON. Refer to the `[PresenceData](https://discord.js.org/#/docs/main/stable/typedef/PresenceData)` object for what properties and values to use. Using a codeblock with your JSON input is supported so long that your message contains a singular string of valid JSON somewhere within it.",
+        names: ["presence", "setpresence"],
+        description: "Sets the bot's presence with raw JSON. Refer to the [`PresenceData`](https://discord.js.org/#/docs/main/stable/typedef/PresenceData) object for what properties and values to use. Using a codeblock with your JSON input is supported so long that your message contains a singular string of valid json somewhere within it.",
         usage: "[JSON]",
         locked: "hosts",
     }, async function(client, message, content, args) {
-        if (!content) {
-            return message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
-        }
-        if (!content.includes("{") || !content.includes("}")) {
-            return message.reply(`${client.reactions.negative.emote} Input isn't enclosed in curly brackets; you must pass in valid JSON.`);
-        }
+        if (!content) return message.channel.send(`Usage: \`${this.names[0]} ${this.usage}\`\n<https://discord.js.org/#/docs/main/stable/typedef/PresenceData>`);
+        if (!content.includes("{") || !content.includes("}")) return message.channel.send(`${client.reactions.negative.emote} Provided input isn't enclosed in curly brackets; valid json is required. Please see the discord.js docs on [PresenceData](https://discord.js.org/#/docs/main/stable/typedef/PresenceData) for more information on how to format this.`);
 
         let data = content.substring(content.indexOf("{"), content.lastIndexOf("}") + 1).trim();
         try {
@@ -208,7 +198,7 @@ module.exports = [
         return message.react(client.reactions.positive.id);
     }),
     new CommandBlock({
-        identity: ["status", "setstatus"],
+        names: ["status", "setstatus"],
         description: "Sets the bot's status. All four statuses are supported; `online`, `idle`, `dnd`, and `invisible`.",
         usage: "[status]",
         locked: "hosts",
@@ -235,28 +225,22 @@ module.exports = [
         return message.react(client.reactions.positive.id);
     }),
     new CommandBlock({
-        identity: ["activity", "setactivity"],
-        description: "Sets the bot's activity. All activities are supported; `playing`, `watching`, `listening`, `streaming`, and `competing`.",
-        usage: "(type) [text]",
+        names: ["activity", "setactivity"],
+        description: "Sets the bot's activity. All four activities are supported (playing, watching, listening, and streaming)",
+        usage: "[type] [text]",
         locked: "hosts",
     }, async function(client, message, content, args) {
-        if (!content) {
-            return message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
-        }
         const data = resolveActivity(client, content, args);
-        if (!data) {
-            return message.reply(`${client.reactions.negative.emote} Activity text must be 128 characters or shorter in length.`);
-        }
+        if (!data) return message.reply(`${client.reactions.negative.emote} Activity text must be 128 characters or shorter in length.`);
+        if (data.activity.type === "STREAMING" && !data.activity.url) return message.reply(`${client.reactions.negative.emote} To use the streaming activity, set \`metadata.channel\` in the config to the username of the Twitch channel you want to display.`);
 
         try {
             await client.user.setPresence(data);
         } catch (error) {
             log.error("[set activity]", error);
-            message.react(client.reactions.negative.id);
             return message.reply(`${client.reactions.negative.emote} Failed to set activity, an error occurred;\`\`\`\n${error.message}\`\`\``);
         }
-
-        log.info(`${client.user.tag}'s activity has been updated by ${message.author.tag}`);
+        log.info(`${client.user.tag}'s activity has been ${!data.activity.name.length ? "cleared" : "updated"} by ${message.author.tag}`);
         return message.react(client.reactions.positive.id);
     }),
 ];

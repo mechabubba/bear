@@ -18,7 +18,7 @@ const minesweeper_limit = 199; // The limit to how many mines can be viewed on t
 const icon = new MessageAttachment("assets/mine.png");
 
 module.exports = new CommandBlock({
-    identity: ["minesweeper", "ms"],
+    names: ["minesweeper", "ms"],
     description: "Generates a playable Minesweeper board, using spoiler tags. The seed is optional and is random by default.\n\n**Tip:** The upper left corner will never be a mine; start there!",
     usage: "[length] [width] [mines] (-seed [...values])",
 }, async function(client, message, content, [length, width, maxmines, hasseed, ...args]) {

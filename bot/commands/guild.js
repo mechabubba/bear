@@ -1,11 +1,9 @@
 const CommandBlock = require("../../modules/CommandBlock");
-const log = require("../../modules/log");
-const { isNumeric } = require("../../modules/miscellaneous");
+const { numeric } = require("../../modules/regexes");
 const { MessageEmbed } = require("discord.js");
-const chalk = require("chalk");
 
 module.exports = new CommandBlock({
-    identity: ["guild", "guilds"],
+    names: ["guild", "guilds"],
     description: "Logs a list of guilds to the console or provides info about individual guilds when queried.",
     usage: "(guild ID)",
     locked: "hosts",
@@ -22,7 +20,7 @@ module.exports = new CommandBlock({
         log.info(`List of ${client.user.tag}'s ${client.guilds.cache.size} ${!unavailable.length ? "guilds" : `guilds (${unavailable} unavailable)`}, requested by ${message.author.tag}${list}`);
         return message.reply({ content: `${client.reactions.positive.emote} Logged ${client.guilds.cache.size} guilds to console.`, allowedMentions: { repliedUser: false } });
     } else {
-        if (!isNumeric(id)) return message.reply(`${client.reactions.negative.emote} The id \`${id}\` was invalid!`);
+        if (!numeric.test(id)) return message.reply(`${client.reactions.negative.emote} The id \`${id}\` was invalid!`);
         if (!client.guilds.cache.has(id)) return message.reply(`${client.reactions.negative.emote} The id \`${id}\` isn't mapped to a guild in the cache!`);
         const guild = client.guilds.cache.get(id);
         if (!guild.available) return message.reply(`${client.reactions.negative.emote} The guild was unavailable and could not be interacted with. This is indicative of a server outage.`);

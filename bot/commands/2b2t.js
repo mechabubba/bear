@@ -1,9 +1,8 @@
 const CommandBlock = require("../../modules/CommandBlock");
-const { MessageEmbed } = require("discord.js");
 const fetch = require("node-fetch");
 
 module.exports = new CommandBlock({
-    identity: "2b2t",
+    names: ["2b2t"],
     summary: "Gets the current queue length of 2b2t.",
     description: "Gets the current queue length of 2b2t. Data fetched from [2b2t.io](https://2b2t.io/).",
 }, async function(client, message, content, args) {

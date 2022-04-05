@@ -6,7 +6,7 @@ const CommandBlock = require("../../modules/CommandBlock");
 const ipv4 = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$/; // https://stackoverflow.com/a/36760050/17188891
 
 module.exports = new CommandBlock({
-    identity: ["query", "q", "srcds"],
+    names: ["query", "q", "srcds"],
     description: "Querys a Source engine server. The port is optional and is `27015` by default.",
     usage: "ip:port",
     locked: "hosts",

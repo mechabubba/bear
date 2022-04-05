@@ -6,7 +6,7 @@ const finance = require("yahoo-finance");
 const canalias = ["hosts"];
 
 module.exports = new CommandBlock({
-    identity: ["finance", "f"],
+    names: ["finance", "f"],
     description: "Gets stock and crypto data from [Yahoo! Finance](https://finance.yahoo.com).",
     usage: "[symbol]",
 }, function(client, message, content, [symbol, ...args]) {
