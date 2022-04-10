@@ -3,7 +3,7 @@ const { fork } = require("child_process");
 
 module.exports = new CommandBlock({
     names: ["brainfuck"],
-    description: "Evaluates code for the esoteric programming language [brainfuck](https://esolangs.org/wiki/Brainfuck), created by Urban Müller.\n• Memory is limited to 30,000 unsigned byte cells.",
+    description: "Evaluates code for the esoteric programming language [brainfuck](https://esolangs.org/wiki/Brainfuck), created by Urban Müller. Memory is limited to 30,000 unsigned byte cells.\n\nA positive emote indicates a completed operation. An alert emote indicates that the operation couldn't be completed within the operation limit.",
     usage: "[bf code] or [(input text) | (bf code)]",
 }, function(client, message, content, args) {
     if(!content) return message.reply(`${client.reactions.negative.emote} You didn't send any code! Perform \`help ${this.firstName}\` for more information.`);
@@ -17,18 +17,14 @@ module.exports = new CommandBlock({
         let output = data.output;
         if(output.length > 1993) output = output.substring(0, 1990) + "...";
 
-        let emote;
         if(data.level == "warning") {
-            emote = client.reactions.alert.emote;
-        }
-        else if(data.level == "error") {
-            emote = client.reactions.negative.emote;
-        }
-        else {
-            emote = client.reactions.positive.emote;
+            message.react(client.reactions.alert.id);
+        } else if(data.level == "error") {
+            message.react(client.reactions.negative.id);
+        } else {
+            message.react(client.reactions.positive.id);
         }
 
-        //message.reply(`${emote} ${data.log}`);
         return message.reply({ content: `\`\`\`\n${output}\`\`\``, allowedMentions: { repliedUser: false } });
     });
 });

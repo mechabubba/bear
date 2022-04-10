@@ -1,7 +1,6 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const { MessageEmbed } = require("discord.js");
 const log = require("../../modules/log");
-const { isArray } = require("lodash");
 
 const commandPredicate = function(message, command) {
     if (!command.checkPermissions(message, command.userPermissions, false, false)) return false;

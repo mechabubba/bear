@@ -17,7 +17,7 @@ const bears = {
 
 module.exports = new CommandBlock({
     names: ["bear"],
-    description: "<a:_:588518103814504490>",
+    description: "<a:_:588518103814504490>\n\n**Tip:** Try your luck to get a rare bear.",
     clientPermissions: ["ATTACH_FILES"],
 }, function(client, message, content, args) {
     if(!client.storage.has("local.bear").value()) {

@@ -12,9 +12,7 @@ module.exports = new ListenerBlock({ event: "reminderCall" }, ({ client }, remin
     if(reminder.isDM) {
         user.send({
             content: alert,
-            allowedMentions: {
-                parse: ["users"],
-            },
+            allowedMentions: { parse: ["users"] },
         });
     } else {
         const guild = client.guilds.resolve(reminder.guildID);
@@ -27,9 +25,7 @@ module.exports = new ListenerBlock({ event: "reminderCall" }, ({ client }, remin
                 if(channel !== null) {
                     channel.send({
                         content: alert,
-                        allowedMentions: {
-                            parse: ["users"],
-                        },
+                        allowedMentions: { parse: ["users"] },
                     });
                 }
             }

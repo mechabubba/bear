@@ -2,8 +2,11 @@
 const { MessageEmbed } = require("discord.js");
 const fetch = require("node-fetch");
 const CommandBlock = require("../../modules/CommandBlock");
-const { sleep, unescapeHTML } = require("../../modules/miscellaneous");
+const { sleep, unescapeHTML, useragents } = require("../../modules/miscellaneous");
 
+const r34_post_limit = 1000; // The amount of posts to request from rule34.xxx. Set this to 1000 for a large amount of images.
+const r34_cooldown = 500;    // Rate-limited to 2 requests per second.
+const e621_cooldown = 500;   // Rate-limited to 2 requests per second.
 const chan_canupdate = ["hosts"]; // A list of groups that can use the "4chan update" subcommand.
 const chan_cooldown = 1000;  // Rate-limited to 1 request per second.
 
@@ -12,7 +15,7 @@ const chan_cooldown = 1000;  // Rate-limited to 1 request per second.
  * @param {Client} client 
  * @returns 
  */
-const get4chanBoards = async (client) => {
+const get4chanBoards = async () => {
     const resp = await fetch("https://a.4cdn.org/boards.json");
     if(!resp.ok) throw new Error(resp.statusText);
     
@@ -33,6 +36,90 @@ const get4chanBoards = async (client) => {
 }
 
 module.exports = [
+    new CommandBlock({
+        names: ["rule34", "r34"],
+        description: "Gets (pseudo)random posts from [rule34](https://rule34.xxx).",
+        usage: "(...tags)",
+        nsfw: true,
+        clientChannelPermissions: ["ATTACH_FILES"],
+    }, async function(client, message, content, args) {
+        const _now = Date.now();
+        client.cookies["r34_cd"] = client.cookies["r34_cd"] ?? _now;
+        if(client.cookies["r34_cd"] > _now) {
+            await sleep(client.cookies["r34_cd"] - _now);
+        }
+        client.cookies["r34_cd"] = Date.now() + r34_cooldown;
+
+        try {
+            const resp = await fetch(`https://api.rule34.xxx/index.php?page=dapi&s=post&json=1&q=index&limit=${r34_post_limit}&tags=${[...args].join("+")}`, {
+                headers: { "User-Agent": useragents.bear }
+            })
+            if(!resp.ok) throw new Error(resp.statusText);
+
+            const json = await resp.json();
+            if(json.length == 0) throw new Error("No posts were found.");
+
+            const img = json[Math.floor(Math.random() * json.length)];
+            img.tags = img.tags.split(" ");
+
+            const embed = new MessageEmbed()
+                .setColor("AAE5A3")
+                .setURL(`https://rule34.xxx/index.php?page=post&s=view&id=${img.id}`);
+
+            if(img.tags.includes("video")) {
+                embed.setTitle(`ID: #${img.id} \uD83C\uDFA5`)
+                    .setImage(img.sample_url);
+            } else {
+                embed.setTitle(`ID: #${img.id}`)
+                    .setImage(img.file_url);
+            }
+
+            return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
+        } catch(e) {
+            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
+        }
+    }),
+    new CommandBlock({
+        names: ["e621"],
+        description: "Gets random posts from [e621](https://e621.net).",
+        usage: "(...tags)",
+        nsfw: true,
+        clientChannelPermissions: ["ATTACH_FILES"],
+    }, async function(client, message, contents, args) {
+        const _now = Date.now();
+        client.cookies["e621_cd"] = client.cookies["e621_cd"] ?? _now;
+        if(client.cookies["e621_cd"] > _now) {
+            await sleep(client.cookies["e621_cd"] - _now);
+        }
+        client.cookies["chan_cd"] = Date.now() + e621_cooldown;
+        
+        try {
+            const resp = await fetch(`https://e621.net/posts.json?limit=1&tags=${encodeURIComponent([...args, "order:random"].join(" "))}`, {
+                headers: { "User-Agent": useragents.bear }
+            })
+            if(!resp.ok) throw new Error(resp.statusText);
+
+            const json = await resp.json();
+            if(json.posts.length == 0) throw new Error("No posts were found.");
+
+            const img = json.posts[0];
+            const embed = new MessageEmbed()
+                .setColor("223457")
+                .setURL(`https://e621.net/posts/${img.id}`);
+
+            if(img.file.ext == "webm" || img.file.ext == "swf") {
+                embed.setTitle(`ID: #${img.id} \uD83C\uDFA5`)
+                    .setImage(img.sample.url);
+            } else {
+                embed.setTitle(`ID: #${img.id}`)
+                    .setImage(img.file.url);
+            }
+
+            return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
+        } catch(e) {
+            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
+        }
+    }),
     new CommandBlock({
         names: ["4chan", "4c"],
         description: "Pulls the latest op from a 4chan board.",
