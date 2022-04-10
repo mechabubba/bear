@@ -97,7 +97,6 @@ module.exports.defaultConfig = {
 module.exports.disabledModules = [
     "bot/commands/template.js",
     "bot/commands/templateMultiple.js",
-    "bot/commands/eval.js",
 ];
 
 /**
