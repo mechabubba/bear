@@ -124,7 +124,7 @@ module.exports = [
         names: ["4chan", "4c"],
         description: "Pulls the latest op from a 4chan board.",
         usage: "[board]",
-        clientPermissions: ["ATTACH_FILES"],
+        clientChannelPermissions: ["ATTACH_FILES"],
     }, async function(client, message, contents, [board, ...args]) {
         // Updates our board cache.
         if(board == "update") {

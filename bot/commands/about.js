@@ -12,7 +12,7 @@ module.exports = [
     new CommandBlock({
         names: ["about"],
         description: "Displays information about the bot.",
-        clientPermissions: ["ATTACH_FILES"],
+        clientChannelPermissions: ["ATTACH_FILES"],
     }, function(client, message, content, args) {
         const col = randomColor();
         const embed = new MessageEmbed()
