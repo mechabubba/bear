@@ -60,7 +60,6 @@ module.exports = new CommandBlock({
         if (!command.channelTypes.includes("dm")) embed.addField("Direct Messages", "Disallowed", true);
         if (!command.channelTypes.includes("text")) embed.addField("Guilds", "Disallowed", true);
         if (command.nsfw) embed.addField("NSFW", "True", true);
-        if (command.names.length > 1) embed.setFooter({ text: command.names.slice(1).join(", ") });
         const color = client.config.get("metadata.color").value();
         if (color) embed.setColor(color);
         return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
