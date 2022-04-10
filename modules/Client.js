@@ -39,7 +39,7 @@ class Client extends Discord.Client {
         this.storagePath = path.join(__dirname, "../data/storage.json");
 
         // Log to the console if the config will be created
-        if (!fse.pathExistsSync(this.dbPath)) log.info(`A default config file will be generated at ./data/config.json`);
+        if (!fse.pathExistsSync(this.configPath)) log.info(`A default config file will be generated at ./data/config.json`);
 
         /**
          * Config database via lowdb
@@ -62,7 +62,7 @@ class Client extends Discord.Client {
          * Handler framework
          * @type {Handler}
          */
-        this.handler = new Handler();
+        this.handler = new Handler(this);
 
         /**
          * Commands
@@ -75,6 +75,12 @@ class Client extends Discord.Client {
          * @type {EventConstruct}
          */
         this.events = new EventConstruct(this, "discord.js event construct");
+
+        /**
+         * Reminders
+         * @type {ReminderEmitter}
+         */
+        this.reminders = new ReminderEmitter(this);
     }
 }
 

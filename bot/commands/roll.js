@@ -6,7 +6,7 @@ const max_dice = 200;
 const max_sides = 1000;
 
 module.exports = new CommandBlock({
-    names: "roll",
+    names: ["roll"],
     description: "Rolls some dice. Default roll bound is 100.",
     usage: "[sides] or [die_count]d[sides]",
 }, async function(client, message, content, [bound = "100"]) {

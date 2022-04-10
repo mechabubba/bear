@@ -41,7 +41,9 @@ module.exports = [
         usage: "user/guild [ID]",
         locked: "hosts",
     }, async function(client, message, content, [type, id, ...args]) {
-        if (!content) message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
+        if (!content) {
+            return message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
+        }
 
         const group = determineType(type);
         if (!group) return message.reply(`${client.reactions.negative.emote} Unrecognized type \`type\`! This must be either \`user\` or \`guild\`.`);

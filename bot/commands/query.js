@@ -9,7 +9,6 @@ module.exports = new CommandBlock({
     names: ["query", "q", "srcds"],
     description: "Querys a Source engine server. The port is optional and is `27015` by default.",
     usage: "ip:port",
-    locked: "hosts",
 }, async function(client, message, content, [ip, port]) {
     if(!ip) return message.reply(`${client.reactions.negative.emote} You must input a server IP. Perform \`help ${this.firstName}\` for more information.`);
     ip = ip.toLowerCase();

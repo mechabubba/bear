@@ -1,5 +1,7 @@
 const CommandBlock = require("../../modules/CommandBlock");
+const log = require("../../modules/log");
 const { numeric } = require("../../modules/regexes");
+const chalk = require("chalk");
 const { MessageEmbed } = require("discord.js");
 
 module.exports = new CommandBlock({

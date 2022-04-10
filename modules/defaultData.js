@@ -39,7 +39,7 @@ module.exports.defaultConfig = {
         "parseUserMessages": true,
         "parseBotMessages": false,
         "parseSelfMessages": false,
-        "channelTypes": ["dm", "text", "news"],
+        "channelTypes": ["DM", "GUILD_TEXT", "GUILD_NEWS", "GUILD_NEWS_THREAD", "GUILD_PUBLIC_THREAD", "GUILD_PRIVATE_THREAD"],
         "channellogging": {
             "enabled": false,
             "guild": null,
@@ -109,7 +109,7 @@ module.exports.defaultCommandData = {
     summary: null,
     description: null,
     usage: null,
-    channelTypes: ["dm", "text", "news"],
+    channelTypes: ["DM", "GUILD_TEXT", "GUILD_NEWS", "GUILD_NEWS_THREAD", "GUILD_PUBLIC_THREAD", "GUILD_PRIVATE_THREAD"],
     nsfw: false,
     locked: false,
     clientPermissions: null,

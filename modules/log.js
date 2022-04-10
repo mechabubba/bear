@@ -1,9 +1,3 @@
-/**
- * Modified logging module from sandplate. [Original source code](https://github.com/06000208/sandplate/blob/main/modules/log.js)
- * @module logger
- * @example
- * const log = require("./util/logger");
- */
 const chalk = require("chalk");
 
 // Label names
@@ -26,44 +20,33 @@ const styles = {
     5: chalk.gray,
 };
 
-const timestamp = "HH:mm:ss.SSS";
-/**
- * Logger's timestamp format
- * @readonly
- * @todo If it was possible to store this in `.env` that would be nice
- */
-module.exports.timestamp = timestamp;
+// If you would prefer accurate stack tracing when using
+// debuggers like visual studio code's over having timestamps,
+// you can switch by swapping which approach is commented out
 
-/**
- * Internal function used for logging
- * @param {*} level
- * @param  {...any} args
- * @private
- */
+// Wrapper function approach
+
+const moment = require("moment");
 const print = function(level, ...args) {
     const prefix = `${chalk.gray(moment().format("HH:mm:ss.SSS"))} ${styles[level](labels[level])}`;
     return level > 1 ? console.log(prefix, ...args) : console.error(prefix, ...args);
 };
+module.exports = (...args) => print(3, ...args);
+module.exports.trace = (...args) => print(5, ...args);
+module.exports.debug = (...args) => print(4, ...args);
+module.exports.info = (...args) => print(3, ...args);
+module.exports.warn = (...args) => print(2, ...args);
+module.exports.error = (...args) => print(1, ...args);
+module.exports.fatal = (...args) => print(0, ...args);
 
-/**
- * Default exported logging function
- *
- * Using `log()` by itself is an alias to `log.info()`
- * @param  {...any} args
- * @function log
- * @example
- * log("example")
- * log.fatal("example");
- * log.error("example");
- * log.warn("example");
- * log.info("example");
- * log.debug("example");
- * log.trace("example");
- */
-module.exports = (...args) => print(" info", ...args);
-module.exports.fatal = (...args) => print("fatal", ...args);
-module.exports.error = (...args) => print("error", ...args);
-module.exports.warn = (...args) => print(" warn", ...args);
-module.exports.info = (...args) => print(" info", ...args);
-module.exports.debug = (...args) => print("debug", ...args);
-module.exports.trace = (...args) => print("trace", ...args);
+// Bind approach (no timestamps)
+/*
+const prefix = (id) => styles[id](labels[id]);
+module.exports = console.log.bind(console, prefix(3));
+module.exports.trace = console.log.bind(console, prefix(5));
+module.exports.debug = console.log.bind(console, prefix(4));
+module.exports.info = console.log.bind(console, prefix(3));
+module.exports.warn = console.log.bind(console, prefix(2));
+module.exports.error = console.error.bind(console, prefix(1));
+module.exports.fatal = console.error.bind(console, prefix(0));
+*/

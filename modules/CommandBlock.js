@@ -211,15 +211,15 @@ class CommandBlock extends BaseBlock {
         if (this.locked === true) return false;
         if (isString(this.locked)) {
             if (this.locked === message.author.id) return true;
-            if (!message.client.config.has(["users", this.locked]).value()) return false;
-            if (message.client.config.isNil(["users", this.locked]).value()) return false;
-            return message.client.config.get(["users", this.locked]).includes(message.author.id).value();
+            if (!message.client.storage.has(["users", this.locked]).value()) return false;
+            if (message.client.storage.isNil(["users", this.locked]).value()) return false;
+            return message.client.storage.get(["users", this.locked]).includes(message.author.id).value();
         } else if (isArray(this.locked)) {
             if (this.locked.includes(message.author.id)) return true;
             return this.locked.some((group) => {
-                if (!message.client.config.has(["users", group]).value()) return false;
-                if (message.client.config.isNil(["users", group]).value()) return false;
-                return message.client.config.get(["users", group]).includes(message.author.id).value();
+                if (!message.client.storage.has(["users", group]).value()) return false;
+                if (message.client.storage.isNil(["users", group]).value()) return false;
+                return message.client.storage.get(["users", group]).includes(message.author.id).value();
             });
         } else {
             return false;
@@ -236,6 +236,8 @@ class CommandBlock extends BaseBlock {
     checkPermissions(message, permissions, useClient = true, useChannel = false) {
         if (message.channel.type === "dm") return true;
         if (!permissions) return true;
+        // Small hack to make my life easier, so we dont need to check these two perms every time.
+        permissions = ["VIEW_CHANNEL", "SEND_MESSAGES", ...permissions];
         /** @type {Discord.GuildMember} */
         const member = useClient ? message.guild.me : message.member;
         if (useChannel) {
@@ -243,7 +245,7 @@ class CommandBlock extends BaseBlock {
             return message.channel.permissionsFor(member).has(permissions, true);
         } else {
             // checkAdmin and checkOwner options default to true https://discord.js.org/#/docs/main/stable/class/GuildMember?scrollTo=hasPermission
-            return member.hasPermission(permissions);
+            return member.permissions.has(permissions);
         }
     }
 

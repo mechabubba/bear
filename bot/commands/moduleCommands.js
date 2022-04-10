@@ -3,17 +3,23 @@ const Response = require("../../modules/Response");
 const log = require("../../modules/log");
 const { forAny } = require("../../modules/miscellaneous");
 const { isArray } = require("lodash");
-const commands = ["c", "cmd", "cmds", "command", "commands"];
-const events = ["e", "event", "events", "l", "listen", "listener", "listeners"];
+
+// Aliases for command and event.
+const types = {
+    command: ["c", "cmd", "cmds", "command", "commands"],
+    events: ["e", "event", "events", "l", "listen", "listener", "listeners"],
+}
+
 const determineConstruct = function(choice) {
-    if (commands.includes(choice)) {
+    if (types.command.includes(choice)) {
         return "commands";
-    } else if (events.includes(choice)) {
+    } else if (types.command.includes(choice)) {
         return "events";
     } else {
         return null;
     }
 };
+
 const resolveInputToPaths = function(client, constructProperty, content, choice) {
     const input = content.substring(choice.length).trim();
     const obj = {
@@ -49,81 +55,96 @@ module.exports = [
     new CommandBlock({
         names: ["load"],
         summary: "Load modules by path",
-        description: "Load command or event modules by file path. Note that the /modules/ folder is treated as the working directory.",
-        usage: "command/event <path>",
+        description: "Load command or event modules by file path. Note that the `/modules/` folder is treated as the working directory.",
+        usage: "command/event [path]",
         locked: "hosts",
-        clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, function(client, message, content, [choice, args]) {
-        if (!choice) return message.channel.send(`Usage: \`${this.names[0]} ${this.usage}\``);
+        if (!choice) {
+            return message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
+        }
+
         const constructProperty = determineConstruct(choice);
-        if (!constructProperty) return message.channel.send(`Unknown construct "${choice}"\nUsage: \`${this.names[0]} ${this.usage}\``);
+        if (!constructProperty) return message.reply(`${client.reactions.negative.emote} Unrecognized construct "${choice}"! This must be either \`command\` or \`event\`.`);
         const filePath = content.substring(choice.length).trim();
-        if (!filePath.length) return message.channel.send(`A path is required\nUsage: \`${this.names[0]} ${this.usage}\``);
+        if (!filePath.length) return message.reply(`${client.reactions.negative.emote} A path is required.`);
+        
         const loadResult = client.handler.requireModule(client[constructProperty], filePath, false);
-        return message.channel.send(`\`\`\`\n${loadResult.message}\n\`\`\``);
+        return message.reply({ content: `\`\`\`\n${loadResult.message}\n\`\`\``, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
         names: ["unload"],
         summary: "Unload modules by name/path",
-        description: "Unload command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory.",
+        description: "Unload command or event modules by command name, event name, or file path. Note that the `/modules/` folder is treated as the working directory.",
         usage: "command/event [name/path]",
         locked: "hosts",
-        clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, function(client, message, content, [choice, args]) {
-        if (!choice) return message.channel.send(`Usage: \`${this.names[0]} ${this.usage}\``);
+        if (!choice) {
+            return message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
+        }
+
         const constructProperty = determineConstruct(choice);
-        if (!constructProperty) return message.channel.send(`Unknown construct "${choice}"\nUsage: \`${this.names[0]} ${this.usage}\``);
+        if (!constructProperty) return message.reply(`${client.reactions.negative.emote} Unrecognized construct "${choice}"! This must be either \`command\` or \`event\`.`);
         const pathsResult = resolveInputToPaths(client, constructProperty, content, choice);
+        
         const unloadResult = isArray(pathsResult.value) ? client.handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : client.handler.unloadModule(client[constructProperty], pathsResult.value);
-        return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n\`\`\``);
+        return message.reply({ content: `\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n\`\`\``, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
         names: ["reload"],
         summary: "Reload modules by name/path",
-        description: "Reloading command or event modules by command name, event name, or file path. Note that the /modules/ folder is treated as the working directory.",
-        usage: "command/event <name/path>",
+        description: "Reloading command or event modules by command name, event name, or file path. Note that the `/modules/` folder is treated as the working directory. Also note that if you're targetting anonymous blocks, use the `unload` command instead.",
+        usage: "command/event [name/path]",
         locked: "hosts",
-        clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
     }, function(client, message, content, [choice, args]) {
-        if (!choice) return message.channel.send(`Usage: \`${this.names[0]} ${this.usage}\``);
+        if (!choice) {
+            return message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
+        }
+
         const constructProperty = determineConstruct(choice);
-        if (!constructProperty) return message.channel.send(`Unknown construct "${choice}"\nUsage: \`${this.names[0]} ${this.usage}\``);
+        if (!constructProperty) return message.reply(`${client.reactions.negative.emote} Unrecognized construct "${choice}"! This must be either \`command\` or \`event\`.`);
         const pathsResult = resolveInputToPaths(client, constructProperty, content, choice);
-        if (!pathsResult.value) return message.channel.send(`A path or name is required\nIf targeting anonymous blocks, use \`unload\` instead\nUsage: \`${this.names[0]} ${this.usage}\``);
+        if (!pathsResult.value) return message.reply(`${client.reactions.negative.emote} A path or name is required.\n\nIf you're targeting an anonymous block, use \`unload\` instead!`);
         const unloadResult = isArray(pathsResult.value) ? client.handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : client.handler.unloadModule(client[constructProperty], pathsResult.value);
-        if (!unloadResult.success || unloadResult.error) return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n\`\`\``);
+        if (!unloadResult.success || unloadResult.error) return message.reply(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n\`\`\``);
+        
         const loadResult = isArray(pathsResult.value) ? client.handler.requireMultipleModules(client[constructProperty], pathsResult.value, false) : client.handler.requireModule(client[constructProperty], pathsResult.value, false);
-        return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${loadResult.message}\n\`\`\``);
+        return message.reply({ content: `\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${loadResult.message}\n\`\`\``, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
         names: ["enable"],
         summary: "Enable modules by path",
         description: "Enable command or event modules by file path. Note that paths should be written relative to the /modules/ folder (for example, navigating to `/bot/commands/` should be `../bot/commands`)",
-        usage: "command/event <path>",
+        usage: "command/event [path]",
         locked: "hosts",
-        clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    }, function(client, message, content, [choice, args]) {
-        if (!choice) return message.channel.send(`Usage: \`${this.names[0]} ${this.usage}\``);
+    }, function(client, message, content, [choice, ...args]) {
+        if (!choice) {
+            return message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
+        }
+        
         const constructProperty = determineConstruct(choice);
-        if (!constructProperty) return message.channel.send(`Unknown construct "${choice}"\nUsage: \`${this.names[0]} ${this.usage}\``);
+        if (!constructProperty) return message.reply(`${client.reactions.negative.emote} Unrecognized construct "${choice}"! This must be either \`command\` or \`event\`.`);
         const filePath = content.substring(choice.length).trim();
-        if (!filePath.length) return message.channel.send(`A path is required\nUsage: \`${this.names[0]} ${this.usage}\``);
+        if (!filePath.length) return message.reply(`${client.reactions.negative.emote} A path is required.`);
         const loadResult = client.handler.requireModule(client[constructProperty], filePath, false);
+        
         // Putting the path in an array prevents periods from being interpreted as traversing the db
         if (loadResult.value) client.handler.modules.set([client.handler.trimPath(loadResult.value)], true).write();
-        return message.channel.send(`\`\`\`\n${loadResult.message}\n${loadResult.value ? "Enabled the module" : ""}\n\`\`\``);
+        return message.reply({ content: `\`\`\`\n${loadResult.message}\n${loadResult.value ? "Enabled the module" : ""}\n\`\`\``, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
         names: ["disable"],
         summary: "Disable modules by name/path",
         description: "Disable command or event modules by command name, event name, or file path. Note that paths should be written relative to the /modules/ folder (for example, navigating to `/bot/commands/` should be `../bot/commands`)",
-        usage: "command/event <name/path>",
+        usage: "command/event [name/path]",
         locked: "hosts",
-        clientChannelPermissions: ["VIEW_CHANNEL", "SEND_MESSAGES"],
-    }, function(client, message, content, [choice, args]) {
-        if (!choice) return message.channel.send(`Usage: \`${this.names[0]} ${this.usage}\``);
+    }, function(client, message, content, [choice, ...args]) {
+        if (!choice) {
+            return message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
+        }
+
         const constructProperty = determineConstruct(choice);
-        if (!constructProperty) return message.channel.send(`Unknown construct "${choice}"\nUsage: \`${this.names[0]} ${this.usage}\``);
+        if (!constructProperty) return message.reply(`${client.reactions.negative.emote} Unrecognized construct "${choice}"! This must be either \`command\` or \`event\`.`);
+        
         const pathsResult = resolveInputToPaths(client, constructProperty, content, choice);
         const multipleModules = isArray(pathsResult.value);
         const unloadResult = multipleModules ? client.handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : client.handler.unloadModule(client[constructProperty], pathsResult.value);
@@ -131,6 +152,6 @@ module.exports = [
             // Putting the path in an array prevents periods from being interpreted as traversing the db
             client.handler.modules.set([client.handler.trimPath(resolvedPath)], false).write();
         }, unloadResult.value);
-        return message.channel.send(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${unloadResult.value ? `Disabled ${multipleModules ? `${unloadResult.value.length} modules` : "1 module"}` : ""}\n\`\`\``);
+        return message.reply({ content: `\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${unloadResult.value ? `Disabled ${multipleModules ? `${unloadResult.value.length} modules` : "1 module"}` : ""}\n\`\`\``, allowedMentions: { repliedUser: false } });
     }),
 ];

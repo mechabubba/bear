@@ -20,10 +20,10 @@ module.exports = [
         }
     }),
     new CommandBlock({
-        identity: ["httpcat", "cattp"],
+        names: ["httpcat", "cattp"],
         description: "Gets an HTTP cat code. Images fetched from [http.cat](https://http.cat).",
         usage: "(code)",
-        clientPermissions: ["ATTACH_FILES"],
+        clientChannelPermissions: ["ATTACH_FILES"],
     }, async function(client, message, content, [code]) {
         try {
             await message.reply({ files: [`https://http.cat/${code}.jpg`], allowedMentions: { repliedUser: false } });

@@ -4,6 +4,8 @@
 const ListenerBlock = require("../../modules/ListenerBlock");
 const log = require("../../modules/log");
 const chalk = require("chalk");
+const { MessageEmbed } = require("discord.js");
+const { DateTime } = require("luxon");
 
 module.exports = [
     // Guild Access Control (from modules/GuildManager.js)
@@ -16,14 +18,14 @@ module.exports = [
     new ListenerBlock({ event: "commandParsed" }, (client, commandName, message, content, args, ...extraParameters) => log.debug(`${chalk.gray("[commandParser]")} input from ${message.author.tag} successfully parsed as "${commandName}${(!content ? "\"" : `" with "${content}"`)}`)),
     // Commands (from modules/CommandConstruct.js)
     new ListenerBlock({ event: "ignoredMessage" }, (client, name, message) => log.debug(`${chalk.gray("[command]")} Ignored message ${message.id} as "${name}" wasn't mapped to an id`)),
-    new ListenerBlock({ event: "commandUsed" }, (client, command, message, content, args, ...extraParameters) => {
+    new ListenerBlock({ event: "commandUsed" }, async (client, command, message, content, args, ...extraParameters) => {
         log.debug(`${chalk.gray("[command]")} ${message.author.tag} ran "${command.names[0]}${(!content ? "\"" : `" with "${content}"`)}`);
         const clogging = client.config.get("commands.channellogging").value();
         if(clogging.enabled) {
             const embed = new MessageEmbed()
                 .setTitle(`\`${message.author.id}\``)
                 .setColor(clogging.color)
-                .setDescription(`\`\`\`\n${name} ${content || ""}\`\`\``)
+                .setDescription(`\`\`\`\n${command.names[0]} ${content || ""}\`\`\``)
                 .setFooter({ text: `${DateTime.fromMillis(message.createdTimestamp).toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}` });
 
             const guild = await client.guilds.fetch(clogging.guild);

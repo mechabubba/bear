@@ -226,7 +226,7 @@ module.exports = [
     }),
     new CommandBlock({
         names: ["activity", "setactivity"],
-        description: "Sets the bot's activity. All four activities are supported (playing, watching, listening, and streaming)",
+        description: "Sets the bot's activity. All five activities are supported; `playing`, `watching`, `listening`, `streaming`, and `competing`",
         usage: "[type] [text]",
         locked: "hosts",
     }, async function(client, message, content, args) {
