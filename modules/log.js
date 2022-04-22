@@ -26,9 +26,9 @@ const styles = {
 
 // Wrapper function approach
 
-const moment = require("moment");
+const { DateTime } = require("luxon");
 const print = function(level, ...args) {
-    const prefix = `${chalk.gray(moment().format("HH:mm:ss.SSS"))} ${styles[level](labels[level])}`;
+    const prefix = `${chalk.gray(DateTime.now().toFormat("HH:mm:ss.SSS"))} ${styles[level](labels[level])}`;
     return level > 1 ? console.log(prefix, ...args) : console.error(prefix, ...args);
 };
 module.exports = (...args) => print(3, ...args);
