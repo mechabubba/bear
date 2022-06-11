@@ -232,7 +232,8 @@ module.exports = [
     }, async function(client, message, content, args) {
         const data = resolveActivity(client, content, args);
         if (!data) return message.reply(`${client.reactions.negative.emote} Activity text must be 128 characters or shorter in length.`);
-        if (data.activity.type === "STREAMING" && !data.activity.url) return message.reply(`${client.reactions.negative.emote} To use the streaming activity, set \`metadata.channel\` in the config to the username of the Twitch channel you want to display.`);
+        const activity = data.activities[0];
+        if (activity.type === "STREAMING" && !activity.url) return message.reply(`${client.reactions.negative.emote} To use the streaming activity, set \`metadata.channel\` in the config to the username of the Twitch channel you want to display.`);
 
         try {
             await client.user.setPresence(data);
