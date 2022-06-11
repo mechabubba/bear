@@ -235,6 +235,7 @@ module.exports = [
         try {
             const data = resolveActivity(client, content, args);
             await client.user.setPresence(data);
+            const activity = data.activities[0];
             log.info(`${client.user.tag}'s activity has been ${!activity.name.length ? "cleared" : "updated"} by ${message.author.tag}`);
         } catch(error) {
             log.error("[set activity]", error);
