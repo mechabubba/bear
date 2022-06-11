@@ -68,7 +68,7 @@ const resolveInputToImage = function(message, input) {
 
 const resolveActivity = function(client, content, args) {
     if (!content) return { "activities": [] };
-    const activity = {}
+    const activity = {};
     const type = args[0].toLowerCase();
     activity.name = content;
     if (activityTypes.includes(type)) {
@@ -82,7 +82,9 @@ const resolveActivity = function(client, content, args) {
                 activity.type = "LISTENING";
             } else if (type === "streaming" || type === "stream" || type === "twitch") {
                 activity.type = "STREAMING";
-                activity.url = "https://twitch.tv/" + client.config.get("metadata.twitch").value();
+                const url = client.config.get("metadata.twitch").value();
+                if(!url) throw new Error("No Twitch channel configured; set config value `metadata.channel` to the username of the Twitch channel you want to display.");
+                activity.url = "https://twitch.tv/" + url;
             } else if (type === "competing" || type === "compete") {
                 if (activity.name.toLowerCase().startsWith("in")) activity.name = activity.name.substring(2).trim();
                 if (activity.name.length) return { "activities": [] };
@@ -90,7 +92,7 @@ const resolveActivity = function(client, content, args) {
             }
         }
     }
-    if (activity.name.length > 128) return null;
+    if (activity.name.length > 128) throw new Error("Activity text must be 128 characters or shorter in length.");
     return { "activities": [activity] };
 };
 
@@ -226,22 +228,19 @@ module.exports = [
     }),
     new CommandBlock({
         names: ["activity", "setactivity"],
-        description: "Sets the bot's activity. All five activities are supported; `playing`, `watching`, `listening`, `streaming`, and `competing`",
+        description: "Sets the bot's activity. All five activities are supported; `PLAYING`, `WATCHING`, `LISTENING`, `STREAMING`, and `COMPETING`.",
         usage: "[type] [text]",
         locked: "hosts",
     }, async function(client, message, content, args) {
-        const data = resolveActivity(client, content, args);
-        if (!data) return message.reply(`${client.reactions.negative.emote} Activity text must be 128 characters or shorter in length.`);
-        const activity = data.activities[0];
-        if (activity.type === "STREAMING" && !activity.url) return message.reply(`${client.reactions.negative.emote} To use the streaming activity, set \`metadata.channel\` in the config to the username of the Twitch channel you want to display.`);
-
         try {
+            const data = resolveActivity(client, content, args);
             await client.user.setPresence(data);
-        } catch (error) {
+        } catch(e) {
             log.error("[set activity]", error);
-            return message.reply(`${client.reactions.negative.emote} Failed to set activity, an error occurred;\`\`\`\n${error.message}\`\`\``);
+            return message.reply(`${client.reactions.negative.emote} Failed to set activity, an error occured;\`\`\`\n${e.message}\`\`\``);
         }
-        log.info(`${client.user.tag}'s activity has been ${!data.activity.name.length ? "cleared" : "updated"} by ${message.author.tag}`);
+
+        log.info(`${client.user.tag}'s activity has been ${!activity.name.length ? "cleared" : "updated"} by ${message.author.tag}`);
         return message.react(client.reactions.positive.id);
     }),
 ];
