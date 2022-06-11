@@ -19,10 +19,10 @@ if(!semver.satisfies(process.version, package.engines.node)) {
     log.fatal(`node.js v${semver.clean(package.engines.node)}+ is required, currently ${process.version}`);
     process.exit(1);
 } else if(!semver.satisfies(djsver, ">=13")) {
-    log.fatal(`discord.js v13+ is required, currently v${Discord.version}`);
+    log.fatal(`discord.js v13+ is required, currently v${djsver}`);
     process.exit(1);
 } else {
-    log.info(`Starting ${package.name} v${package.version} using node.js ${process.version} and discord.js v${Discord.version} on ${process.platform}`);
+    log.info(`Starting ${package.name} v${package.version} using node.js ${process.version} and discord.js v${djsver} on ${process.platform}`);
 }
 
 // rock n' roll
