@@ -235,12 +235,12 @@ module.exports = [
         try {
             const data = resolveActivity(client, content, args);
             await client.user.setPresence(data);
+            log.info(`${client.user.tag}'s activity has been ${!activity.name.length ? "cleared" : "updated"} by ${message.author.tag}`);
         } catch(e) {
             log.error("[set activity]", error);
             return message.reply(`${client.reactions.negative.emote} Failed to set activity, an error occured;\`\`\`\n${e.message}\`\`\``);
         }
-
-        log.info(`${client.user.tag}'s activity has been ${!activity.name.length ? "cleared" : "updated"} by ${message.author.tag}`);
+        
         return message.react(client.reactions.positive.id);
     }),
 ];
