@@ -59,7 +59,13 @@ module.exports.defaultConfig = {
             "inquiry": "❔",
             "alert": "❕",
             "cooldown": "⏳",
+            "online": "565377942297903116",
+            "offline": "565377942427795457",
+            "reminderalert": "620996211188695041"
         },
+    },
+    "keys": {
+        "wolfram": null,
     }
 };
 
