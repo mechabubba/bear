@@ -65,7 +65,7 @@ module.exports.defaultConfig = {
         },
     },
     "keys": {
-        "wolfram": null,
+        "wolfram_appid": null,
     }
 };
 
