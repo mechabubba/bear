@@ -11,7 +11,7 @@ const client = new Client({
 
 // Token validation (config)
 if (client.config.get("client.token").value() !== null) {
-    if (token.test(client.config.get("client.token").value())) {
+    if (token.exec(client.config.get("client.token").value()).groups.basicToken) {
         log.info("Token stored in the config successfully matched token regex, will attempt to login");
     } else {
         const id = SnowflakeUtil.generate();

@@ -30,8 +30,10 @@ module.exports.alphanumeric = /^[A-Za-z\d]+$/;
 
 /**
  * Matches the format for a discord authentication token from the beginning to the end of the string.
+ * 
+ * Source: https://github.com/sapphiredev/utilities/blob/384ff845115c37aaeb20b0b23051954f75f1d0bf/packages/discord-utilities/src/lib/regexes.ts#L121
  */
-module.exports.token = /^[\w]{24}\.[\w-]{6}\.[\w-]{27}$/;
+module.exports.token = /(?<mfaToken>mfa\.[a-z0-9_-]{20,})|(?<basicToken>[a-z0-9_-]{23,28}\.[a-z0-9_-]{6,7}\.[a-z0-9_-]{27})/i;
 
 /**
  * Matches discord message URLs with capturing groups for the three ids (guild, channel, and message)
