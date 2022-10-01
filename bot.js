@@ -27,7 +27,7 @@ if (client.config.get("client.token").value() !== null) {
 const argv = process.argv.slice(2);
 if (argv.length) {
     if (argv.length > 1) log.warn("Regarding command line arguments, only using the first argument to pass in a token is supported. All further arguments are ignored.");
-    if (token.test(argv[0])) {
+    if (token.exec(argv[0]).groups.basicToken) {
         log.info("Command line argument matched token regex, will attempt to login");
         client.cookies.set("token", argv[0]);
     } else {
