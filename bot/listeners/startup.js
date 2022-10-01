@@ -15,12 +15,12 @@ module.exports = new ListenerBlock({
 
     // Add bot owner to hosts user group
     // If the users.hosts group is an empty array, this won't happen.
-    if (client.config.get("users.hosts").value() === null) {
-        const application = await client.fetchApplication();
+    if (client.storage.get("users.hosts").value() === null) {
+        const app = await client.application.fetch();
         // This supports teams, but only the team's owner.
         // If anyone wants to implement real support for team members, it would be appreciated.
-        const owner = has(application, "owner.members") ? application.owner.ownerID : application.owner.id;
-        client.config.set("users.hosts", [owner]).write();
+        const owner = has(app, "owner.members") ? app.owner.ownerID : app.owner.id;
+        client.storage.set("users.hosts", [owner]).write();
         log.info(`Added the bot's owner "${owner}" to the hosts user group.`);
     }
 
