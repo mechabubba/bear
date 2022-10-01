@@ -148,7 +148,7 @@ module.exports = [
             }
 
             // very much a bandaid solution before the eventual merge to a sql database. i know this is messy.
-            let db = client.storage.get(["local", "4chan"]).value();
+            let db = client.storage.get(["local", "4chan"]).value() ?? {};
             db.boards = boards;
             await client.storage.set(["local", "4chan"], db).write();
             return message.reply({ content: `${client.reactions.positive.emote} Board list updated.`, allowedMentions: { repliedUser: false } });
