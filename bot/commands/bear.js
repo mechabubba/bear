@@ -8,10 +8,10 @@ const { MessageEmbed } = require("discord.js");
  */
 const bears = {
     "bear.gif":   1000,
-    "speedy.gif": 100,
-    "child.gif":  50,
-    "gay.gif":    50,
-    "corrupted.gif": 50,
+    "speedy.gif": 50,
+    "child.gif":  10,
+    "gay.gif":    10,
+    "corrupted.gif": 10,
     "sugoi.gif":  1,
 };
 
