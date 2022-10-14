@@ -223,7 +223,7 @@ module.exports.unescapeHTML = (input = "") => {
  * @param {number} millis - The amount of milliseconds to convert to a string duration.
  * @returns {string}
  */
- module.exports.humanizeDuration = (millis) => {
+module.exports.humanizeDuration = (millis) => {
     const periods = [
         ["year",   60 * 60 * 24 * 365 * 1000],
         ["month",  60 * 60 * 24 * 30 * 1000],
