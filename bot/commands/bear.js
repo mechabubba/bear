@@ -20,10 +20,10 @@ module.exports = new CommandBlock({
     description: "<a:_:588518103814504490>\n\n**Tip:** Try your luck to get a rare bear.",
     clientChannelPermissions: ["ATTACH_FILES"],
 }, function(client, message, content, args) {
-    if(!client.storage.has("local.bear").value()) {
-        client.storage.set("local.bear", { points: 0 }).write();
+    if(!client.storage.has("local.bear")) {
+        client.storage.set("local.bear", { points: 0 });
     }
-    let bearpoints = client.storage.get("local.bear.points").value();
+    let bearpoints = client.storage.get("local.bear.points");
     bearpoints++;
 
     const img = weightedRandom(Object.keys(bears), bears);
@@ -34,5 +34,5 @@ module.exports = new CommandBlock({
         .setFooter({ text: `\uD83D\uDC3B ${bearpoints}` });
     message.reply({ embeds: [embed], files: [`assets/bears/${img}`], allowedMentions: { repliedUser: false } });
 
-    client.storage.set("local.bear.points", bearpoints).write();
+    client.storage.set("local.bear.points", bearpoints);
 });

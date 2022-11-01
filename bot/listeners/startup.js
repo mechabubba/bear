@@ -15,17 +15,17 @@ module.exports = new ListenerBlock({
 
     // Add bot owner to hosts user group
     // If the users.hosts group is an empty array, this won't happen.
-    if (client.storage.get("users.hosts").value() === null) {
+    if (client.storage.get("users.hosts") === null) {
         const app = await client.application.fetch();
         // This supports teams, but only the team's owner.
         // If anyone wants to implement real support for team members, it would be appreciated.
         const owner = has(app, "owner.members") ? app.owner.ownerID : app.owner.id;
-        client.storage.set("users.hosts", [owner]).write();
+        client.storage.set("users.hosts", [owner]);
         log.info(`Added the bot's owner "${owner}" to the hosts user group.`);
     }
 
     // Notify channel log
-    const clogging = client.config.get("commands.channellogging").value();
+    const clogging = client.config.get("commands.channellogging");
     if(clogging.enabled) {
         const guild = await client.guilds.fetch(clogging.guild);
         if(guild.available) {
@@ -40,7 +40,7 @@ module.exports = new ListenerBlock({
 
     // Set up reactions object so we dont have to get it from the config every time
     client.reactions = {};
-    const reactions = client.config.get("metadata.reactions").value();
+    const reactions = client.config.get("metadata.reactions");
     for(const [key, value] of Object.entries(reactions)) {
         client.reactions[key] = {};
         if(snowflake.test(value)) {

@@ -10,14 +10,15 @@ module.exports = new CommandBlock({
     description: "Gets stock and crypto data from [Yahoo! Finance](https://finance.yahoo.com).",
     usage: "[symbol]",
 }, function(client, message, content, [symbol, ...args]) {
-    if(!symbol) return message.reply(`${client.reactions.negative.emote} You must use a valid symbol. See \`help finance\` for more information.`);
-    if(!client.storage.has(["local", "finance_aliases"]).value()) {
-        client.storage.set(["local", "finance_aliases"], {}).write();
+    if(!client.storage.has(["local", "finance_aliases"])) {
+        client.storage.set(["local", "finance_aliases"], {});
     }
 
-    const isallowed = (client, userID) => {
+    if(!symbol) return message.reply(`${client.reactions.negative.emote} You must use a valid symbol. See \`help finance\` for more information.`);
+
+    const isallowed = (userID) => {
         for(const group of canalias) {
-            const g = client.storage.get(["users", group]).value();
+            const g = client.storage.get(["users", group]);
             if(Array.isArray(g) && g.includes(userID)) return true;
         }
         return false;
@@ -25,29 +26,38 @@ module.exports = new CommandBlock({
 
     switch(symbol) {
         case "addalias": {
-            if(!isallowed(client, message.author.id)) return;
+            if(!isallowed(message.author.id)) {
+                return message.reply(`${client.reactions.negative.emote} You do not have permission to do this.`);
+            }
+
             const [alias, sym] = [args[0], args[1]];
-            client.storage.set(["local", "finance_aliases", alias], sym).write();
+            client.storage.set(["local", "finance_aliases", alias], sym);
             return message.reply({ content: `${client.reactions.positive.emote} Set alias \`${alias}\` for symbol \`${sym}\`.`, allowedMentions: { repliedUser: false } });
         }
 
         case "removealias": {
-            if(!isallowed(client, message.author.id)) return;
+            if(!isallowed(message.author.id)) {
+                return message.reply(`${client.reactions.negative.emote} You do not have permission to do this.`);
+            }
+
             const alias = args[0];
-            if(!client.storage.has(["local", "finance_aliases", alias]).value()) return message.reply(`<:_:${negative}> This alias doesn't exist!`);
-            client.storage.get(["local", "finance_aliases"]).unset(alias).value();
+            if(!client.storage.has(["local", "finance_aliases", alias])) {
+                return message.reply(`${client.reactions.negative.emote} This alias doesn't exist!`);
+            }
+            
+            client.storage.delete(["local", "finance_aliases", alias]);
             return message.reply({ content: `${client.reactions.positive.emote} Removed alias \`${alias}\`.`, allowedMentions: { repliedUser: false } });
         }
 
         default: {
-            if(client.storage.has(["local", "finance_aliases", symbol]).value()) {
-                symbol = client.storage.get(["local", "finance_aliases", symbol]).value();
-            }
+            symbol = symbol ?? client.storage.get(["local", "finance_aliases", symbol]);
             finance.quote({ symbol: symbol }, (e, quotes) => {
                 if(e) return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
 
                 const [sd, p] = [quotes.summaryDetail, quotes.price];
-                if(p.regularMarketPrice == null || p.regularMarketChange == null || p.regularMarketChangePercent == null) return message.reply(`${client.reactions.negative.emote} The ticker symbol was not found.`);
+                if(p.regularMarketPrice == null || p.regularMarketChange == null || p.regularMarketChangePercent == null) {
+                    return message.reply(`${client.reactions.negative.emote} The ticker symbol was not found.`);
+                }
 
                 const embed = new MessageEmbed();
                 const gain = p.regularMarketChangePercent >= 0;
@@ -59,13 +69,13 @@ module.exports = new CommandBlock({
                     embed.setColor("#F04747");
                 }
 
-                embed.setAuthor({
-                    name: p.shortName || p.longName ? `${p.shortName || p.longName} (${p.symbol})` : p.symbol,
-                    url: `https://finance.yahoo.com/quote/${p.symbol}`
-                })
-                    .setTitle(`\`${(p.regularMarketPrice).toFixed(4)}\` ${gain ? "+" : ""}${(p.regularMarketChange).toFixed(4)} (${gain ? "+" : ""}${(p.regularMarketChangePercent * 100).toFixed(4)}%)`)
+                embed.setTitle(`\`${(p.regularMarketPrice).toFixed(4)}\` ${gain ? "+" : ""}${(p.regularMarketChange).toFixed(4)} (${gain ? "+" : ""}${(p.regularMarketChangePercent * 100).toFixed(4)}%)`)
                     .setFooter({ text: "Data from Yahoo! Finance" })
-                    .setTimestamp(p.regularMarketTime);
+                    .setTimestamp(p.regularMarketTime)
+                    .setAuthor({
+                        name: p.shortName || p.longName ? `${p.shortName || p.longName} (${p.symbol})` : p.symbol,
+                        url: `https://finance.yahoo.com/quote/${p.symbol}`
+                    });
 
                 const desc = (sd.previousClose != null ? `Prev. Close:   ${(sd.previousClose).toFixed(4)}\n` : "") +
                     (sd.dayLow != null && sd.dayHigh != null ? `Day's Range:   ${(sd.dayLow).toFixed(4)} - ${(sd.dayHigh).toFixed(4)}\n` : "") +

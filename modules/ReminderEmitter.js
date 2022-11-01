@@ -27,7 +27,9 @@ class ReminderEmitter extends EventEmitter {
         if(!this.reminders.has(reminder.userID)) this.reminders.set(reminder.userID, new Map());
         if(!reminder.id) reminder.id = this.generateID(reminder.userID);
 
-        const job = new CronJob(reminder.iscron ? reminder.end : new Date(reminder.end), () => this._trigger(reminder), null, true, "America/Chicago", this);
+        const job = new CronJob(reminder.iscron ? reminder.end : new Date(reminder.end), () => {
+            this._trigger(reminder)
+        }, null, true, "America/Chicago", this);
 
         this.reminders.get(reminder.userID).set(reminder.id, {
             "job": job,

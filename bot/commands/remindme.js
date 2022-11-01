@@ -94,7 +94,7 @@ module.exports = new CommandBlock({
                 let ishost = false;
                 if(slg !== "*") {
                     for(const group of slg) {
-                        if(client.storage.get(["users", group]).includes(message.author.id).value()) {
+                        if(client.storage.get(["users", group]).includes(message.author.id)) {
                             ishost = true;
                             break;
                         }

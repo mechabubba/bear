@@ -1,8 +1,9 @@
 /** booru.js - Image boards n' boorus n' stuff. */
-const { MessageEmbed } = require("discord.js");
-const fetch = require("node-fetch");
 const CommandBlock = require("../../modules/CommandBlock");
 const { sleep, unescapeHTML, useragents } = require("../../modules/miscellaneous");
+const { MessageEmbed } = require("discord.js");
+const { isArray } = require("lodash");
+const fetch = require("node-fetch");
 
 const r34_post_limit = 1000; // The amount of posts to request from rule34.xxx. Set this to 1000 for a large amount of images.
 const r34_cooldown = 500;    // Rate-limited to 2 requests per second.
@@ -126,20 +127,20 @@ module.exports = [
         usage: "[board]",
         clientChannelPermissions: ["ATTACH_FILES"],
     }, async function(client, message, contents, [board, ...args]) {
-        // Updates our board cache.
         if(board == "update") {
-            let canupdate = false;
-            for(const group of chan_canupdate) {
-                const g = await client.storage.get(["users", group]).value();
-                if(Array.isArray(g) && g.includes(message.author.id)) {
-                    canupdate = true;
-                    break;
-                };
-            }
-            if(!canupdate) {
+            // We need this to update our cache of available boards, incase some /qb/ shit gets pulled.
+            const isallowed = (userID) => {
+                for(const group of chan_canupdate) {
+                    const g = client.storage.get(["users", group]);
+                    if(isArray(g) && g.includes(userID)) return true;
+                }
+                return false;
+            };
+
+            if(!isallowed(message.author.id)) {
                 return message.reply(`${client.reactions.negative.emote} You do not have permission to do this.`);
             }
-
+            
             let boards;
             try {
                 boards = await get4chanBoards(client);
@@ -147,15 +148,18 @@ module.exports = [
                 return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
             }
 
-            // very much a bandaid solution before the eventual merge to a sql database. i know this is messy.
-            let db = client.storage.get(["local", "4chan"]).value() ?? {};
+            const db = client.storage.get(["local", "4chan"]) ?? {};
             db.boards = boards;
-            await client.storage.set(["local", "4chan"], db).write();
+            await client.storage.set(["local", "4chan"], db);
             return message.reply({ content: `${client.reactions.positive.emote} Board list updated.`, allowedMentions: { repliedUser: false } });
         }
 
         // @todo on bot/command init, keep these in memory.
-        const boards = await client.storage.get(["local", "4chan", "boards"]).value();
+        const boards = client.storage.get(["local", "4chan", "boards"]);
+        if(!boards) {
+            return message.reply(`${client.reactions.negative.emote} The board list is not cached. Run \`4chan update\` to do that!`);
+        }
+
         if(!board || !boards.all.includes(board)) {
             return message.reply(`${client.reactions.negative.emote} A board was not provided or doesn't exist.`);
         }
@@ -178,8 +182,8 @@ module.exports = [
 
             const json = await resp.json();
             let i = 0, post = json[0].threads[i];
-            while(post.sticky || post.capcode) { // get the first non-stickied and non-janny thread
-                post = json[0].threads[++i];
+            while(post.sticky || post.capcode) {
+                post = json[0].threads[++i]; // Get the first non-stickied and non-janny thread.
             }
 
             const embed = new MessageEmbed()

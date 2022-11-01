@@ -5,7 +5,7 @@ const { DateTime } = require("luxon");
 
 module.exports = [
     new ListenerBlock({ event: "command" }, async (client, message, name, content) => {
-        const clogging = client.config.get("commands.channellogging").value();
+        const clogging = client.config.get("commands.channellogging");
         if(clogging.enabled) {
             const embed = new MessageEmbed()
                 .setTitle(`\`${message.author.id}\``)

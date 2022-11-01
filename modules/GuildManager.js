@@ -52,8 +52,8 @@ class GuildManager extends Discord.GuildManager {
      * @private
      */
     getGuildGroup(name) {
-        if (!name || !this.client.config.has(["guilds", name]).value()) return false;
-        const group = this.client.config.get(["guilds", name]).value();
+        if (!name || !this.client.config.has(["guilds", name])) return false;
+        const group = this.client.config.get(["guilds", name]);
         if (!group || !isArray(group) || !group.length) return false;
         return group;
     }

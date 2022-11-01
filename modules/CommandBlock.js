@@ -207,19 +207,20 @@ class CommandBlock extends BaseBlock {
      * @returns {boolean}
      */
     checkLocked(message) {
+        const client = message.client;
         if (!this.locked) return true;
         if (this.locked === true) return false;
         if (isString(this.locked)) {
             if (this.locked === message.author.id) return true;
-            if (!message.client.storage.has(["users", this.locked]).value()) return false;
-            if (message.client.storage.isNil(["users", this.locked]).value()) return false;
-            return message.client.storage.get(["users", this.locked]).includes(message.author.id).value();
+            const locked = client.storage.get(["users", this.locked]);
+            if (!locked) return false;
+            return client.storage.get(["users", this.locked]).includes(message.author.id);
         } else if (isArray(this.locked)) {
             if (this.locked.includes(message.author.id)) return true;
             return this.locked.some((group) => {
-                if (!message.client.storage.has(["users", group]).value()) return false;
-                if (message.client.storage.isNil(["users", group]).value()) return false;
-                return message.client.storage.get(["users", group]).includes(message.author.id).value();
+                const locked = client.storage.get(["users", group]);
+                if (!locked) return false;
+                return client.storage.get(["users", group]).includes(message.author.id);
             });
         } else {
             return false;

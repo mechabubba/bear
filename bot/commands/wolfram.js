@@ -8,14 +8,14 @@ const ignoredPodIDs = [
     // Plots (obviously cant be displayed in plaintext)
     "PlotsOfTheSolution",
 ];
-const ip = "69.178.108.164"; // Spoofed IP passed to Wolfram to be our reference IP.
+const ip = "69.178.108.164"; // Spoofed IP passed to Wolfram to be our reference IP (so to not leak the bots IP).
 
 module.exports = new CommandBlock({
     names: ["wolfram", "wmath"],
     description: "Queries Wolfram Alpha.",
     usage: "[query]"
 }, async function(client, message, content, args) {
-    const appid = client.config.get(["keys", "wolfram_appid"]).value();
+    const appid = client.config.get(["keys", "wolfram_appid"]);
     if(!appid) return message.reply(`${client.reactions.negative.emote} The bot does not have a configured Wolfram Alpha AppID, which is necessary to make calls to its API!`);
     if(!content) return message.reply(`${client.reactions.negative.emote} You need to query *something!*`);
 
@@ -51,45 +51,55 @@ module.exports = new CommandBlock({
     if(!query.success) return message.reply(`${msg_content}`);
     
     const embed = new MessageEmbed();
+
     // Handle assumptions. These will just be placed in the embed description.
     // @todo it might be worthy to analyze the complexity of this. probably easier to do this than is implemented
     if(query.assumptions) {
         // Assumptions include placeholders in them, so we need to handle formatting that correctly.
+        // In some very specific cases they don't; this covers *some* of the related cases (and makes it so nothing goes awry otherwise). 
         const formatAssumption = (asmp) => {
-            let result = asmp.template;
-            result = result.replace("Use", "Consider using");
-            
-            // matchedTemplateNames matches "${template}" to "template". It includes an infinite negative lookbehind which removes duplicate matched groups. This is slow, but the strings are small so I think its worthy.
-            // We must do this because the `values` object in the assumption does not include names to which template equals the other; however, it seems to be sequential. Therefore we're gonna run with that fact and hope it works.
-            const matchedTemplateNames = result.matchAll(/\${([A-Za-z0-9]*)(?<!^.*\b\1\b.*\b\1\b)}/g);
-            
-            let i = 0;
-            for(const match of matchedTemplateNames) {
-                const word = match[1];
-                // We replace text via regex, so all values in string get replaced. Triple escape there so the RegExp understands the original escape on the "$" sign.
-                if(word == "word") {
-                    // Special case. "word" utilizes another passed in property of the same name, not anything in the `values` list.
-                    // Replace it and continue.
-                    result = result.replace(new RegExp(`\\\${${word}}`, "g"), asmp.word);
-                    continue;
+            require("../../modules/log").debug(asmp);
+            if(!asmp.template) { // Sometimes assumption templates aren't provided.
+                switch(asmp.type) {
+                    case "FormulaVariable": return `Query was not provided with a ${asmp.desc}; using ${asmp.values.desc}.`; // Tested with "derivative", "integral", and "eigenvalue"; can't find any other cases.
                 }
-                result = result.replace(new RegExp(`\\\${${word}}`, "g"), asmp.values[i].desc);
-                i++;
+                return;
+            } else {
+                let result = asmp.template;
+                result = result.replace("Use", "Consider using");
+
+                // matchedTemplateNames matches "${template}" to "template". It includes an infinite negative lookbehind which removes duplicate matched groups. This is slow, but the strings are small so I think its worthy.
+                // We must do this because the `values` object in the assumption does not include names to which template equals the other; however, it seems to be sequential. Therefore we're gonna run with that fact and hope it works.
+                const matchedTemplateNames = result.matchAll(/\${([A-Za-z0-9]*)(?<!^.*\b\1\b.*\b\1\b)}/g);
+                
+                let i = 0;
+                for(const match of matchedTemplateNames) {
+                    const word = match[1];
+                    // We replace text via regex, so all values in string get replaced. Triple escape there so the RegExp understands the original escape on the "$" sign.
+                    if(word == "word") {
+                        // Special case. "word" utilizes another passed in property of the same name, not anything in the `values` list.
+                        // Replace it and continue.
+                        result = result.replace(new RegExp(`\\\${${word}}`, "g"), asmp.word);
+                        continue;
+                    } // @todo handle assumptions properly | If the template ends with a number, we assume its referring to the specific value index provided.
+                    result = result.replace(new RegExp(`\\\${${word}}`, "g"), asmp.values[i].desc);
+                    i++;
+                }
+
+                result += "."; // For some reason, these assumptions don't end with a period. Add one for easier reading.
+                return result;
             }
-            
-            result += "."; // For some reason, these assumptions don't end with a period. Add one for easier reading.
-            return result;
         }
 
-        if(isArray(query.assumptions)) {
-            const assumptions = [];
-            for(let i = 0; i < query.assumptions.length; i++) {
+        if(!isArray(query.assumptions)) query.assumptions = [query.assumptions]; // This API is stupid.
+        const assumptions = [];
+        for(let i = 0; i < query.assumptions.length; i++) {
+            const asmp = formatAssumption(query.assumptions[i]);
+            if(asmp) {
                 assumptions.push(`:warning: *${formatAssumption(query.assumptions[i])}*`);
             }
-            embed.setDescription(assumptions.join("\n"));
-        } else {
-            embed.setDescription(`:warning: *${formatAssumption(query.assumptions)}*`);
         }
+        embed.setDescription(assumptions.join("\n"));
     }
 
     // Handle pods. Each pod normally is its own field in the embed.

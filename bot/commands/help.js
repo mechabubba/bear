@@ -31,7 +31,7 @@ module.exports = new CommandBlock({
             .setDescription(text)
             .setFooter({ text: `\uD83D\uDD0D To query command info, perform "${this.firstName} ${this.usage}".` });
 
-        const color = client.config.get("metadata.color").value();
+        const color = client.config.get("metadata.color");
         if (color) embed.setColor(color);
         return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
     } else {
@@ -60,7 +60,7 @@ module.exports = new CommandBlock({
         if (!command.channelTypes.includes("DM")) embed.addField("Direct Messages", "Disallowed", true);
         if (!command.channelTypes.includes("GUILD_TEXT")) embed.addField("Guilds", "Disallowed", true);
         if (command.nsfw) embed.addField("NSFW", "True", true);
-        const color = client.config.get("metadata.color").value();
+        const color = client.config.get("metadata.color");
         if (color) embed.setColor(color);
         return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
     }

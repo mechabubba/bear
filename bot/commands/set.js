@@ -82,7 +82,7 @@ const resolveActivity = function(client, content, args) {
                 activity.type = "LISTENING";
             } else if (type === "streaming" || type === "stream" || type === "twitch") {
                 activity.type = "STREAMING";
-                const url = client.config.get("metadata.twitch").value();
+                const url = client.config.get("metadata.twitch");
                 if(!url) throw new Error("No Twitch channel configured; set config value `metadata.channel` to the username of the Twitch channel you want to display.");
                 activity.url = "https://twitch.tv/" + url;
             } else if (type === "competing" || type === "compete") {

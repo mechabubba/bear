@@ -36,7 +36,7 @@ module.exports = new CommandBlock({
             ])
             .setFooter({ text: guild.id })
             .setTimestamp(guild.createdTimestamp)
-            .setColor(client.config.get("metadata.color").value());
+            .setColor(client.config.get("metadata.color"));
         return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
     }
 });

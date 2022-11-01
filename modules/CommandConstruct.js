@@ -48,8 +48,8 @@ class CommandConstruct extends BaseConstruct {
      * @readonly
      */
     get firstPrefix() {
-        const prefix = this.client.config.get("commands.prefix").value();
-        const mentions = this.client.config.get("commands.mentions").value();
+        const prefix = this.client.config.get("commands.prefix");
+        const mentions = this.client.config.get("commands.mentions");
         if (prefix) {
             if (isArray(prefix)) {
                 return prefix[0];
