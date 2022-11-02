@@ -6,13 +6,11 @@ const Handler = require("./Handler");
 const log = require("./log");
 
 const Discord = require("discord.js");
-const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
+const JSONManager = require("./JSONManager");
 const fse = require("fs-extra");
 const path = require("path");
 
 const { defaultConfig, defaultStorage, defaultJSONManagerConfig } = require("./defaultData");
-const JSONManager = require("./JSONManager");
 
 /**
  * Extension of the discord.js client

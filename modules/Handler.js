@@ -1,10 +1,9 @@
 const BaseConstruct = require("./BaseConstruct");
 const Response = require("./Response");
-const { disabledModules } = require("./defaultData");
+const { disabledModules, defaultJSONManagerConfig } = require("./defaultData");
 const log = require("./log");
 const { has, isString, isArray, isNil, cloneDeep } = require("lodash");
-const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
+const JSONManager = require("./JSONManager");
 const fse = require("fs-extra");
 const path = require("path");
 const filehound = require("filehound");
@@ -13,7 +12,7 @@ const { drop } = require("lodash");
 /**
  * Handler framework
  *
- * As is, you shouldn't instantiate this anywhere other than in the Client class's constructor, unless you're prepared to deal with overlapping lowdb databases. This will be fixed in future versions.
+ * As is, you shouldn't instantiate this anywhere other than in the Client class's constructor, unless you're prepared to deal with overlapping JSONManager databases. This will be fixed in future versions.
  */
 class Handler {
     constructor() {
@@ -38,13 +37,14 @@ class Handler {
          */
         this.folderLevels = this.workingDirectory.split(path.sep).length;
 
-        // Determine whether the modules database exists prior to using low()
+        // Determine whether the modules database exists prior to instantiating JSONManager
         const generating = !fse.pathExistsSync(this.dbPath);
 
         /**
-         * Modules database via lowdb
+         * Modules database via JSONManager
+         * @type {JSONManager}
          */
-        this.modules = low(new FileSync(this.dbPath));
+        this.modules = new JSONManager(this.dbPath, defaultJSONManagerConfig);
 
         // Handle modules that were configured to be disabled by default
         // All modules not present in the modules database are implicitly enabled (and will be added upon load)
@@ -53,7 +53,7 @@ class Handler {
                 const resolvedPath = Handler.resolvePath(path.join(this.workingDirectory, trimmedPath));
                 if (!resolvedPath.success) continue;
                 // Putting the path in an array prevents periods from being interpreted as traversing the db
-                if (!this.modules.has([trimmedPath]).value()) this.modules.set([trimmedPath], false).write();
+                if (!this.modules.has([trimmedPath])) this.modules.set([trimmedPath], false);
             }
             log.info("A database of enabled modules has been generated at ./data/modules.json");
         }
@@ -201,9 +201,9 @@ class Handler {
         if (!resolvedPath.success || resolvedPath.error) return resolvedPath;
         const trimmedPath = this.trimPath(resolvedPath.value);
         // Putting the path in an array prevents periods from being interpreted as traversing the db
-        if (!this.modules.has([trimmedPath]).value()) {
-            this.modules.set([trimmedPath], true).write();
-        } else if (respectDisabled && !this.modules.get([trimmedPath]).value()) {
+        if (!this.modules.has([trimmedPath])) {
+            this.modules.set([trimmedPath], true);
+        } else if (respectDisabled && !this.modules.get([trimmedPath])) {
             log.debug(`Skipping disabled module "${resolvedPath.value}"`);
             return new Response({ message: `Module "${resolvedPath.value}" was disabled`, success: true });
         }
