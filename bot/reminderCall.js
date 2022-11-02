@@ -1,4 +1,6 @@
 const ListenerBlock = require("../modules/ListenerBlock");
+const log = require("../modules/log");
+
 module.exports = new ListenerBlock({ event: "reminderCall" }, async ({ client }, reminder, cronremove) => {
     const stop = (uid, rid) => client.reminders.stop(uid, rid);
     
@@ -23,7 +25,7 @@ module.exports = new ListenerBlock({ event: "reminderCall" }, async ({ client },
             if(!user) throw new Error("User is no longer in this guild.");
 
             channel.send({
-                content: `${reminderalert} <@${reminder.userID}>, you set a reminder on **<t:${reminder.startSecs}:f>**;\n${reminder.message}`,
+                content: `${client.reactions.reminderalert.emote} <@${reminder.userID}>, you set a reminder on **<t:${reminder.startSecs}:f>**;\n${reminder.message}`,
                 allowedMentions: { parse: ["users"] },
             });
         }
@@ -34,6 +36,8 @@ module.exports = new ListenerBlock({ event: "reminderCall" }, async ({ client },
         // - The bot could not fetch the channel.
         // - The bot could not DM the user.
         // Whatever the case, it wasn't supposed to happen. We kill the reminder here.
+        log.error("Attempted to send reminder, but failed (for whatever reason!");
+        log.error(e);
         threw = true;
     } finally {
         if(!reminder.isCron || (reminder.isCron && cronremove) || threw) {

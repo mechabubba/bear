@@ -119,6 +119,7 @@ class JSONManager {
         }
         
         this._setInterval();
+        this._prevHash = hash(this.data);
 
         // On exit, we exit gracefully and save our database once more.
         process.on("exit", () => this.close());
