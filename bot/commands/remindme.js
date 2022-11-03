@@ -14,7 +14,7 @@ const slg = ["hosts"];
 
 module.exports = new CommandBlock({
     names: ["remindme", "remind", "reminder", "setreminder"],
-    description: "Creates a reminder that will ping you at a certain date, interval, or time. Able to use human-date statements or cron statements.\n• Steps, ranges, and asterisks are supported as cron statement elements.\n• Nonstandard entries, such as @yearly, @monthly, @weekly, etc, are also supported. These can be prefaced with a `-` instead of an `@`.\n• Triggering a reminder early will cancel it if it's not a cron statement.",
+    description: "Creates a reminder that will ping you at a certain date, interval, or time. Able to use human-written date/time statements or cron statements.\n• Steps, ranges, and asterisks are supported as cron statement elements.\n• *Some* nonstandard entries, such as @yearly, @monthly, @weekly, etc, are also supported. These can be prefaced with a `-` instead of an `@` so to avoid pinging random people.\n• Triggering a reminder early will cancel it, regardless if it's a cron statement or not.\n\nFor server owners: kicking an offending user (or me!) using this command for evil will automatically stop the reminder from ticking.",
     usage: "[(date / time / cron / human-readable string) | (message)] [list] [trigger (id)] [remove (id)]",
 }, async function(client, message, content, args) {
     if(!args[0]) return message.reply(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
@@ -24,11 +24,11 @@ module.exports = new CommandBlock({
             const embed = new MessageEmbed()
                 .setColor("9B59B6")
                 .setTitle(`Reminders for ${message.author.username}`);
-
-            const reminders = client.reminders.activeReminders(message.author.id);
+            const reminders = client.reminders.getActiveReminders(message.author.id);
             embed.setFooter({ text: `${reminders.size} active reminder(s) • See \`help remindme\` for usage information.` });
 
             if(reminders.size > 0) {
+                const fields = [];
                 for(const data of reminders.values()) {
                     const reminder = data.reminder;
 
@@ -36,16 +36,17 @@ module.exports = new CommandBlock({
                     if(reminder.isDM) {
                         location = "the DMs";
                     } else {
-                        const guild = client.guilds.resolve(reminder.guildID);
-                        const channel = guild === null ? guild : guild.channels.resolve(reminder.channelID);
+                        const guild = await client.guilds.fetch(reminder.guildID);
+                        const channel = guild === null ? guild : await guild.channels.fetch(reminder.channelID);
                         location = channel === null ? "an unknown channel?" : `#${channel.name}`; 
                     }
-
-                    embed.addField(
-                        `\`${reminder.id.toUpperCase()}\` in ${location}`,
-                        `(started <t:${reminder.startSecs}:R>, ${reminder.iscron ? `follows statement \`${reminder.end}\`, ticks <t:${Math.round(data.job.nextDates().toDate().getTime() / 1000)}:R>`: `ends <t:${reminder.endSecs}:R>`})\n${reminder.message}`
-                    );
+                    
+                    fields.push({
+                        name: `\`${reminder.ID.toUpperCase()}\` in ${location}`,
+                        value: `(started <t:${reminder.startSecs}:R>, ${reminder.isCron ? `follows statement \`${reminder.end}\`, ticks <t:${data.job.nextDates().toSeconds()}:R>`: `ends <t:${reminder.endSecs}:R>`})\n${reminder.message}`
+                    })
                 }
+                embed.addFields(fields);
             } else {
                 embed.setDescription("No reminders! :)");
             }
@@ -78,7 +79,7 @@ module.exports = new CommandBlock({
                 return message.reply(`${client.reactions.negative.emote} You must input a reminder ID!`);
             } else {
                 try {
-                    await client.reminders.trigger(message.author.id, given.toLowerCase());
+                    await client.reminders.trigger(message.author.id, given.toLowerCase(), true);
                 } catch(e) {
                     return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
                 }
@@ -91,34 +92,34 @@ module.exports = new CommandBlock({
 
             let reminder;
             try {
-                let ishost = false;
+                let isHost = false;
                 if(slg !== "*") {
                     for(const group of slg) {
                         if(client.storage.get(["users", group]).includes(message.author.id)) {
-                            ishost = true;
+                            isHost = true;
                             break;
                         }
                     }
                 } else {
-                    ishost = true;
+                    isHost = true;
                 }
                 if(message.channel.type == "dm") {
-                    reminder = new Reminder(content, message.author.id, null, null, ishost);
+                    reminder = new Reminder(content, message.author.id, undefined, undefined, isHost);
                 } else {
-                    reminder = new Reminder(content, message.author.id, message.guild.id, message.channel.id, ishost);
+                    reminder = new Reminder(content, message.author.id, message.guild.id, message.channel.id, isHost);
                 }
             } catch(e) {
                 return message.reply(`${client.reactions.negative.emote} An error occured.\`\`\`\n${e.message}\`\`\``);
             }
 
-            if(!reminder.iscron && (reminder.end < Date.now())) return message.reply(`${client.reactions.negative.emote} The supplied date is before the current date!`);
-            const time = reminder.iscron ? `the cron expression \`${reminder.end}\`` : `**<t:${reminder.endSecs}:f>**`;
+            if(!reminder.isCron && reminder.end <= Date.now()) return message.reply(`${client.reactions.negative.emote} The supplied date is before the current date!`);
+            const time = reminder.isCron ? `the cron expression \`${reminder.end}\`` : `**<t:${reminder.endSecs}:f>**`;
 
             let id;
             try {
                 id = await client.reminders.start(reminder);
             } catch(e) {
-                return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``); // should never be seen
+                return message.reply(`${client.reactions.negative.emote} An error occured whilst starting the reminder;\`\`\`\n${e.message}\`\`\``); // this should never happen
             }
 
             return message.reply({

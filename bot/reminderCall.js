@@ -1,9 +1,7 @@
 const ListenerBlock = require("../modules/ListenerBlock");
 const log = require("../modules/log");
 
-module.exports = new ListenerBlock({ event: "reminderCall" }, async ({ client }, reminder, cronremove) => {
-    const stop = (uid, rid) => client.reminders.stop(uid, rid);
-    
+module.exports = new ListenerBlock({ event: "reminderCall" }, async ({ client }, reminder, forceRemove) => {
     let threw = false;
     try {
         if(reminder.isDM) {
@@ -40,8 +38,8 @@ module.exports = new ListenerBlock({ event: "reminderCall" }, async ({ client },
         log.error(e);
         threw = true;
     } finally {
-        if(!reminder.isCron || (reminder.isCron && cronremove) || threw) {
-            stop(reminder.userID, reminder.id);
+        if(!reminder.isCron || forceRemove || threw) {
+            client.reminders.stop(reminder.userID, reminder.ID);
         }
     }
 });
