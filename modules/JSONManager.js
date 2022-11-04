@@ -64,16 +64,16 @@ class JSONManager {
 
         // Try writing to a temporary file first to avoid data loss.
         // @todo probably not the best way of doing this.
+        let temp = `${path.dirname(this.filepath)}/.${new Date().getTime()}.tmp`;
         try {
-            const temppath = `${path.dirname(this.filepath)}/.${new Date().getTime()}.tmp`;
-            fs.writeFileSync(temppath, JSON.stringify(this.data), { encoding: "utf8" });
-            fs.rmSync(temppath);
+            fs.writeFileSync(temp, JSON.stringify(this.data), { encoding: "utf8" });
         } catch(e) {
             log.error(e);
             return log.error("Couldn't save the file! Doing nothing.");
         }
 
         fs.writeFileSync(this.filepath, JSON.stringify(this.data), { encoding: "utf8" });
+        fs.rmSync(temp);
     }
 
     /**
