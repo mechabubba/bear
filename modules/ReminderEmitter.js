@@ -83,7 +83,7 @@ class ReminderEmitter extends EventEmitter {
         data.job.stop(); // Stop cron timer before deleting the object.
 
         this.reminders.get(userID).delete(reminderID);
-        this.client.storage.delete(["local", "reminders", userID, reminderID], reminder);
+        this.client.storage.delete(["local", "reminders", userID, reminderID]);
         if(!stopAll) { // (((very small optimization)))
             if(isEmpty(this.client.storage.get(["local", "reminders", userID]))) {
                 this.client.storage.delete(["local", "reminders", userID]); // Delete object if its empty.
