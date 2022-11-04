@@ -58,10 +58,10 @@ module.exports = new ListenerBlock({
     for(const userID in reminders) {
         for(const ID in reminders[userID]) {
             const reminder = Reminder.fromObject(reminders[userID][ID]);
-            log.debug(reminder);
-            if(!reminder.isCron && Date.now() <= reminder.end) {
+            if(!reminder.isCron && Date.now() >= reminder.end) {
                 // For verification, we're only checking if the reminder is past its due.
                 // Whether its able to be fired (ie. if its in a server or not) will be detemrined at tick time.
+                client.storage.delete(["local", "reminders", userID, ID]);
                 continue;
             }
             client.reminders.start(reminder);
