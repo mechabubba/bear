@@ -2,7 +2,7 @@ const ListenerBlock = require("../../modules/ListenerBlock");
 const log = require("../../modules/log");
 const Reminder = require("../../modules/Reminder");
 const { MessageEmbed } = require("discord.js");
-const { has } = require("lodash");
+const { has, isEmpty } = require("lodash");
 const { DateTime } = require("luxon");
 
 const snowflake = new RegExp("^(\\d{17,21})$");
@@ -65,6 +65,9 @@ module.exports = new ListenerBlock({
                 continue;
             }
             client.reminders.start(reminder);
+        }
+        if(isEmpty(client.storage.get(["local", "reminders", userID]))) {
+            client.storage.delete(["local", "reminders", userID]);
         }
     }
 
