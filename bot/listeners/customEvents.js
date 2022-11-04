@@ -20,7 +20,7 @@ module.exports = [
     new ListenerBlock({ event: "ignoredMessage" }, (client, name, message) => log.debug(`${chalk.gray("[command]")} Ignored message ${message.id} as "${name}" wasn't mapped to an id`)),
     new ListenerBlock({ event: "commandUsed" }, async (client, command, message, content, args, ...extraParameters) => {
         log.debug(`${chalk.gray("[command]")} ${message.author.tag} ran "${command.names[0]}${(!content ? "\"" : `" with "${content}"`)}`);
-        const clogging = client.config.get("commands.channellogging").value();
+        const clogging = client.config.get("commands.channellogging");
         if(clogging.enabled) {
             const embed = new MessageEmbed()
                 .setTitle(`\`${message.author.id}\``)

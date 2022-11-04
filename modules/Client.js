@@ -6,12 +6,11 @@ const Handler = require("./Handler");
 const log = require("./log");
 
 const Discord = require("discord.js");
-const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
+const JSONManager = require("./JSONManager");
 const fse = require("fs-extra");
 const path = require("path");
 
-const { defaultConfig, defaultStorage } = require("./defaultData");
+const { defaultConfig, defaultStorage, defaultJSONManagerConfig } = require("./defaultData");
 
 /**
  * Extension of the discord.js client
@@ -42,16 +41,16 @@ class Client extends Discord.Client {
         if (!fse.pathExistsSync(this.configPath)) log.info(`A default config file will be generated at ./data/config.json`);
 
         /**
-         * Config database via lowdb
+         * Config database via JSONManager class
          */
-        this.config = low(new FileSync(this.configPath));
-        this.config.defaultsDeep(defaultConfig).write();
+        this.config = new JSONManager(this.configPath, defaultJSONManagerConfig);
+        if(this.config.isEmpty) this.config.data = defaultConfig;
 
         /**
-         * Storage database via lowdb
+         * Storage database via JSONManager class
          */
-        this.storage = low(new FileSync(this.storagePath));
-        this.storage.defaultsDeep(defaultStorage).write() 
+        this.storage = new JSONManager(this.storagePath, defaultJSONManagerConfig);
+        if(this.storage.isEmpty) this.storage.data = defaultStorage;
 
         /**
          * Arbitrary object for temporary data.

@@ -9,7 +9,7 @@ module.exports = new ListenerBlock({
     event: "messageCreate",
     once: false,
 }, function(client, message) {
-    const configuration = client.config.get("commands").value();
+    const configuration = client.config.get("commands");
     // Only parse messages from configured accounts
     if (!configuration.parseUserMessages && !message.author.bot) return;
     if (!configuration.parseBotMessages && message.author.bot) return;
@@ -19,8 +19,9 @@ module.exports = new ListenerBlock({
         client.emit("ignoredChannel", message);
         return;
     }
+
     // Access control
-    const users = client.storage.get("users").value();
+    const users = client.storage.get("users");
     if (users.blocked !== null) {
         if (users.blocked.includes(message.author.id)) {
             client.emit("blockedUser", message);
@@ -33,6 +34,7 @@ module.exports = new ListenerBlock({
             return;
         }
     }
+    
     // Parsing
     let content = message.content.trim();
     const lowercase = content.toLowerCase();

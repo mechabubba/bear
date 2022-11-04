@@ -129,3 +129,14 @@ module.exports.defaultCommandData = {
  * Same deal as the default CommandBlock properties above re: static properties on the class
  */
 module.exports.defaultListenerData = {};
+
+/**
+ * Default JSONManager config.
+ * See modules/JSONManager.js to see all options.
+ */
+module.exports.defaultJSONManagerConfig = {
+    verbose: true,
+    interval: {
+        duration: 120000
+    }
+}

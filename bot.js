@@ -10,15 +10,15 @@ const client = new Client({
 });
 
 // Token validation (config)
-if (client.config.get("client.token").value() !== null) {
-    if (token.exec(client.config.get("client.token").value()).groups.basicToken) {
+if (client.config.has("client.token")) {
+    if (token.exec(client.config.get("client.token")).groups.basicToken) {
         log.info("Token stored in the config successfully matched token regex, will attempt to login");
     } else {
         const id = SnowflakeUtil.generate();
         log.warn("Token stored in the config didn't match token regex, won't try to use it");
         fse.ensureFileSync(client.dbPath);
         fse.copySync(client.dbPath, `./data/config.backup.${id}.json`);
-        client.config.set("client.token", null).write();
+        client.config.set("client.token", null);
         log.warn(`The token in the config has been reset to null and a backup of the config with the invalid token has been created at ./data/config.backup.${id}.json`);
     }
 }
@@ -37,15 +37,15 @@ if (argv.length) {
 
 // Initialize bot
 const init = async function() {
-    const commandLoadResult = await client.handler.requireDirectory(client.commands, client.config.get("commands.directory").value(), true);
-    const eventLoadResult = await client.handler.requireDirectory(client.events, client.config.get("events.directory").value(), true);
+    const commandLoadResult = await client.handler.requireDirectory(client.commands, client.config.get("commands.directory"), true);
+    const eventLoadResult = await client.handler.requireDirectory(client.events, client.config.get("events.directory"), true);
     const remindersLoadResult = client.handler.requireModule(client.reminders.events, "../bot/reminderCall.js");
     log.info(commandLoadResult.message);
     log.info(eventLoadResult.message);
     log.info(remindersLoadResult.message);
     // Ground control to major tom
-    if (client.cookies["token"] || client.config.get("client.token").value() !== null) {
-        client.login(client.cookies["token"] || client.config.get("client.token").value());
+    if (client.cookies["token"] || client.config.get("client.token") !== null) {
+        client.login(client.cookies["token"] || client.config.get("client.token"));
     } else {
         log.warn("No token available to login with! Please set one in config.json or pass one in as an argument");
         process.exit(0);
