@@ -26,8 +26,8 @@ module.exports = [
             .setThumbnail("attachment://bear.gif")
             .addField("Statistics", [
                 `• **Uptime:** ${humanizeDuration(client.uptime)}`,
-                `• **Guilds:** ${client.guilds.cache.size}`,
-                `• **Users:** ${client.users.cache.size}`,
+                `• **Cached guilds:** ${client.guilds.cache.size}`,
+                `• **Cached users:** ${client.users.cache.size}`,
             ].join("\n"))
             .setFooter({ text: `Made with \uD83D\uDC96 by mechabubba. • Commit ${gitinfo("%h")} @ ${DateTime.fromMillis(parseInt(gitinfo("%ct")) * 1000).toLocaleString(DateTime.DATETIME_SHORT)} \uD83C\uDF89 • #${col.toUpperCase()}` });
         return message.reply({ embeds: [embed], files: ["assets/bears/bear.gif"], allowedMentions: { repliedUser: false } });

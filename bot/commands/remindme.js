@@ -8,7 +8,7 @@ const affirmations = ["Okee doke!", "Will do!", "Gotcha!", "Affirmative.", "You 
  * "slg" stands for "Second Level Granularity."
  * This is a list of groups that can use second level granularity in cron statements.
  * If it equals "*", second level granularity will be available to all.
- * @type {(string|Array)}
+ * @type {(string|string[])}
  */
 const slg = ["hosts"];
 
@@ -21,24 +21,29 @@ module.exports = new CommandBlock({
 
     switch(args[0]) {
         case "list": {
+            const chan = args[1];
             const embed = new MessageEmbed()
                 .setColor("9B59B6")
                 .setTitle(`Reminders for ${message.author.username}`);
-            const reminders = client.reminders.getActiveReminders(message.author.id);
-            embed.setFooter({ text: `${reminders.size} active reminder(s) • See \`help remindme\` for usage information.` });
+            const reminders = client.reminders.getReminders(message.author.id, (r) => {
+                if(r.isDM || (chan === "*" ? true : r.channelID === chan) || (!chan && r.channelID == message.channel.id)) {
+                    return true;
+                }
+                return false;
+            });
 
-            if(reminders.size > 0) {
+            if(reminders.length > 0) {
                 const fields = [];
-                for(const data of reminders.values()) {
-                    const reminder = data.reminder;
-
+                const large = reminders.length > 25;
+                for(let i = 0; i < (large ? 25 : reminders.length); i++) {
+                    const reminder = reminders[i];
                     let location;
                     if(reminder.isDM) {
                         location = "the DMs";
                     } else {
                         const guild = await client.guilds.fetch(reminder.guildID);
-                        const channel = guild === null ? guild : await guild.channels.fetch(reminder.channelID);
-                        location = channel === null ? "an unknown channel?" : `#${channel.name}`; 
+                        const channel = await guild.channels.fetch(reminder.channelID);
+                        location = `#${channel.name}`; 
                     }
                     
                     fields.push({
@@ -48,8 +53,10 @@ module.exports = new CommandBlock({
                 }
                 embed.addFields(fields);
             } else {
-                embed.setDescription("No reminders! :)");
+                embed.setDescription(`No reminders${(chan && chan === "*") ? "" : " in this channel"}.`);
             }
+
+            embed.setFooter({ text: `${reminders.length} active reminder(s)${(chan && chan === "*") ? "" : " here"}. ${large ? "Only displaying the first 25! " : ""}• See \`help remindme\` for usage information.` });
             return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
         }
 
@@ -79,11 +86,48 @@ module.exports = new CommandBlock({
                 return message.reply(`${client.reactions.negative.emote} You must input a reminder ID!`);
             } else {
                 try {
+                    // Remove the reminder if its invalid.
+                    if(!await reminder.isValid(client)) {
+                        client.reminders.stop(message.author.id, reminder.ID);
+                        throw new Error("Attempted to trigger an invalid reminder.");
+                    }
+
                     await client.reminders.trigger(message.author.id, given.toLowerCase(), true);
+                    return message.reply(`${client.reactions.positive.emote} Reaction triggered.`);
                 } catch(e) {
                     return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
                 }
             }
+            break;
+        }
+
+        case "edit": {
+            // Check if this references a real ID.
+            const ID = args[1];
+            if(!ID) {
+                return message.reply(`${client.reactions.negative.emote} You must input a reminder ID!`);
+            }
+
+            args.shift();
+            const text = args.join(" ");
+            if(!text) {
+                return message.reply(`${client.reactions.negative.emote} You must input a piece of text to change it to!\nIf you're looking to remove a reminder, use the \`${this.firstName} stop\` command.`);
+            }
+
+            try {
+                const reminder = client.storage.get(["local", "reminders", message.author.id, ID]);
+                if(!reminder) {
+                    throw new Error(`This reminder does not exist.`);
+                }
+
+                const old = reminder.message;
+                reminder.message = text;
+
+                return message.reply(`${client.reactions.positive.emote} Your reminders text has been updated.\`\`\`diff\n- ${old}\n+ ${reminder.message}\`\`\``);
+            } catch(e) {
+                return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\n\`\`\``);
+            }
+
             break;
         }
 

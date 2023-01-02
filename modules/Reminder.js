@@ -2,7 +2,15 @@ const chrono = require("chrono-node");
 const { CronTime } = require("cron");
 
 /**
- * @class Reminder
+ * Represents a reminder for use in the remindme command.
+ * @property {String} userID - User ID.
+ * @property {String} guildID - Guild ID - undefined if DM.
+ * @property {String} channelID - Channel ID - undefined if DM.
+ * @property {boolean} isDM Determines if this reminder stemmed from a DM.
+ * @property {boolean} isCron Determines if this reminder is of a cron interval.
+ * @property {number} start Start date in milliseconds.
+ * @property {(number|String)} end End date in milliseconds, or if its a cron statement it will be the string representing that statement.
+ * @property {String} message The message corresponding with the reminder.
  */
 class Reminder {
     /**
@@ -25,13 +33,6 @@ class Reminder {
      * Parses the given reminder using the provided constructor arguments.
      * @param {String} content The provided "date string" from the user.
      * @param {Object} options Options for the parser.
-     * * * *
-     * After parsing, you'll be rewarded with the following properties;
-     * @property {boolean} isDM Determines if this reminder stemmed from a DM.
-     * @property {boolean} isCron Determines if this reminder is of a cron interval.
-     * @property {number} start Start date in milliseconds.
-     * @property {(number|String)} end End date in milliseconds, or if its a cron statement it will be the string representing that statement.
-     * @property {String} message The message corresponding with the reminder.
      */
     parse(content, options = {}) {
         // Determine if this was a DM reminder.
@@ -61,7 +62,7 @@ class Reminder {
         content = content.trim();
         this.start = Date.now();
         this.message = message.join(" | "); // Just incase there are any other bar characters past the first one.
-        this.isCron = this.testCron(content);
+        this.isCron = this.isValidCronExpression(content);
 
         // Manual testing of the given human-formed date.
         switch(content.toLowerCase()) {
@@ -141,8 +142,10 @@ class Reminder {
         return Object.assign(reminder, obj);
     }
 
-    // Helper functions to get the start and end times in seconds. This is used to format Discord timestamps.
+    /** Helper function to get the start time in seconds. */
     get startSecs() { return Math.round(this.start / 1000) }
+
+    /** Helper function to get the end time in seconds. */
     get endSecs() { return this.isCron ? undefined : Math.round(this.end / 1000); }
 
     /**
@@ -150,13 +153,49 @@ class Reminder {
      * @param {String} expression Possible cron expression.
      * @returns {boolean} Whether the provided expression was a cron expression.
      */
-    testCron(expression) {
+    isValidCronExpression(expression) {
         if(!expression) return false;
         try {
             new CronTime(expression);
         } catch(e) {
             return false;
         }
+        return true;
+    }
+
+    /**
+     * Given a client, tests if this reminder is valid. Specifically, this tests;
+     * - Whether the reminder is past its due.
+     * - Whether the bot exists in the guild.
+     * - Whether the channel exists in the guild.
+     * - Finally, whether the user exists in the guild.
+     * 
+     * Apart from checking the validity of a reminder, this method isn't entirely useless; if the guild/user isn't cached, it will get cached for future use.
+     * @param {Discord.Client} client 
+     * @returns {boolean} Whether this reminder is valid or not.
+     */
+    async isValid(client) {
+        if(!this.isCron && Date.now() >= this.end) {
+            return false;
+        }
+
+        try {
+            if(this.isDM) {
+                const user = await client.users.fetch(this.userID);
+                if(!user || !user.dmChannel) return false; // @todo Unsure if this is a good metric to determine if a user can be DM'd or not.
+            } else {
+                const guild = await client.guilds.fetch(this.guildID);
+                if(!guild) return false;
+                const channel = await guild.channels.fetch(this.channelID);
+                if(!channel) return false;
+                const member = await guild.members.fetch(this.userID);
+                if(!member) return false;
+            }
+        } catch(e) {
+            // Various different errors thrown here; dont really care what they are specifically, just return false if it happens.
+            return false;
+        }
+
         return true;
     }
 }

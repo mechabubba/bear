@@ -3,7 +3,7 @@ const Reminder = require("./Reminder");
 const { CronJob } = require("cron");
 const { randomBytes } = require("crypto");
 const EventEmitter = require("events");
-const { isEmpty } = require("lodash");
+const { isEmpty, has } = require("lodash");
 
 /**
  * ReminderEmitter class for the reminder command.
@@ -12,7 +12,7 @@ const { isEmpty } = require("lodash");
 class ReminderEmitter extends EventEmitter {
     constructor(client, options = {}) {
         super();
-        this.reminders = new Map();
+        this.jobs = {};
         this.events = new EventConstruct(this, "reminder event construct");
         Object.defineProperty(this, "client", { value: client }); // kind of annoying but its 4 am and i want this to work damnit
 
@@ -28,8 +28,10 @@ class ReminderEmitter extends EventEmitter {
      */
     start(reminder) {
         if(!(reminder instanceof Reminder)) throw new Error(`Reminder object expected; got ${typeof reminder}`);
-        if(!this.reminders.has(reminder.userID)) this.reminders.set(reminder.userID, new Map());
-        if(!reminder.ID) reminder.ID = this.generateID(reminder.userID);
+        this.jobs[reminder.userID] ??= {};
+        if(!reminder.ID) {
+            reminder.ID = this.generateID(reminder.userID); // Generate a random, unique short ID if it doesn't exist.
+        }
 
         // The CronJob class can handle cron statements as well as dates for long time timers.
         // This is an improvement upon setInterval/Timeout, which can only have timers up to 2,147,483,647ms (or ~24 days).
@@ -37,14 +39,12 @@ class ReminderEmitter extends EventEmitter {
             this._trigger(reminder);
         }, null, true, "America/Chicago", this);
 
-        // Store the reminder in memory with our cron job.
-        this.reminders.get(reminder.userID).set(reminder.ID, {
-            "job": job,
-            "reminder": reminder,
-        });
-
+        // Store our cron job in memory.
         // Also save the reminder to storage. This will create an object to this point automatically.
-        this.client.storage.set(["local", "reminders", reminder.userID, reminder.ID], reminder);
+        this.jobs[reminder.userID][reminder.ID] = job;
+        if(!this.client.storage.has(["local", "reminders", reminder.userID, reminder.ID])) {
+            this.client.storage.set(["local", "reminders", reminder.userID, reminder.ID], reminder);
+        }
 
         return reminder.ID;
     }
@@ -65,9 +65,10 @@ class ReminderEmitter extends EventEmitter {
      * @param {boolean} forceStop Should we forcefully stop this reminder?
      */
     trigger(userID, reminderID, forceStop = false) {
-        if(!this.reminders.has(userID)) this.reminders.set(userID, new Map());
-        if(!this.reminders.get(userID).has(reminderID)) throw new Error("The reminder wasn't found, or doesn't exist.");
-        const reminder = this.reminders.get(userID).get(reminderID).reminder;
+        this.jobs[userID] ??= {};
+        const reminder = this.client.storage.get(["local", "reminders", userID, reminderID]);
+        if(!reminder) throw new Error("The reminder wasn't found, or doesn't exist.");
+        
         this._trigger(reminder, forceStop);
     }
 
@@ -76,17 +77,18 @@ class ReminderEmitter extends EventEmitter {
      * @param {string} userID The user ID to get the reminder from..
      * @param {string} reminderID The reminder ID.
      */
-    stop(userID, reminderID, stopAll = false) {
-        if(!this.reminders.has(userID)) this.reminders.set(userID, new Map());
-        if(!this.reminders.get(userID).has(reminderID)) throw new Error("The reminder wasn't found, or doesn't exist.");
-        const data = this.reminders.get(userID).get(reminderID);
-        data.job.stop(); // Stop cron timer before deleting the object.
-
-        this.reminders.get(userID).delete(reminderID);
+    stop(userID, reminderID, _stopAll = false) {
+        this.jobs[userID] ??= {};
+        const reminder = this.client.storage.get(["local", "reminders", userID, reminderID]);
+        if(!reminder) throw new Error("The reminder wasn't found, or doesn't exist.");
+        
+        this.jobs[userID][reminderID].stop(); // Stop cron timer before deleting the object.
         this.client.storage.delete(["local", "reminders", userID, reminderID]);
-        if(!stopAll) { // (((very small optimization)))
+
+        if(!_stopAll) { // (((very small optimization)))
             if(isEmpty(this.client.storage.get(["local", "reminders", userID]))) {
                 this.client.storage.delete(["local", "reminders", userID]); // Delete object if its empty.
+                delete this.jobs[userID];
             }
         }
     }
@@ -96,33 +98,50 @@ class ReminderEmitter extends EventEmitter {
      * @param {string} userID
      */
     stopAll(userID) {
-        if(!this.reminders.has(userID)) this.reminders.set(userID, new Map());
-        for(const key of this.reminders.get(userID).keys()) {
+        this.jobs[userID] ??= {};
+        for(const key in this.jobs[userID]) {
             this.stop(userID, key, true);
         }
+
         if(isEmpty(this.client.storage.get(["local", "reminders", userID]))) {
             this.client.storage.delete(["local", "reminders", userID]); // Delete object if its empty.
+            delete this.jobs[userID];
         }
     }
 
     /**
-     * Return the reminders that correspond to a user ID.
-     * @param {string} userID
-     * @returns {Object} An object of all active jobs.
+     * Return an array of reminders that satisfy a filter.
+     * @param {String} userID The user ID.
+     * @param {(r: Reminder) => boolean} filter The filter to check each reminder against, with one parameter "r" as the reminder object.
+     * @returns {Reminder[]} The result of the filter.
      */
-    getActiveReminders(userID) {
-        if(!this.reminders.has(userID)) this.reminders.set(userID, new Map());
-        return this.reminders.get(userID);
+    getReminders(userID, filter = (r) => true) {
+        this.jobs[userID] ??= {};
+        const result = [];
+
+        const user_reminders = this.client.storage.get(["local", "reminders", userID]);
+        if(!user_reminders) return result;
+
+        for(const data of user_reminders) {
+            const reminder = Reminder.fromObject(data.reminder);
+            if(!reminder.isValid(this.client)) continue;
+            if(filter(reminder) == true) {
+                result.push(reminder);
+            }
+        }
+        return result;
     }
 
     /**
      * Generates a small, random, unique ID.
+     * @param {string} userID The users ID.
+     * @param {number} length The amount of bytes of the ID.
      * @returns {string} A unique ID fit for a users reminder.
      */
     generateID(userID, length = 2) {
-        const id = randomBytes(length).toString("hex");
-        if(this.reminders.get(userID).has(id)) return this.generateID(userID); // Only regenerate if a collision is ran into.
-        return id;
+        const ID = randomBytes(length).toString("hex");
+        if(this.client.storage.get(["local", "reminders", userID, ID])) this.generateID(userID); // Only regenerate if a collision is ran into.
+        return ID;
     }
 }
 

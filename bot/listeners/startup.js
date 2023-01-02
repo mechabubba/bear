@@ -58,12 +58,12 @@ module.exports = new ListenerBlock({
     for(const userID in reminders) {
         for(const ID in reminders[userID]) {
             const reminder = Reminder.fromObject(reminders[userID][ID]);
-            if(!reminder.isCron && Date.now() >= reminder.end) {
-                // For verification, we're only checking if the reminder is past its due.
-                // Whether its able to be fired (ie. if its in a server or not) will be detemrined at tick time.
+            if(!reminder.isValid(client)) {
+                log.debug(`Reminder ${reminder.ID} is invalid.`);
                 client.storage.delete(["local", "reminders", userID, ID]);
                 continue;
             }
+            log.debug(`Reminder ${reminder.ID} is valid. Starting...`);
             client.reminders.start(reminder);
         }
         if(isEmpty(client.storage.get(["local", "reminders", userID]))) {
@@ -71,5 +71,5 @@ module.exports = new ListenerBlock({
         }
     }
 
-    log.info("App is now fully functional");
+    log.info("App is now fully functional!");
 });
