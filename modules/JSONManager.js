@@ -67,7 +67,6 @@ class JSONManager {
         const temp_path = `${path.dirname(this.filepath)}/.${Date.now()}.${path.basename(this.filepath)}`;
         try {
             fs.writeFileSync(temp_path, JSON.stringify(this.data), { encoding: "utf8" });
-            fs.rmSync(temp_path);
         } catch(e) {
             log.error(e);
             return log.error("Couldn't save the file! Doing nothing.");
