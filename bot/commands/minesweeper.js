@@ -20,9 +20,9 @@ const icon = new MessageAttachment("assets/mine.png");
 module.exports = new CommandBlock({
     names: ["minesweeper", "ms"],
     description: "Generates a playable Minesweeper board, using spoiler tags. The seed is optional and is random by default.\n\n**Tip:** The upper left corner will never be a mine; start there!",
-    usage: "[length] [width] [mines] (-seed [...values])",
+    usage: "[length] [width] [mines] (-s or --seed [...values])",
 }, async function(client, message, content, [length, width, maxmines, hasseed, ...args]) {
-    const seed = hasseed == "-seed" ? args.join(" ") : undefined;
+    const seed = ["-s", "--seed"].includes(hasseed) ? args.join(" ") : undefined;
     const rng = seedrandom(seed);
 
     if(!length || !width || !maxmines) {

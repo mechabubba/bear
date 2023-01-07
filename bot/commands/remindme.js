@@ -15,7 +15,7 @@ const slg = ["hosts"];
 module.exports = new CommandBlock({
     names: ["remindme", "remind", "reminder", "setreminder"],
     description: "Creates a reminder that will ping you at a certain date, interval, or time. Able to use human-written date/time statements or cron statements.\n• Steps, ranges, and asterisks are supported as cron statement elements.\n• *Some* nonstandard entries, such as @yearly, @monthly, @weekly, etc, are also supported. These can be prefaced with a `-` instead of an `@` so to avoid pinging random people.\n• Triggering a reminder early will cancel it, regardless if it's a cron statement or not.\n\n**For server owners:** Kicking an offending user (or me!) using this command for evil will automatically stop the reminder when it ticks.",
-    usage: "[(date / time / cron / human-readable string) | (message)] [list (\"*\" | channel_id?)] [trigger (id)] [edit (id) (message)] [remove (id)]",
+    usage: "[[date / time / cron / human-readable string] | [message]] or [list (\"*\" or channel_id?)] [trigger [id]] [edit [id] [message]] [remove [id]]",
 }, async function(client, message, content, args) {
     if(!args[0]) return message.reply(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
 
@@ -27,7 +27,7 @@ module.exports = new CommandBlock({
                 .setColor("9B59B6")
                 .setTitle(`Reminders for ${message.author.username}`);
             
-            const results = client.reminders.getReminders(message.author.id, (r) => {
+            const results = await client.reminders.getReminders(message.author.id, (r) => {
                 if((chan && (chan == "*" || chan == r.channelID)) || (!chan && (r.channelID == message.channel.id)) || (r.isDM && message.channel.isDMBased())) {
                     return true;
                 }

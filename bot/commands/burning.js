@@ -12,7 +12,7 @@ module.exports = new CommandBlock({
     usage: "[text]",
     clientChannelPermissions: ["ATTACH_FILES"],
 }, async function(client, message, content, args) {
-    if(!content) return message.reply(`${client.reactions.negative.emote} You didn't provide any text.`);
+    if(!content) return message.reply(`${client.reactions.negative.emote} You must input a piece of text to render.`);
     if(content.length > charlimit) return message.reply(`${client.reactions.negative.emote} There is a character limit of ${charlimit} per image.`);
 
     const _now = Date.now();
@@ -44,7 +44,6 @@ module.exports = new CommandBlock({
         if(!json || !json.renderLocation) throw new Error("Recieved malformed json.");
 
         return message.reply({ files: [json.renderLocation.replace("https", "http")], allowedMentions: { repliedUser: false } }); // they dont encrypt things correctly on their end, requiring us to use http
-
     } catch(e) {
         return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
     }

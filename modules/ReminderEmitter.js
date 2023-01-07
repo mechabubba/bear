@@ -119,7 +119,7 @@ class ReminderEmitter extends EventEmitter {
      * @param {(r: Reminder) => boolean} filter The filter to check each reminder against, with one parameter "r" as the reminder object.
      * @returns {{job: CronJob; reminder: Reminder}[]} The result of the filter.
      */
-    getReminders(userID, filter = (r) => true) {
+    async getReminders(userID, filter = (r) => true) {
         this.jobs[userID] ??= {};
         const result = [];
 
@@ -128,10 +128,17 @@ class ReminderEmitter extends EventEmitter {
 
         for(const ID in user_reminders) {
             const reminder = Reminder.fromObject(user_reminders[ID]);
-            if(!reminder.isValid(this.client) || !filter(reminder)) {
-                // Note to self: do not do any reminder stopping here, variable filter can be anything.
+
+            const filtered = filter(reminder);
+            const valid = await reminder.isValid(this.client);
+            if(!filtered) { // Note to self: do not do any reminder stopping here, variable filter can be anything.
                 continue;
             }
+            if(!valid) {
+                this.stop(userID, reminder.ID);
+                continue;
+            }
+
             result.push({
                 job: this.jobs[userID][reminder.ID],
                 reminder

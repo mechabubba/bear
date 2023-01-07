@@ -164,14 +164,7 @@ class JSONManager {
      */
     set(key, value) {
         if(!this.ready) return this.__warn();
-        setWith(this.data, key, value, (nsValue, key, nsObject) => {
-            // Lodash (javascript in general?) has a tendency to treat numeric strings as positions in an array.
-            // This is necessary to avoid this; numeric strings are treated as object keys, whilst actual numbers are treated as array values.
-            // Don't ask how long it took to debug this, I was wondering for days why my json files were being filled with thousands of null values for no reason.
-            if(typeof key == "string" && numeric.test(key)) {
-                return {};
-            }
-        });
+        setWith(this.data, key, value, Object);
     }
 
     /**
@@ -206,5 +199,5 @@ class JSONManager {
 module.exports = JSONManager;
 
 /**
- * @todo might want to do json-safe type checking (we are potentially hashing the object with data that will not be stringified into json if it gets saved [functions, classes, etc...])
+ * @todo might want to do json-safe type checking (we are potentially hashing the object with data that cannot be serialized into json if it gets saved [functions, classes, etc...])
  */

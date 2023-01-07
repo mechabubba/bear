@@ -14,7 +14,7 @@ module.exports = [
     new CommandBlock({
         names: ["echo", "e"],
         description: "Echoes text.",
-        usage: "[...text]",
+        usage: "(...text)",
         clientChannelPermissions: ["MANAGE_MESSAGES"],
     }, async function(client, message, content, args) {
         await message.channel.send({ content: content || "** **", allowedMentions: { parse: [] } });
@@ -22,8 +22,8 @@ module.exports = [
     }),
     new CommandBlock({
         names: ["wecho"],
-        description: "Echoes text via a Discord webhook.\n\n**Warning:** This is not secure; if used publicly, people WILL be able to get your webhooks ID and token, which will let them use it aswell! Use only as a utility!",
-        usage: "[hook_url] [...text]",
+        description: "Echoes text via a Discord webhook.\n\n**Warning:** This is not secure. If used in an open channel, people WILL be able to get your webhooks ID and token, which will let them use it aswell. Use this only as a utility!",
+        usage: "[hook_url] (...text)",
         locked: ["hosts"],
     }, async function(client, message, content, [hook_url, ...args]) {
         const matched = hook_url.match(/discord.com\/api\/webhooks\/([^\/]+)\/([^\/]+)/);

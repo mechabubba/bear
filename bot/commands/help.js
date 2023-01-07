@@ -12,7 +12,7 @@ module.exports = new CommandBlock({
     names: ["help", "commands", "command", "cmds", "cmd"],
     summary: "Lists commands & provides command info",
     description: "Provides a list of commands or info about individual commands when queried.",
-    usage: "[command]",
+    usage: "(command)",
     clientChannelPermissions: ["EMBED_LINKS"],
 }, function(client, message, content, args) {
     if (!content) {
@@ -54,12 +54,33 @@ module.exports = new CommandBlock({
 
         const embed = new MessageEmbed()
             .setTitle(command.names[0])
-            .setDescription(command.description || command.summary || "No description provided")
-            .addField("Usage", `\`${command.names[0]}${command.usage ? " " + command.usage : ""}\``, true);
+            .setDescription(command.description || command.summary || "No description provided");
         
-        if (!command.channelTypes.includes("DM")) embed.addField("Direct Messages", "Disallowed", true);
-        if (!command.channelTypes.includes("GUILD_TEXT")) embed.addField("Guilds", "Disallowed", true);
-        if (command.nsfw) embed.addField("NSFW", "True", true);
+        // Add specific fields to help text.
+        const fields = [];
+        fields.push({
+            name: "Usage",
+            value: `\`${command.names[0]}${command.usage ? " " + command.usage : ""}\``,
+            inline: true
+        });
+
+        if(!command.channelTypes.includes("DM")) fields.push({
+            name: "Direct Messages",
+            value: "Disallowed",
+            inline: true
+        });
+        if (!command.channelTypes.includes("GUILD_TEXT")) fields.push({
+            name: "Guilds",
+            value: "Disallowed",
+            inline: true
+        });
+        if (command.nsfw) fields.push({
+            name: "NSFW",
+            value: "True",
+            inline: true
+        });
+        embed.addFields(fields);
+
         const color = client.config.get("metadata.color");
         if (color) embed.setColor(color);
         return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });

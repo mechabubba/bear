@@ -5,7 +5,9 @@ const { MessageEmbed } = require("discord.js");
 const { isArray } = require("lodash");
 const fetch = require("node-fetch");
 
-const r34_post_limit = 1000; // The amount of posts to request from rule34.xxx. Set this to 1000 for a large amount of images.
+const log = require("../../modules/log");
+
+const r34_post_limit = 500;  // The amount of posts to request from rule34.xxx. [1-1000]
 const r34_cooldown = 500;    // Rate-limited to 2 requests per second.
 const e621_cooldown = 500;   // Rate-limited to 2 requests per second.
 const chan_canupdate = ["hosts"]; // A list of groups that can use the "4chan update" subcommand.
@@ -40,7 +42,7 @@ module.exports = [
     new CommandBlock({
         names: ["rule34", "r34"],
         description: "Gets (pseudo)random posts from [rule34](https://rule34.xxx).",
-        usage: "(...tags)",
+        usage: "[...tags]",
         nsfw: true,
         clientChannelPermissions: ["ATTACH_FILES"],
     }, async function(client, message, content, args) {
@@ -57,9 +59,10 @@ module.exports = [
             })
             if(!resp.ok) throw new Error(resp.statusText);
 
+            const text = await resp.text();
+            if(!text) throw new Error("No posts were found."); // Empty response indicates no posts found.
+            
             const json = await resp.json();
-            if(json.length == 0) throw new Error("No posts were found.");
-
             const img = json[Math.floor(Math.random() * json.length)];
             img.tags = img.tags.split(" ");
 
@@ -83,7 +86,7 @@ module.exports = [
     new CommandBlock({
         names: ["e621"],
         description: "Gets random posts from [e621](https://e621.net).",
-        usage: "(...tags)",
+        usage: "[...tags]",
         nsfw: true,
         clientChannelPermissions: ["ATTACH_FILES"],
     }, async function(client, message, contents, args) {
@@ -154,7 +157,6 @@ module.exports = [
             return message.reply({ content: `${client.reactions.positive.emote} Board list updated.`, allowedMentions: { repliedUser: false } });
         }
 
-        // @todo on bot/command init, keep these in memory.
         const boards = client.storage.get(["local", "4chan", "boards"]);
         if(!boards) {
             return message.reply(`${client.reactions.negative.emote} The board list is not cached. Run \`4chan update\` to do that!`);

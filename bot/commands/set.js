@@ -67,10 +67,11 @@ const resolveInputToImage = function(message, input) {
 };
 
 const resolveActivity = function(client, content, args) {
-    if (!content) return { "activities": [] };
+    if (!content) return null;
     const activity = {};
     const type = args[0].toLowerCase();
     activity.name = content;
+
     if (activityTypes.includes(type)) {
         activity.name = content.substring(type.length).trim();
         if (activity.name.length > 0) {
@@ -78,7 +79,7 @@ const resolveActivity = function(client, content, args) {
                 activity.type = "WATCHING";
             } else if (type === "listening" || type === "listen" || type === "music") {
                 if (activity.name.toLowerCase().startsWith("to")) activity.name = activity.name.substring(2).trim();
-                if (!activity.name.length) return { "activities": [] };
+                if (!activity.name.length) return null;
                 activity.type = "LISTENING";
             } else if (type === "streaming" || type === "stream" || type === "twitch") {
                 activity.type = "STREAMING";
@@ -87,11 +88,12 @@ const resolveActivity = function(client, content, args) {
                 activity.url = "https://twitch.tv/" + url;
             } else if (type === "competing" || type === "compete") {
                 if (activity.name.toLowerCase().startsWith("in")) activity.name = activity.name.substring(2).trim();
-                if (activity.name.length) return { "activities": [] };
+                if (!activity.name.length) return null;
                 activity.type = "COMPETING";
             }
         }
     }
+
     if (activity.name.length > 128) throw new Error("Activity text must be 128 characters or shorter in length.");
     return { "activities": [activity] };
 };
@@ -179,8 +181,8 @@ module.exports = [
         usage: "[JSON]",
         locked: "hosts",
     }, async function(client, message, content, args) {
-        if (!content) return message.channel.send(`Usage: \`${this.names[0]} ${this.usage}\`\n<https://discord.js.org/#/docs/main/stable/typedef/PresenceData>`);
-        if (!content.includes("{") || !content.includes("}")) return message.channel.send(`${client.reactions.negative.emote} Provided input isn't enclosed in curly brackets; valid json is required. Please see the discord.js docs on [PresenceData](https://discord.js.org/#/docs/main/stable/typedef/PresenceData) for more information on how to format this.`);
+        if (!content) return message.channel.send(`${client.reactions.negative.emote} You must input a piece of JSON. Perform \`help ${this.firstName}\` for more information.`);
+        if (!content.includes("{") || !content.includes("}")) return message.channel.send(`${client.reactions.negative.emote} Provided input isn't enclosed in curly brackets; valid json is required. Perform \`help ${this.firstName}\` for more information.`);
 
         let data = content.substring(content.indexOf("{"), content.lastIndexOf("}") + 1).trim();
         try {
@@ -234,12 +236,17 @@ module.exports = [
     }, async function(client, message, content, args) {
         try {
             const data = resolveActivity(client, content, args);
-            await client.user.setPresence(data);
-            const activity = data.activities[0];
-            log.info(`${client.user.tag}'s activity has been ${!activity.name.length ? "cleared" : "updated"} by ${message.author.tag}`);
+            let activity;
+            if(!data) {
+                await client.user.setPresence({ activity: null });
+            } else {
+                await client.user.setPresence(data);
+                activity = data.activities[0];
+            }
+            log.info(`${client.user.tag}'s activity has been ${activity ? "cleared" : "updated"} by ${message.author.tag}`);
         } catch(error) {
             log.error("[set activity]", error);
-            return message.reply(`${client.reactions.negative.emote} Failed to set activity, an error occured;\`\`\`\n${error.message}\`\`\``);
+            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${error.message}\`\`\``);
         }
 
         return message.react(client.reactions.positive.id);

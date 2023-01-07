@@ -27,6 +27,11 @@
  * @property {EmojiIdentifierResolvable} metadata.reactions.inquiry Emoji representing something unknown, questioning, confusion
  * @property {EmojiIdentifierResolvable} metadata.reactions.alert Emoji representing something that invokes attention, a warning, an alert
  * @property {EmojiIdentifierResolvable} metadata.reactions.cooldown Emoji representing something involving time, a cool down, a delay, a rate limit
+ * @property {EmojiIdentifierResolvable} metadata.reactions.online Emoji representing the status of being online.
+ * @property {EmojiIdentifierResolvable} metadata.reactions.offline Emoji representing the status of being offline.
+ * @property {EmojiIdentifierResolvable} metadata.reactions.reminderalert Emoji used strictly for reminders.
+ * @property {Object} keys Keys and sensitive stuff. Like the bot token, but for other websites!
+ * @property {string} keys.wolfram_appid Wolfram App ID for the wolfram command.
  */
 module.exports.defaultConfig = {
     "client": {
@@ -80,7 +85,7 @@ module.exports.defaultConfig = {
  * @property {?[Snowflake]} users.trusted - Trusted users. Just an example group, not relied upon by anything.
  * @property {?[Snowflake]} users.blocked - Used by command internals, acts as a "block list" where user ids in the group are not allowed to run commands
  * @property {?[Snowflake]} users.allowed - Used by command internals, acts as an "allow list" where only user ids in the group are allowed to run commands
- * @property {Object} local - Local data about the bot.
+ * @property {Object} local - Local data about the bot. Filled whenever its needed by the bot.
  */
  module.exports.defaultStorage = {
     "guilds": {

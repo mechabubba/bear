@@ -5,9 +5,9 @@ const { fork } = require("child_process");
 module.exports = new CommandBlock({
     names: ["brainfuck"],
     description: `Evaluates code for the esoteric programming language [brainfuck](https://esolangs.org/wiki/Brainfuck), created by Urban Müller.\n\nMemory is limited to 30,000 unsigned byte cells, and operation limit is set to ${options.operation_limit} operations. This implementation of brainfuck also implements the debug \`#\` opcode, which breaks the current execution and displays the first ${options.debug_limit} bytes in memory.\n\nBefore being ran, code is minified and all characters that are not brainfuck opcodes are removed.\n\nAfter being ran, your message will get a reaction indicating an error code. A positive reaction indicates a successful execution, and an alert reaction indicates that the execution couldn't be completed within the operation limit. An error will result in an appropriate error message.`,
-    usage: "[bf code] or [(input text) | (bf code)]",
+    usage: "[bf code] or [[input text] | [bf code]]",
 }, function(client, message, content, args) {
-    if(!content) return message.reply(`${client.reactions.negative.emote} You didn't send any code! Perform \`help ${this.firstName}\` for more information.`);
+    if(!content) return message.reply(`${client.reactions.negative.emote} You must input a piece of code to evaluate. Perform \`help ${this.firstName}\` for more information.`);
 
     const index = content.indexOf("|") || 0;
     let [input, code] = [content.substring(0, index), content.substring(index + 1)].map(x => x.trim()); // eslint-disable-line prefer-const

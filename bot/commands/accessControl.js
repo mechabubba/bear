@@ -16,18 +16,19 @@ const types = {
 };
 
 // Groups forbidden to interact with.
-const forbiddenGroups = ["allowed"];
+// Simply so the user doesn't accidentally delete the group via the `group` command.
+const forbiddenGroups = ["blocked", "allowed"];
 
 const determineType = function(input) {
     const type = input.toLowerCase();
     if (types.user.includes(type)) {
         return {
-            path: "users.blocked",
+            path: ["users", "blocked"],
             type: "user",
         };
     } else if (types.guild.includes(type)) {
         return {
-            path: "guilds.blocked",
+            path: ["guilds", "blocked"],
             type: "guild",
         };
     } else {
@@ -82,7 +83,7 @@ module.exports = [
         pull(group_arr, id);
 
         if (!group_arr.length) {
-            client.storage.delete(group.path);
+            client.storage.set(group.path, null);
         } else {
             client.storage.set(group.path, group_arr);
         }
@@ -108,9 +109,6 @@ module.exports = [
         }
 
         group_name = group_name.toLowerCase();
-        if (forbiddenGroups.includes(group_name)) {
-            return message.reply(`${client.reactions.negative.emote} Interacting with this group is forbidden.`);
-        }
 
         const match = MessageMentions.USERS_PATTERN.exec(userID);
         if(match && match[1]) {
@@ -118,11 +116,12 @@ module.exports = [
         }
 
         const group_path = ["users", group_name];
-        const group = client.storage.get(group_path);
         const replies = [];
+        let group = client.storage.get(group_path);
 
-        if (!group) {
+        if (group === undefined) {
             group = []; // The group does not exist, so we create it.
+            client.storage.set(group_path, group);
             replies.push(`Created group \`${group_name}\`.`);
         } else if (!userID) {
             // The group *does* exist, but no ID was provided.
@@ -130,12 +129,17 @@ module.exports = [
             if (!group || !group.length) {
                 replies.push(`The group \`${group_name}\` is empty.`);
             } else {
-                replies.push(`The group \`${group_name}\` has ${array.length} ${array.length === 1 ? "user" : "users"};\`\`\`\n${group.join(", ")}\`\`\``);
+                replies.push(`The group \`${group_name}\` has ${group.length} ${group.length === 1 ? "user" : "users"};\`\`\`\n${group.join(", ")}\`\`\``);
             }
         }
         // Regardless of the above, if there's no ID, we're done. The ID doesn't exist regardless if the group exists.
         if (!userID) return message.reply({ content: `${client.reactions.positive.emote} ${replies.join("\n")}`, allowedMentions: { repliedUser: false } });
         
+        // Check to see if we're about to interact with a group we aren't allowed to be.
+        if (forbiddenGroups.includes(group_name)) {
+            return message.reply(`${client.reactions.negative.emote} Directly interacting with this group is forbidden.`);
+        }
+
         if (!numeric.test(userID)) {
             replies.push(`The ID \`${userID}\` was invalid.`);
             return message.reply({ content: `${client.reactions.negative.emote} ${replies.join("\n")}` });

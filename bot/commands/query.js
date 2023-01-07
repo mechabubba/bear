@@ -8,7 +8,7 @@ const ipv4 = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$/; // https://sta
 module.exports = new CommandBlock({
     names: ["query", "q", "srcds"],
     description: "Querys a Source engine server. The port is optional and is `27015` by default.",
-    usage: "ip:port",
+    usage: "[ip:port]",
 }, async function(client, message, content, [ip, port]) {
     if(!ip) return message.reply(`${client.reactions.negative.emote} You must input a server IP. Perform \`help ${this.firstName}\` for more information.`);
     ip = ip.toLowerCase();
@@ -64,8 +64,15 @@ module.exports = new CommandBlock({
     if(!plys) plys = "Dead server. :(";
     plys = Util.escapeMarkdown(plys);
 
-    embed.addField(`Current Players (${info.players}/${info.max_players}${info.players >= info.max_players ? " - full!" : ``})`, plys)
-        .addField(`Current Map`, `\`${info.map}\``);
+    embed.addFields([
+        {
+            name: `Current Players (${info.players}/${info.max_players}${info.players >= info.max_players ? " - full!" : ``})`,
+            value: plys
+        }, {
+            name: "Current Map",
+            value: `\`${info.map}\``
+        }
+    ]);
 
     return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
 });

@@ -13,11 +13,12 @@ const ip = "69.178.108.164"; // Spoofed IP passed to Wolfram to be our reference
 module.exports = new CommandBlock({
     names: ["wolfram", "wmath"],
     description: "Queries Wolfram Alpha.",
-    usage: "[query]"
+    usage: "[query]",
+    locked: ["hosts"]
 }, async function(client, message, content, args) {
     const appid = client.config.get(["keys", "wolfram_appid"]);
     if(!appid) return message.reply(`${client.reactions.negative.emote} The bot does not have a configured Wolfram Alpha AppID, which is necessary to make calls to its API!`);
-    if(!content) return message.reply(`${client.reactions.negative.emote} You need to query *something!*`);
+    if(!content) return message.reply(`${client.reactions.negative.emote} You must input a piece of text to query.`);
 
     let query;
     try {
