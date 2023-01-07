@@ -73,6 +73,7 @@ class JSONManager {
             return log.error("Couldn't save the file! Doing nothing.");
         }
         fs.writeFileSync(this.filepath, JSON.stringify(this.data), { encoding: "utf8" });
+        fs.rmSync(temp);
     }
 
     /**
