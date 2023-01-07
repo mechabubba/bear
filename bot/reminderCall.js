@@ -24,7 +24,7 @@ module.exports = new ListenerBlock({ event: "reminderCall" }, async ({ client },
         });
     } catch(e) {
         // Something happened that wasn't supposed to happen. Kill the reminder just to avoid it throwing again.
-        log.error("Attempted to send reminder, but failed (for whatever reason!");
+        log.error(`Attempted to send reminder ${reminder.uniqueID}, but failed (for whatever reason)!`);
         log.error(e);
         threw = true;
     } finally {

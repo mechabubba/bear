@@ -3,7 +3,7 @@ const Reminder = require("./Reminder");
 const { CronJob } = require("cron");
 const { randomBytes } = require("crypto");
 const EventEmitter = require("events");
-const { isEmpty, has } = require("lodash");
+const { isEmpty } = require("lodash");
 
 /**
  * ReminderEmitter class for the reminder command.
@@ -16,8 +16,8 @@ class ReminderEmitter extends EventEmitter {
         this.events = new EventConstruct(this, "reminder event construct");
         Object.defineProperty(this, "client", { value: client }); // kind of annoying but its 4 am and i want this to work damnit
 
-        if(!client.storage.has("local.reminders")) {
-            client.storage.set("local.reminders", {});
+        if(!this.client.storage.has(["local", "reminders"])) {
+            this.client.storage.set(["local", "reminders"], {});
         }
     }
 
@@ -66,9 +66,10 @@ class ReminderEmitter extends EventEmitter {
      */
     trigger(userID, reminderID, forceStop = false) {
         this.jobs[userID] ??= {};
-        const reminder = this.client.storage.get(["local", "reminders", userID, reminderID]);
-        if(!reminder) throw new Error("The reminder wasn't found, or doesn't exist.");
+        const result = this.client.storage.get(["local", "reminders", userID, reminderID]);
+        if(!result) throw new Error("The reminder wasn't found, or doesn't exist.");
         
+        const reminder = Reminder.fromObject(result);
         this._trigger(reminder, forceStop);
     }
 
@@ -82,7 +83,10 @@ class ReminderEmitter extends EventEmitter {
         const reminder = this.client.storage.get(["local", "reminders", userID, reminderID]);
         if(!reminder) throw new Error("The reminder wasn't found, or doesn't exist.");
         
-        this.jobs[userID][reminderID].stop(); // Stop cron timer before deleting the object.
+        if(this.jobs[userID][reminderID]) {
+            this.jobs[userID][reminderID].stop(); // Stop cron timer before deleting the object.
+        }
+        delete this.jobs[userID][reminderID];
         this.client.storage.delete(["local", "reminders", userID, reminderID]);
 
         if(!_stopAll) { // (((very small optimization)))
@@ -95,7 +99,7 @@ class ReminderEmitter extends EventEmitter {
 
     /**
      * Stop all reminders.
-     * @param {string} userID
+     * @param {String} userID The user ID.
      */
     stopAll(userID) {
         this.jobs[userID] ??= {};
@@ -113,7 +117,7 @@ class ReminderEmitter extends EventEmitter {
      * Return an array of reminders that satisfy a filter.
      * @param {String} userID The user ID.
      * @param {(r: Reminder) => boolean} filter The filter to check each reminder against, with one parameter "r" as the reminder object.
-     * @returns {Reminder[]} The result of the filter.
+     * @returns {{job: CronJob; reminder: Reminder}[]} The result of the filter.
      */
     getReminders(userID, filter = (r) => true) {
         this.jobs[userID] ??= {};
@@ -122,12 +126,16 @@ class ReminderEmitter extends EventEmitter {
         const user_reminders = this.client.storage.get(["local", "reminders", userID]);
         if(!user_reminders) return result;
 
-        for(const data of user_reminders) {
-            const reminder = Reminder.fromObject(data.reminder);
-            if(!reminder.isValid(this.client)) continue;
-            if(filter(reminder) == true) {
-                result.push(reminder);
+        for(const ID in user_reminders) {
+            const reminder = Reminder.fromObject(user_reminders[ID]);
+            if(!reminder.isValid(this.client) || !filter(reminder)) {
+                // Note to self: do not do any reminder stopping here, variable filter can be anything.
+                continue;
             }
+            result.push({
+                job: this.jobs[userID][reminder.ID],
+                reminder
+            });
         }
         return result;
     }

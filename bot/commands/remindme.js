@@ -14,29 +14,32 @@ const slg = ["hosts"];
 
 module.exports = new CommandBlock({
     names: ["remindme", "remind", "reminder", "setreminder"],
-    description: "Creates a reminder that will ping you at a certain date, interval, or time. Able to use human-written date/time statements or cron statements.\n• Steps, ranges, and asterisks are supported as cron statement elements.\n• *Some* nonstandard entries, such as @yearly, @monthly, @weekly, etc, are also supported. These can be prefaced with a `-` instead of an `@` so to avoid pinging random people.\n• Triggering a reminder early will cancel it, regardless if it's a cron statement or not.\n\nFor server owners: kicking an offending user (or me!) using this command for evil will automatically stop the reminder from ticking.",
-    usage: "[(date / time / cron / human-readable string) | (message)] [list] [trigger (id)] [remove (id)]",
+    description: "Creates a reminder that will ping you at a certain date, interval, or time. Able to use human-written date/time statements or cron statements.\n• Steps, ranges, and asterisks are supported as cron statement elements.\n• *Some* nonstandard entries, such as @yearly, @monthly, @weekly, etc, are also supported. These can be prefaced with a `-` instead of an `@` so to avoid pinging random people.\n• Triggering a reminder early will cancel it, regardless if it's a cron statement or not.\n\n**For server owners:** Kicking an offending user (or me!) using this command for evil will automatically stop the reminder when it ticks.",
+    usage: "[(date / time / cron / human-readable string) | (message)] [list (\"*\" | channel_id?)] [trigger (id)] [edit (id) (message)] [remove (id)]",
 }, async function(client, message, content, args) {
     if(!args[0]) return message.reply(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
 
-    switch(args[0]) {
+    const subcmd = args.shift();
+    switch(subcmd) {
         case "list": {
-            const chan = args[1];
+            const chan = args.shift();
             const embed = new MessageEmbed()
                 .setColor("9B59B6")
                 .setTitle(`Reminders for ${message.author.username}`);
-            const reminders = client.reminders.getReminders(message.author.id, (r) => {
-                if(r.isDM || (chan === "*" ? true : r.channelID === chan) || (!chan && r.channelID == message.channel.id)) {
+            
+            const results = client.reminders.getReminders(message.author.id, (r) => {
+                if((chan && (chan == "*" || chan == r.channelID)) || (!chan && (r.channelID == message.channel.id)) || (r.isDM && message.channel.isDMBased())) {
                     return true;
                 }
                 return false;
             });
+            const large = results.length > 25;
 
-            if(reminders.length > 0) {
+            if(results.length > 0) {
                 const fields = [];
-                const large = reminders.length > 25;
-                for(let i = 0; i < (large ? 25 : reminders.length); i++) {
-                    const reminder = reminders[i];
+                for(let i = 0; i < (large ? 25 : results.length); i++) {
+                    const reminder = results[i].reminder;
+                    
                     let location;
                     if(reminder.isDM) {
                         location = "the DMs";
@@ -48,7 +51,7 @@ module.exports = new CommandBlock({
                     
                     fields.push({
                         name: `\`${reminder.ID.toUpperCase()}\` in ${location}`,
-                        value: `(started <t:${reminder.startSecs}:R>, ${reminder.isCron ? `follows statement \`${reminder.end}\`, ticks <t:${data.job.nextDates().toSeconds()}:R>`: `ends <t:${reminder.endSecs}:R>`})\n${reminder.message}`
+                        value: `(started <t:${reminder.startSecs}:R>, ${reminder.isCron ? `follows statement \`${reminder.end}\`, ticks <t:${results[i].job.nextDates().toSeconds()}:R>`: `ends <t:${reminder.endSecs}:R>`})\n${reminder.message}`
                     })
                 }
                 embed.addFields(fields);
@@ -56,59 +59,72 @@ module.exports = new CommandBlock({
                 embed.setDescription(`No reminders${(chan && chan === "*") ? "" : " in this channel"}.`);
             }
 
-            embed.setFooter({ text: `${reminders.length} active reminder(s)${(chan && chan === "*") ? "" : " here"}. ${large ? "Only displaying the first 25! " : ""}• See \`help remindme\` for usage information.` });
+            embed.setTitle(`Reminders for ${message.author.username}`)
+            embed.setFooter({ text: `${results.length} active reminder(s)${(chan && chan === "*") ? "" : " here"}. ${large ? "Only displaying the first 25! " : ""}• See \`help remindme\` for usage information.` });
             return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
         }
 
         case "stop":
         case "delete":
         case "remove": {
-            const given = args[1];
-            if(!given) {
-                return message.reply(`${client.reactions.negative.emote} You must input a reminder ID!`);
-            } else {
-                if(given == "*") {
-                    client.reminders.stopAll(message.author.id);
-                    return message.reply({ content: `${client.reactions.positive.emote} All reminders removed successfully!`, allowedMentions: { repliedUser: false } });
-                }
-                try {
-                    await client.reminders.stop(message.author.id, given.toLowerCase());
-                } catch(e) {
-                    return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
-                }
-                return message.reply({ content: `${client.reactions.positive.emote} The reminder was removed successfully!`, allowedMentions: { repliedUser: false } });
-            }
-        }
-
-        case "trigger": {
-            const given = args[1];
-            if(!given) {
-                return message.reply(`${client.reactions.negative.emote} You must input a reminder ID!`);
-            } else {
-                try {
-                    // Remove the reminder if its invalid.
-                    if(!await reminder.isValid(client)) {
-                        client.reminders.stop(message.author.id, reminder.ID);
-                        throw new Error("Attempted to trigger an invalid reminder.");
-                    }
-
-                    await client.reminders.trigger(message.author.id, given.toLowerCase(), true);
-                    return message.reply(`${client.reactions.positive.emote} Reaction triggered.`);
-                } catch(e) {
-                    return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
-                }
-            }
-            break;
-        }
-
-        case "edit": {
-            // Check if this references a real ID.
-            const ID = args[1];
+            let ID = args.shift();
             if(!ID) {
                 return message.reply(`${client.reactions.negative.emote} You must input a reminder ID!`);
             }
+            ID = ID.toLowerCase();
 
-            args.shift();
+            if(ID == "*") {
+                client.reminders.stopAll(message.author.id);
+                return message.reply({ content: `${client.reactions.positive.emote} All reminders removed!`, allowedMentions: { repliedUser: false } });
+            }
+
+            try {
+                await client.reminders.stop(message.author.id, ID);
+            } catch(e) {
+                return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
+            }
+
+            return message.reply({ content: `${client.reactions.positive.emote} The reminder was removed successfully!`, allowedMentions: { repliedUser: false } });
+        }
+
+        case "trigger": {
+            let ID = args.shift();
+            if(!ID) {
+                return message.reply(`${client.reactions.negative.emote} You must input a reminder ID!`);
+            }
+            ID = ID.toLowerCase();
+
+            try {
+                const result = client.storage.get(["local", "reminders", message.author.id, ID]);
+                if(!result) {
+                    throw new Error(`This reminder does not exist.`);
+                }
+                
+                // Construct the reminder and remove it if its invalid.
+                const reminder = Reminder.fromObject(result);
+                const valid = await reminder.isValid(client);
+                if(!valid) {
+                    client.reminders.stop(message.author.id, reminder.ID);
+                    throw new Error("Attempted to trigger an invalid reminder!");
+                }
+
+                await client.reminders.trigger(message.author.id, ID, true);
+                return message.reply({
+                    content: `${client.reactions.positive.emote} Reminder triggered.`,
+                    allowedMentions: { parse: [], repliedUser: false },
+                });
+            } catch(e) {
+                return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\n\`\`\``); // The reminder was not found!
+            }
+        }
+
+        case "edit": {
+            let ID = args.shift();
+            if(!ID) {
+                return message.reply(`${client.reactions.negative.emote} You must input a reminder ID!`);
+            }
+            ID = ID.toLowerCase();
+
             const text = args.join(" ");
             if(!text) {
                 return message.reply(`${client.reactions.negative.emote} You must input a piece of text to change it to!\nIf you're looking to remove a reminder, use the \`${this.firstName} stop\` command.`);
@@ -122,13 +138,15 @@ module.exports = new CommandBlock({
 
                 const old = reminder.message;
                 reminder.message = text;
+                client.storage.set(["local", "reminders", message.author.id, ID], reminder);
 
-                return message.reply(`${client.reactions.positive.emote} Your reminders text has been updated.\`\`\`diff\n- ${old}\n+ ${reminder.message}\`\`\``);
+                return message.reply({
+                    content: `${client.reactions.positive.emote} Your reminders text has been updated.\`\`\`diff\n- ${old}\n+ ${reminder.message}\`\`\``,
+                    allowedMentions: { parse: [], repliedUser: false },
+                });
             } catch(e) {
                 return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\n\`\`\``);
             }
-
-            break;
         }
 
         default: {
@@ -153,10 +171,12 @@ module.exports = new CommandBlock({
                     reminder = new Reminder(content, message.author.id, message.guild.id, message.channel.id, isHost);
                 }
             } catch(e) {
-                return message.reply(`${client.reactions.negative.emote} An error occured.\`\`\`\n${e.message}\`\`\``);
+                return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
             }
 
-            if(!reminder.isCron && reminder.end <= Date.now()) return message.reply(`${client.reactions.negative.emote} The supplied date is before the current date!`);
+            if(!reminder.isCron && reminder.end <= Date.now()) {
+                return message.reply(`${client.reactions.negative.emote} The supplied date is before the current date!`);
+            }
             const time = reminder.isCron ? `the cron expression \`${reminder.end}\`` : `**<t:${reminder.endSecs}:f>**`;
 
             let id;

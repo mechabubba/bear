@@ -149,6 +149,12 @@ class Reminder {
     get endSecs() { return this.isCron ? undefined : Math.round(this.end / 1000); }
 
     /**
+     * Gets the unique ID of this reminder; in this case, its just the userID concatenated with the reminder ID.
+     * @returns {String} The unique ID of the reminder. 
+     */
+    get uniqueID() { return `${this.userID}:${this.ID || "<unknown>"}`; }
+
+    /**
      * Tests if a string is a cron expression by attempting to parse it with the CronTime class.
      * @param {String} expression Possible cron expression.
      * @returns {boolean} Whether the provided expression was a cron expression.
@@ -185,11 +191,8 @@ class Reminder {
                 if(!user || !user.dmChannel) return false; // @todo Unsure if this is a good metric to determine if a user can be DM'd or not.
             } else {
                 const guild = await client.guilds.fetch(this.guildID);
-                if(!guild) return false;
-                const channel = await guild.channels.fetch(this.channelID);
-                if(!channel) return false;
-                const member = await guild.members.fetch(this.userID);
-                if(!member) return false;
+                await guild.channels.fetch(this.channelID);
+                await guild.members.fetch(this.userID);
             }
         } catch(e) {
             // Various different errors thrown here; dont really care what they are specifically, just return false if it happens.

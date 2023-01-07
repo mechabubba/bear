@@ -58,12 +58,11 @@ module.exports = new ListenerBlock({
     for(const userID in reminders) {
         for(const ID in reminders[userID]) {
             const reminder = Reminder.fromObject(reminders[userID][ID]);
-            if(!reminder.isValid(client)) {
-                log.debug(`Reminder ${reminder.ID} is invalid.`);
+			const valid = await reminder.isValid(client);
+            if(!valid) {
                 client.storage.delete(["local", "reminders", userID, ID]);
                 continue;
             }
-            log.debug(`Reminder ${reminder.ID} is valid. Starting...`);
             client.reminders.start(reminder);
         }
         if(isEmpty(client.storage.get(["local", "reminders", userID]))) {
