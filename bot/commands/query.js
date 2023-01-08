@@ -52,7 +52,6 @@ module.exports = new CommandBlock({
 
     embed.setTitle(info.name)
         .setColor("#43B581")
-        .addField(`Basic Info`, `IP: \`${vanity}\`\nConnect: steam://connect/${vanity}`)
         .setFooter({ text: "This server is online!", iconURL: `https://cdn.discordapp.com/emojis/${client.reactions.online.id}.png` });
 
     let plys = "";
@@ -66,6 +65,9 @@ module.exports = new CommandBlock({
 
     embed.addFields([
         {
+            name: "Basic Info",
+            value: `IP: \`${vanity}\`\nConnect: steam://connect/${vanity}`
+        }, {
             name: `Current Players (${info.players}/${info.max_players}${info.players >= info.max_players ? " - full!" : ``})`,
             value: plys
         }, {

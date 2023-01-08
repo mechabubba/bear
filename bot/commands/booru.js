@@ -5,8 +5,6 @@ const { MessageEmbed } = require("discord.js");
 const { isArray } = require("lodash");
 const fetch = require("node-fetch");
 
-const log = require("../../modules/log");
-
 const r34_post_limit = 500;  // The amount of posts to request from rule34.xxx. [1-1000]
 const r34_cooldown = 500;    // Rate-limited to 2 requests per second.
 const e621_cooldown = 500;   // Rate-limited to 2 requests per second.
@@ -206,7 +204,6 @@ module.exports = [
             }
 
             return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
-
         } catch(e) {
             return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
