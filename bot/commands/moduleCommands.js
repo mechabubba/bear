@@ -128,7 +128,7 @@ module.exports = [
         const loadResult = client.handler.requireModule(client[constructProperty], filePath, false);
         
         // Putting the path in an array prevents periods from being interpreted as traversing the db
-        if (loadResult.value) client.handler.modules.set([client.handler.trimPath(loadResult.value)], true).write();
+        if (loadResult.value) client.handler.modules.set([client.handler.trimPath(loadResult.value)], true);
         return message.reply({ content: `\`\`\`\n${loadResult.message}\n${loadResult.value ? "Enabled the module" : ""}\n\`\`\``, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
@@ -150,7 +150,7 @@ module.exports = [
         const unloadResult = multipleModules ? client.handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : client.handler.unloadModule(client[constructProperty], pathsResult.value);
         forAny((resolvedPath) => {
             // Putting the path in an array prevents periods from being interpreted as traversing the db
-            client.handler.modules.set([client.handler.trimPath(resolvedPath)], false).write();
+            client.handler.modules.set([client.handler.trimPath(resolvedPath)], false);
         }, unloadResult.value);
         return message.reply({ content: `\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${unloadResult.value ? `Disabled ${multipleModules ? `${unloadResult.value.length} modules` : "1 module"}` : ""}\n\`\`\``, allowedMentions: { repliedUser: false } });
     }),
