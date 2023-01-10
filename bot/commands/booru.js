@@ -56,10 +56,7 @@ module.exports = [
                 headers: { "User-Agent": useragents.bear }
             })
             if(!resp.ok) throw new Error(resp.statusText);
-
-            const text = await resp.text();
-            if(!text) throw new Error("No posts were found."); // Empty response indicates no posts found.
-            
+			
             const json = await resp.json();
             const img = json[Math.floor(Math.random() * json.length)];
             img.tags = img.tags.split(" ");
@@ -78,6 +75,9 @@ module.exports = [
 
             return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
         } catch(e) {
+            if(e.type === "invalid-json") {
+                e.message = "Invalid json response recieved. This typically means no posts were found.";
+            }
             return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
     }),
