@@ -64,13 +64,13 @@ module.exports = [
             }
             return message.reply(`${client.reactions.negative.emote} Cowfile not found.`);
         }
-        const input = `fortune ${cowfile ? `-f ${cowfile}` : ""} | cowsay`;
+        const input = `fortune | cowsay ${cowfile ? `-f ${cowfile}` : ""}`;
         return client.commands.runByName("sh", message, input, null, false);
     }),
 ];
 
 try {
-    cowfiles = execSync("cowsay -l | tail -n +2 | tr -d '\n' | tr '\n' ' '").toString(); // In order: get list, cut off header line, cut off last newline, and then replace all newlines to strings.
+    cowfiles = execSync("cowsay -l | tail -n +2 | tr '\n' ' '".trim()).toString(); // In order: get list, cut off header line, cut off last newline, and then replace all newlines to strings.
     if(/not found|not recognized/g.test(cowfiles)) {
         throw new Error("`cowsay` is not a recognized command.");
     }
