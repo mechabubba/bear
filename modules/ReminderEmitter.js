@@ -10,7 +10,7 @@ const { isEmpty } = require("lodash");
  * @extends {EventEmitter}
  */
 class ReminderEmitter extends EventEmitter {
-    constructor(client, options = {}) {
+    constructor(client) {
         super();
         this.jobs = {};
         this.events = new EventConstruct(this, "reminder event construct");
@@ -68,7 +68,7 @@ class ReminderEmitter extends EventEmitter {
         this.jobs[userID] ??= {};
         const result = this.client.storage.get(["local", "reminders", userID, reminderID]);
         if(!result) throw new Error("The reminder wasn't found, or doesn't exist.");
-        
+
         const reminder = Reminder.fromObject(result);
         this._trigger(reminder, forceStop);
     }
@@ -82,7 +82,7 @@ class ReminderEmitter extends EventEmitter {
         this.jobs[userID] ??= {};
         const reminder = this.client.storage.get(["local", "reminders", userID, reminderID]);
         if(!reminder) throw new Error("The reminder wasn't found, or doesn't exist.");
-        
+
         if(this.jobs[userID][reminderID]) {
             this.jobs[userID][reminderID].stop(); // Stop cron timer before deleting the object.
         }
@@ -119,7 +119,7 @@ class ReminderEmitter extends EventEmitter {
      * @param {(r: Reminder) => boolean} filter The filter to check each reminder against, with one parameter "r" as the reminder object.
      * @returns {{job: CronJob; reminder: Reminder}[]} The result of the filter.
      */
-    async getReminders(userID, filter = (r) => true) {
+    async getReminders(userID, filter = () => true) {
         this.jobs[userID] ??= {};
         const result = [];
 
@@ -141,7 +141,7 @@ class ReminderEmitter extends EventEmitter {
 
             result.push({
                 job: this.jobs[userID][reminder.ID],
-                reminder
+                reminder,
             });
         }
         return result;

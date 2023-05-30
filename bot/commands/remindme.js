@@ -15,7 +15,7 @@ const slg = ["hosts"];
 module.exports = new CommandBlock({
     names: ["remindme", "remind", "reminder", "setreminder"],
     description: "Creates a reminder that will ping you at a certain date, interval, or time. Able to use human-written date/time statements or cron statements.\n• Steps, ranges, and asterisks are supported as cron statement elements.\n• *Some* nonstandard entries, such as @yearly, @monthly, @weekly, etc, are also supported. These can be prefaced with a `-` instead of an `@` so to avoid pinging random people.\n• Triggering a reminder early will cancel it, regardless if it's a cron statement or not.\n\n**For server owners:** Kicking an offending user (or me!) using this command for evil will automatically stop the reminder when it ticks.",
-    usage: "[[date / time / cron / human-readable string] | [message]] or [list (\"*\" or channel_id?)] [trigger [id]] [edit [id] [message]] [remove [id]]",
+    usage: "[[date / time / cron / human-readable string] | [message]], [list (\"*\" or channel_id?)], [trigger [id]], [edit [id] [message]], [remove [id]]",
 }, async function(client, message, content, args) {
     if(!args[0]) return message.reply(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
 
@@ -26,7 +26,7 @@ module.exports = new CommandBlock({
             const embed = new MessageEmbed()
                 .setColor("9B59B6")
                 .setTitle(`Reminders for ${message.author.username}`);
-            
+
             const results = await client.reminders.getReminders(message.author.id, (r) => {
                 if((chan && (chan == "*" || chan == r.channelID)) || (!chan && (r.channelID == message.channel.id)) || (r.isDM && message.channel.isDMBased())) {
                     return true;
@@ -39,27 +39,27 @@ module.exports = new CommandBlock({
                 const fields = [];
                 for(let i = 0; i < (large ? 25 : results.length); i++) {
                     const reminder = results[i].reminder;
-                    
+
                     let location;
                     if(reminder.isDM) {
                         location = "the DMs";
                     } else {
                         const guild = await client.guilds.fetch(reminder.guildID);
                         const channel = await guild.channels.fetch(reminder.channelID);
-                        location = `#${channel.name}`; 
+                        location = `#${channel.name}`;
                     }
-                    
+
                     fields.push({
                         name: `\`${reminder.ID.toUpperCase()}\` in ${location}`,
-                        value: `(started <t:${reminder.startSecs}:R>, ${reminder.isCron ? `follows statement \`${reminder.end}\`, ticks <t:${results[i].job.nextDates().toSeconds()}:R>`: `ends <t:${reminder.endSecs}:R>`})\n${reminder.message}`
-                    })
+                        value: `(started <t:${reminder.startSecs}:R>, ${reminder.isCron ? `follows statement \`${reminder.end}\`, ticks <t:${results[i].job.nextDates().toSeconds()}:R>` : `ends <t:${reminder.endSecs}:R>`})\n${reminder.message}`,
+                    });
                 }
                 embed.addFields(fields);
             } else {
                 embed.setDescription(`No reminders${(chan && chan === "*") ? "" : " in this channel"}.`);
             }
 
-            embed.setTitle(`Reminders for ${message.author.username}`)
+            embed.setTitle(`Reminders for ${message.author.username}`);
             embed.setFooter({ text: `${results.length} active reminder(s)${(chan && chan === "*") ? "" : " here"}. ${large ? "Only displaying the first 25! " : ""}• See \`help remindme\` for usage information.` });
             return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
         }
@@ -99,7 +99,7 @@ module.exports = new CommandBlock({
                 if(!result) {
                     throw new Error(`This reminder does not exist.`);
                 }
-                
+
                 // Construct the reminder and remove it if its invalid.
                 const reminder = Reminder.fromObject(result);
                 const valid = await reminder.isValid(client);

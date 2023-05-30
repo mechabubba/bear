@@ -33,7 +33,7 @@ module.exports = [
         usage: "[text]",
     }, async function(client, message, content, args) {
         if(!content) return message.reply(`${client.reactions.negative.emote} ${nocontent}`);
-        let buf = Buffer.from(content).toString("base64");
+        const buf = Buffer.from(content).toString("base64");
         return message.reply({ content: `\`\`\`\n${buf.length > 1993 ? buf.substring(0, 1990) + "..." : buf}\`\`\``, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
@@ -42,7 +42,7 @@ module.exports = [
         usage: "[base64]",
     }, async function(client, message, content, args) {
         if(!content) return message.reply(`${client.reactions.negative.emote} ${nocontent}`);
-        let buf = Buffer.from(content, "base64").toString();
+        const buf = Buffer.from(content, "base64").toString();
         return message.reply({ content: `\`\`\`\n${buf.length > 1993 ? buf.substring(0, 1990) + "..." : buf}\`\`\``, allowedMentions: { repliedUser: false } });
     }),
 ];

@@ -49,7 +49,7 @@ module.exports.defaultConfig = {
             "enabled": false,
             "guild": null,
             "channel": null,
-            "color": "#141414"
+            "color": "#141414",
         },
     },
     "events": {
@@ -66,12 +66,12 @@ module.exports.defaultConfig = {
             "cooldown": "⏳",
             "online": "565377942297903116",
             "offline": "565377942427795457",
-            "reminderalert": "620996211188695041"
+            "reminderalert": "620996211188695041",
         },
     },
     "keys": {
         "wolfram_appid": null,
-    }
+    },
 };
 
 /**
@@ -87,7 +87,7 @@ module.exports.defaultConfig = {
  * @property {?[Snowflake]} users.allowed - Used by command internals, acts as an "allow list" where only user ids in the group are allowed to run commands
  * @property {Object} local - Local data about the bot. Filled whenever its needed by the bot.
  */
- module.exports.defaultStorage = {
+module.exports.defaultStorage = {
     "guilds": {
         "blocked": null,
         "allowed": null,
@@ -98,8 +98,7 @@ module.exports.defaultConfig = {
         "blocked": null,
         "allowed": null,
     },
-    "local": {
-    }
+    "local": {},
 };
 
 /**
@@ -142,6 +141,6 @@ module.exports.defaultListenerData = {};
 module.exports.defaultJSONManagerConfig = {
     verbose: true,
     interval: {
-        duration: 120000
-    }
-}
+        duration: 120000,
+    },
+};

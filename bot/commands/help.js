@@ -55,31 +55,33 @@ module.exports = new CommandBlock({
         const embed = new MessageEmbed()
             .setTitle(command.names[0])
             .setDescription(command.description || command.summary || "No description provided");
-        
+
         // Add specific fields to help text.
         const fields = [];
         fields.push({
             name: "Usage",
             value: `\`${command.names[0]}${command.usage ? " " + command.usage : ""}\``,
-            inline: true
+            inline: true,
         });
 
+        /* eslint-disable curly */
         if(!command.channelTypes.includes("DM")) fields.push({
             name: "Direct Messages",
             value: "Disallowed",
-            inline: true
+            inline: true,
         });
         if (!command.channelTypes.includes("GUILD_TEXT")) fields.push({
             name: "Guilds",
             value: "Disallowed",
-            inline: true
+            inline: true,
         });
         if (command.nsfw) fields.push({
             name: "NSFW",
             value: "True",
-            inline: true
+            inline: true,
         });
         embed.addFields(fields);
+        /* eslint-enable curly */
 
         const color = client.config.get("metadata.color");
         if (color) embed.setColor(color);

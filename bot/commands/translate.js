@@ -31,12 +31,12 @@ module.exports = new CommandBlock({
             translation += json[0][i][0];
         }
 
-        let sjson = JSON.stringify(json, null, 4);
+        const sjson = JSON.stringify(json, null, 4);
         if(debug) log.debug(sjson);
 
         return message.reply({
             content: debug ? `\`\`\`\n${sjson.length > 1993 ? sjson.substring(1990) + "..." : sjson}\`\`\`` : translation,
-            allowedMentions: { parse: [], repliedUser: false }, 
+            allowedMentions: { parse: [], repliedUser: false },
         });
     } catch(e) {
         return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
@@ -197,5 +197,5 @@ const languages = {
     xh: "Xhosa",
     yi: "Yiddish",
     yo: "Yoruba",
-    zu: "Zulu"
+    zu: "Zulu",
 };

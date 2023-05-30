@@ -5,7 +5,7 @@ module.exports = [
     new CommandBlock({
         names: ["shibe"],
         description: "Gets a shibe. Images fetched from [shibe.online](https://shibe.online/).",
-        clientChannelPermissions: ["ATTACH_FILES"]
+        clientChannelPermissions: ["ATTACH_FILES"],
     }, async function(client, message, content, args) {
         try {
             const resp = await fetch("http://shibe.online/api/shibes", { method: "get" });
@@ -28,7 +28,7 @@ module.exports = [
         try {
             await message.reply({ files: [`https://http.cat/${code}.jpg`], allowedMentions: { repliedUser: false } });
         } catch(e) { // just in case ;)
-            message.reply({ files: [{ attachment: "../../assets/service_unavailable.jpg", name: "service_unavailable.jpg" }], allowedMentions: { repliedUser: false } })
+            message.reply({ files: [{ attachment: "../../assets/service_unavailable.jpg", name: "service_unavailable.jpg" }], allowedMentions: { repliedUser: false } });
         }
     }),
 ];

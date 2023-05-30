@@ -133,7 +133,7 @@ module.exports.randomColor = function(w = 6) {
 /**
  * Small helper function that gets information from the latest commit via the `git show` command.
  * For more information, see https://git-scm.com/docs/git-show.
- * @param {string} placeholder 
+ * @param {string} placeholder
  * @returns {string} The value recieved.
  */
 module.exports.gitinfo = (placeholder) => execSync(`git show -s --format=${placeholder} HEAD`).toString().trim();
@@ -159,7 +159,7 @@ module.exports.weightedRandom = (arr, weight) => {
         rand -= weight[val] || 0;
     }
     throw new Error("This should never happen. Prepare to die.");
-}
+};
 
 const entities = {
     "amp":    "&",
@@ -186,12 +186,12 @@ const entities = {
     "rarr":   "→",
     "darr":   "↓",
     "uarr":   "↑",
-}
+};
 
 /**
  * Takes an input, and unescapes the HTML entities inside.
- * Handles certain named entities (only some, see above) and codepoint entities. 
- * @param {string} input 
+ * Handles certain named entities (only some, see above) and codepoint entities.
+ * @param {string} input
  * @returns {string}
  */
 module.exports.unescapeHTML = (input = "") => {
@@ -215,7 +215,7 @@ module.exports.unescapeHTML = (input = "") => {
         input = input.replace(res[0], ent);
     }
     return input;
-}
+};
 
 /**
  * "Humanizes" a millisecond duration.
@@ -225,19 +225,19 @@ module.exports.unescapeHTML = (input = "") => {
  */
 module.exports.humanizeDuration = (millis) => {
     const periods = [
-        ["year",   60 * 60 * 24 * 365 * 1000],
-        ["month",  60 * 60 * 24 * 30 * 1000],
-        ["day",    60 * 60 * 24 * 1000],
-        ["hour",   60 * 60 * 1000],
+        ["year", 60 * 60 * 24 * 365 * 1000],
+        ["month", 60 * 60 * 24 * 30 * 1000],
+        ["day", 60 * 60 * 24 * 1000],
+        ["hour", 60 * 60 * 1000],
         ["minute", 60 * 1000],
-        ["second", 1000]
+        ["second", 1000],
     ];
-    const strings = []
+    const strings = [];
     for(const period of periods) {
         if(millis > period[1]) {
-            let value = Math.floor(millis / period[1])
+            const value = Math.floor(millis / period[1]);
             strings.push(`${value} ${period[0]}${value >= 1 ? "s" : ""}`);
-            millis = millis - (value * period[1])
+            millis = millis - (value * period[1]);
         }
     }
     return strings.join(", ");
@@ -245,21 +245,20 @@ module.exports.humanizeDuration = (millis) => {
 
 /**
  * A collection of user agents.
- * Source: https://techblog.willshouse.com/2012/01/03/most-common-user-agents/ (updated March 26th, 2022)
+ * Source: Top 10 user agents from here; https://techblog.willshouse.com/2012/01/03/most-common-user-agents/ (updated May 29th, 2023)
  */
 module.exports.useragents = {
     bear: `bear/${this.gitinfo("%h")} (by mechabubba)`,
     random: [
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.102 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:98.0) Gecko/20100101 Firefox/98.0",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:97.0) Gecko/20100101 Firefox/97.0",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.74 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.82 Safari/537.36",
-        "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.109 Safari/537.36",
-        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.3 Safari/605.1.15",
-        "Mozilla/5.0 (X11; Linux x86_64; rv:98.0) Gecko/20100101 Firefox/98.0"
-    ]
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/113.0",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/112.0",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/113.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.4 Safari/605.1.15",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36",
+        "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.0",
+    ],
 };

@@ -8,12 +8,12 @@ const { isArray } = require("lodash");
 const types = {
     command: ["c", "cmd", "cmds", "command", "commands"],
     events: ["e", "event", "events", "l", "listen", "listener", "listeners"],
-}
+};
 
 const determineConstruct = function(choice) {
     if (types.command.includes(choice)) {
         return "commands";
-    } else if (types.command.includes(choice)) {
+    } else if (types.events.includes(choice)) {
         return "events";
     } else {
         return null;
@@ -67,7 +67,7 @@ module.exports = [
         if (!constructProperty) return message.reply(`${client.reactions.negative.emote} Unrecognized construct "${choice}"! This must be either \`command\` or \`event\`.`);
         const filePath = content.substring(choice.length).trim();
         if (!filePath.length) return message.reply(`${client.reactions.negative.emote} A path is required.`);
-        
+
         const loadResult = client.handler.requireModule(client[constructProperty], filePath, false);
         return message.reply({ content: `\`\`\`\n${loadResult.message}\n\`\`\``, allowedMentions: { repliedUser: false } });
     }),
@@ -85,7 +85,7 @@ module.exports = [
         const constructProperty = determineConstruct(choice);
         if (!constructProperty) return message.reply(`${client.reactions.negative.emote} Unrecognized construct "${choice}"! This must be either \`command\` or \`event\`.`);
         const pathsResult = resolveInputToPaths(client, constructProperty, content, choice);
-        
+
         const unloadResult = isArray(pathsResult.value) ? client.handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : client.handler.unloadModule(client[constructProperty], pathsResult.value);
         return message.reply({ content: `\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n\`\`\``, allowedMentions: { repliedUser: false } });
     }),
@@ -106,7 +106,7 @@ module.exports = [
         if (!pathsResult.value) return message.reply(`${client.reactions.negative.emote} A path or name is required.\n\nIf you're targeting an anonymous block, use \`unload\` instead!`);
         const unloadResult = isArray(pathsResult.value) ? client.handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : client.handler.unloadModule(client[constructProperty], pathsResult.value);
         if (!unloadResult.success || unloadResult.error) return message.reply(`\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n\`\`\``);
-        
+
         const loadResult = isArray(pathsResult.value) ? client.handler.requireMultipleModules(client[constructProperty], pathsResult.value, false) : client.handler.requireModule(client[constructProperty], pathsResult.value, false);
         return message.reply({ content: `\`\`\`\n${pathsResult.message}\n${unloadResult.message}\n${loadResult.message}\n\`\`\``, allowedMentions: { repliedUser: false } });
     }),
@@ -120,13 +120,13 @@ module.exports = [
         if (!choice) {
             return message.reply(`${client.reactions.negative.emote} No input provided. Perform \`help ${this.firstName}\` for more information.`);
         }
-        
+
         const constructProperty = determineConstruct(choice);
         if (!constructProperty) return message.reply(`${client.reactions.negative.emote} Unrecognized construct "${choice}"! This must be either \`command\` or \`event\`.`);
         const filePath = content.substring(choice.length).trim();
         if (!filePath.length) return message.reply(`${client.reactions.negative.emote} A path is required.`);
         const loadResult = client.handler.requireModule(client[constructProperty], filePath, false);
-        
+
         // Putting the path in an array prevents periods from being interpreted as traversing the db
         if (loadResult.value) client.handler.modules.set([client.handler.trimPath(loadResult.value)], true);
         return message.reply({ content: `\`\`\`\n${loadResult.message}\n${loadResult.value ? "Enabled the module" : ""}\n\`\`\``, allowedMentions: { repliedUser: false } });
@@ -144,7 +144,7 @@ module.exports = [
 
         const constructProperty = determineConstruct(choice);
         if (!constructProperty) return message.reply(`${client.reactions.negative.emote} Unrecognized construct "${choice}"! This must be either \`command\` or \`event\`.`);
-        
+
         const pathsResult = resolveInputToPaths(client, constructProperty, content, choice);
         const multipleModules = isArray(pathsResult.value);
         const unloadResult = multipleModules ? client.handler.unloadMultipleModules(client[constructProperty], pathsResult.value) : client.handler.unloadModule(client[constructProperty], pathsResult.value);

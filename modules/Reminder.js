@@ -99,13 +99,13 @@ class Reminder {
                 this.isCron = true;
                 content = "0 * * * *";
                 break;
-            
+
             case "@minutely":
             case "-minutely":
                 this.isCron = true;
                 content = "* * * * *";
                 break;
-            
+
             case "@secondly":
             case "-secondly":
                 this.isCron = true;
@@ -134,23 +134,23 @@ class Reminder {
     /**
      * Creates a Reminder from an object, such as one from storage.
      * Courtesy of https://stackoverflow.com/a/50856428!
-     * @param {Object} obj An object of data to create a Reminder from. 
+     * @param {Object} obj An object of data to create a Reminder from.
      * @returns {Reminder} a Reminder from the data in object obj.
      */
     static fromObject(obj) {
-        const reminder = Object.create(this.prototype) // Create a reminder object **without calling the constructor.**
+        const reminder = Object.create(this.prototype); // Create a reminder object **without calling the constructor.**
         return Object.assign(reminder, obj);
     }
 
     /** Helper function to get the start time in seconds. */
-    get startSecs() { return Math.round(this.start / 1000) }
+    get startSecs() { return Math.round(this.start / 1000); }
 
     /** Helper function to get the end time in seconds. */
     get endSecs() { return this.isCron ? undefined : Math.round(this.end / 1000); }
 
     /**
      * Gets the unique ID of this reminder; in this case, its just the userID concatenated with the reminder ID.
-     * @returns {String} The unique ID of the reminder. 
+     * @returns {String} The unique ID of the reminder.
      */
     get uniqueID() { return `${this.userID}:${this.ID || "<unknown>"}`; }
 
@@ -175,9 +175,9 @@ class Reminder {
      * - Whether the bot exists in the guild.
      * - Whether the channel exists in the guild.
      * - Finally, whether the user exists in the guild.
-     * 
+     *
      * Apart from checking the validity of a reminder, this method isn't entirely useless; if the guild/user isn't cached, it will get cached for future use.
-     * @param {Discord.Client} client 
+     * @param {Discord.Client} client
      * @returns {boolean} Whether this reminder is valid or not.
      */
     async isValid(client) {

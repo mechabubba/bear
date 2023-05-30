@@ -26,7 +26,7 @@ module.exports = [
         usage: "[hook_url] (...text)",
         locked: ["hosts"],
     }, async function(client, message, content, [hook_url, ...args]) {
-        const matched = hook_url.match(/discord.com\/api\/webhooks\/([^\/]+)\/([^\/]+)/);
+        const matched = hook_url.match(/discord.com\/api\/webhooks\/([^/]+)\/([^/]+)/);
         if(!matched[1] || !matched[2]) {
             return message.reply(`${client.reactions.negative.emote} Invalid webhook url provided.`);
         }
@@ -38,5 +38,5 @@ module.exports = [
         } catch(e) {
             return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
-    })
+    }),
 ];

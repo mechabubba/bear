@@ -21,7 +21,7 @@ const result = {
     SUCCESS: 1,
     WARNING: 0,
     FAILURE: -1,
-}
+};
 
 /**
  * The result returned from execute().
@@ -131,7 +131,7 @@ const execute = (program, input) => {
         output = res.join("\n");
     }
 
-    return { result: result.SUCCESS, log: `${breakpoint ? `Broke at character ${pprog}`: "Evaluated successfully"} with ${operations} operations.`, output: output };
+    return { result: result.SUCCESS, log: `${breakpoint ? `Broke at character ${pprog}` : "Evaluated successfully"} with ${operations} operations.`, output: output };
 };
 
 
@@ -141,4 +141,4 @@ if(args.length > 0) {
     process.send(value);
 }
 
-module.exports = { execute, result, options: { operation_limit, debug_limit } }
+module.exports = { execute, result, options: { operation_limit, debug_limit } };

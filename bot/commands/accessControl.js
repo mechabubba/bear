@@ -51,14 +51,14 @@ module.exports = [
         if (!group) return message.reply(`${client.reactions.negative.emote} Unrecognized type \`${type}\`! This must be either \`user\` or \`guild\`.`);
         if (!numeric.test(id)) return message.reply(`${client.reactions.negative.emote} A valid ID is required!`);
 
-        let group_arr = client.storage.get(group.path) ?? [];
+        const group_arr = client.storage.get(group.path) ?? [];
         if (group_arr.includes(id)) {
             message.react(client.reactions.inquiry.id);
             return message.reply(`${client.reactions.inquiry.emote} ${startCase(group.type)} \`${id}\` is already blocked!`);
         }
         group_arr.push(id);
         client.storage.set(group_arr);
-        
+
         log.info(`${message.author.tag} blocked ${group.type} "${id}" from accessing ${client.user.tag}`);
         return message.reply({ content: `${client.reactions.positive.emote} Blocked ${group.type} \`${id}\`!`, allowedMentions: { repliedUser: false } });
     }),
@@ -76,7 +76,7 @@ module.exports = [
         if (!group) return message.reply(`${client.reactions.negative.emote} Unrecognized type \`type\`! This must be either \`user\` or \`guild\`.`);
         if (!numeric.test(id)) return message.reply(`${client.reactions.negative.emote} A valid ID is required!`);
 
-        let group_arr = client.storage.get(group.path);
+        const group_arr = client.storage.get(group.path);
         if (!group_arr || !group_arr.includes(id)) {
             return message.reply(`${client.reactions.inquiry.emote} ${startCase(group.type)} \`${id}\` is not blocked!`);
         }
@@ -134,7 +134,7 @@ module.exports = [
         }
         // Regardless of the above, if there's no ID, we're done. The ID doesn't exist regardless if the group exists.
         if (!userID) return message.reply({ content: `${client.reactions.positive.emote} ${replies.join("\n")}`, allowedMentions: { repliedUser: false } });
-        
+
         // Check to see if we're about to interact with a group we aren't allowed to be.
         if (forbiddenGroups.includes(group_name)) {
             return message.reply(`${client.reactions.negative.emote} Directly interacting with this group is forbidden.`);

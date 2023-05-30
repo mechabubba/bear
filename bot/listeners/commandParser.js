@@ -34,7 +34,7 @@ module.exports = new ListenerBlock({
             return;
         }
     }
-    
+
     // Parsing
     let content = message.content.trim();
     const lowercase = content.toLowerCase();

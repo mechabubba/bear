@@ -13,28 +13,28 @@ const chan_cooldown = 1000;  // Rate-limited to 1 request per second.
 
 /**
  * Gets a list of 4chan boards and organizes them based on if they're red or blue boards.
- * @param {Client} client 
- * @returns 
+ * @param {Client} client
+ * @returns {Object} An object with two properties; `all` is an array of all boards, and `nsfw` is an array of non-worksafe boards.
  */
 const get4chanBoards = async () => {
     const resp = await fetch("https://a.4cdn.org/boards.json");
     if(!resp.ok) throw new Error(resp.statusText);
-    
+
     const json = await resp.json();
     const boards = {
         all: [],
-        nsfw: []
+        nsfw: [],
     };
 
     for(let i = 0; i < json.boards.length; i++) {
         const board = json.boards[i];
         boards.all.push(board.board);
         if(board.ws_board == 0) {
-            boards.nsfw.push(board.board)
+            boards.nsfw.push(board.board);
         }
     }
     return boards;
-}
+};
 
 module.exports = [
     new CommandBlock({
@@ -53,10 +53,10 @@ module.exports = [
 
         try {
             const resp = await fetch(`https://api.rule34.xxx/index.php?page=dapi&s=post&json=1&q=index&limit=${r34_post_limit}&tags=${[...args].join("+")}`, {
-                headers: { "User-Agent": useragents.bear }
-            })
+                headers: { "User-Agent": useragents.bear },
+            });
             if(!resp.ok) throw new Error(resp.statusText);
-			
+
             const json = await resp.json();
             const img = json[Math.floor(Math.random() * json.length)];
             img.tags = img.tags.split(" ");
@@ -94,11 +94,11 @@ module.exports = [
             await sleep(client.cookies["e621_cd"] - _now);
         }
         client.cookies["chan_cd"] = Date.now() + e621_cooldown;
-        
+
         try {
             const resp = await fetch(`https://e621.net/posts.json?limit=1&tags=${encodeURIComponent([...args, "order:random"].join(" "))}`, {
-                headers: { "User-Agent": useragents.bear }
-            })
+                headers: { "User-Agent": useragents.bear },
+            });
             if(!resp.ok) throw new Error(resp.statusText);
 
             const json = await resp.json();
@@ -141,7 +141,7 @@ module.exports = [
             if(!isallowed(message.author.id)) {
                 return message.reply(`${client.reactions.negative.emote} You do not have permission to do this.`);
             }
-            
+
             let boards;
             try {
                 boards = await get4chanBoards(client);
@@ -194,7 +194,7 @@ module.exports = [
                 .setTimestamp(post.time * 1000);
 
             if(post.com) {
-                const desc = unescapeHTML(post.com.replace(/\<br\>/g, "\n").replace(/(<([^>]+)>)/gi, ""));
+                const desc = unescapeHTML(post.com.replace(/<br>/g, "\n").replace(/(<([^>]+)>)/gi, ""));
                 embed.setDescription(`\`\`\`\n${desc.length > 4089 ? desc.substring(0, 4086) + "..." : desc}\`\`\``);
             }
 
@@ -207,5 +207,5 @@ module.exports = [
         } catch(e) {
             return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
-    })
+    }),
 ];

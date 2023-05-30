@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 const CommandBlock = require("../../modules/CommandBlock");
 const { numeric } = require("../../modules/regexes");
 
@@ -10,9 +11,9 @@ module.exports = new CommandBlock({
     description: "Rolls some dice. Default roll bound is 100.",
     usage: "[sides] or [die_count]d[sides]",
 }, async function(client, message, content, [bound = "100"]) {
-    let rolls = [];
+    const rolls = [];
     let total = amount = sides = 0;
-    
+
     if(numeric.test(bound)) {
         amount = 1;
         sides = parseInt(bound);
@@ -31,7 +32,7 @@ module.exports = new CommandBlock({
     }
 
     for(let i = 0; i < amount; i++) {
-        let roll = Math.ceil(Math.random() * sides);
+        const roll = Math.ceil(Math.random() * sides);
         rolls.push(roll);
         total += roll;
     }

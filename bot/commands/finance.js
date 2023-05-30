@@ -44,7 +44,7 @@ module.exports = new CommandBlock({
             if(!client.storage.has(["local", "finance_aliases", alias])) {
                 return message.reply(`${client.reactions.negative.emote} This alias doesn't exist!`);
             }
-            
+
             client.storage.delete(["local", "finance_aliases", alias]);
             return message.reply({ content: `${client.reactions.positive.emote} Removed alias \`${alias}\`.`, allowedMentions: { repliedUser: false } });
         }

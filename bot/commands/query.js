@@ -18,7 +18,7 @@ module.exports = new CommandBlock({
         ip = split[0];
         port = split[split.length - 1];
 
-        let parsed = parseInt(port);
+        const parsed = parseInt(port);
         if(!parsed || (parsed < 0 || parsed > 65535)) {
             port = 27015;
         } else {
@@ -34,7 +34,7 @@ module.exports = new CommandBlock({
         try {
             ip = await resolveHostname(ip);
         } catch(e) {
-            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``)
+            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
     }
 
@@ -66,14 +66,14 @@ module.exports = new CommandBlock({
     embed.addFields([
         {
             name: "Basic Info",
-            value: `IP: \`${vanity}\`\nConnect: steam://connect/${vanity}`
+            value: `IP: \`${vanity}\`\nConnect: steam://connect/${vanity}`,
         }, {
             name: `Current Players (${info.players}/${info.max_players}${info.players >= info.max_players ? " - full!" : ``})`,
-            value: plys
+            value: plys,
         }, {
             name: "Current Map",
-            value: `\`${info.map}\``
-        }
+            value: `\`${info.map}\``,
+        },
     ]);
 
     return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
@@ -82,11 +82,11 @@ module.exports = new CommandBlock({
 /**
  * Resolves an IP from a given hostname.
  * https://stackoverflow.com/a/71580190/17188891
- * @param {string} hostname - The hostname to give it. 
+ * @param {string} hostname - The hostname to give it.
  * @returns {string} The IP, if it could be resolved.
  */
 async function resolveHostname(hostname) {
-    let obj = await dns.lookup(hostname).catch((error) => {
+    const obj = await dns.lookup(hostname).catch((error) => {
         throw error;
     });
     if(obj?.address) {

@@ -31,8 +31,8 @@ module.exports = new CommandBlock({
             .setURL(`https://discordapp.com/channels/${guild.id}/`)
             .setThumbnail(guild.iconURL({ format: "png", dynamic: true }))
             .addFields([
-                { name: "Owner",   value: `<@${guild.ownerId}>`,  inline: true },
-                { name: "Members", value: `${guild.memberCount}`, inline: true }
+                { name: "Owner", value: `<@${guild.ownerId}>`, inline: true },
+                { name: "Members", value: `${guild.memberCount}`, inline: true },
             ])
             .setFooter({ text: guild.id })
             .setTimestamp(guild.createdTimestamp)
