@@ -70,7 +70,7 @@ module.exports = [
 ];
 
 try {
-    cowfiles = execSync("cowsay -l | tail -n +2 | tr '\n' ' '").toString();
+    cowfiles = execSync("cowsay -l | tail -n +2 | tr -d '\n' | tr '\n' ' '").toString(); // In order: get list, cut off header line, cut off last newline, and then replace all newlines to strings.
     if(/not found|not recognized/g.test(cowfiles)) {
         throw new Error("`cowsay` is not a recognized command.");
     }
