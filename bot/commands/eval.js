@@ -14,11 +14,11 @@ module.exports = new CommandBlock({
     clientChannelPermissions: ["USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"],
 }, async function(client, message, code, args) {
     if (!code) return message.react(client.reactions.negative.id);
-    
+
     let output;
     try {
         const result = eval(code);
-        const cleaned = (isString(result) ? result : inspect(result)).replace(client.token, "<client.token>"); // This is *only* a basic precaution. 
+        const cleaned = (isString(result) ? result : inspect(result)).replace(client.token, "<client.token>"); // This is *only* a basic precaution.
         message.react(client.reactions.positive.id);
         log.debug(`Eval from ${message.author.tag} resulted in:`, result);
         output = await message.reply({ content: `\`\`\`js\n${cleaned.length > 1991 ? cleaned.substring(0, 1988) + "..." : (cleaned || "undefined")}\`\`\``, allowedMentions: { repliedUser: false } });

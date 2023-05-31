@@ -70,11 +70,11 @@ module.exports = [
 ];
 
 try {
-    cowfiles = execSync("cowsay -l | tail -n +2 | tr '\n' ' '".trim()).toString(); // In order: get list, cut off header line, cut off last newline, and then replace all newlines to strings.
+    cowfiles = execSync("cowsay -l | tail -n +2 | tr '\n' ' '").toString(); // In order: get list, cut off header line, and replace all newlines to strings.
     if(/not found|not recognized/g.test(cowfiles)) {
         throw new Error("`cowsay` is not a recognized command.");
     }
-    cowfiles = cowfiles.split(" ");
+    cowfiles = cowfiles.split(" ").slice(0, -1); // Cut off last invalid value.
 } catch(e) {
     // Cowsay not installed, do not instantiate it as a command.
     module.exports.splice(-1);

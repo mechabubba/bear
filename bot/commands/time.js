@@ -6,9 +6,17 @@ const sdate = new Date(1993, 8, 1); // The beginning of Eternal September. Month
 module.exports = [
     new CommandBlock({
         names: ["thetime", "time"],
-        description: "Tells the time.",
-    }, (client, message, content, args) => {
-        return message.reply({ content: `It is currently **${DateTime.now().toLocaleString(DateTime.DATETIME_FULL)}.**`, allowedMentions: { repliedUser: false } });
+        description: "Tells the time. Optionally tells the time within a specified timezone.",
+        usage: "(timezone)",
+    }, (client, message, content, [zone, ...args]) => {
+        let date = DateTime.now();
+        if (zone) {
+            date = date.setZone(zone);
+            if (!date.isValid) {
+                return message.reply(`${client.reactions.negative.emote} The provided timezone is invalid.`);
+            }
+        }
+        return message.reply({ content: `It is currently **${date.toLocaleString(DateTime.DATETIME_FULL, { timeZoneName: "short" })}.**`, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
         names: ["sdate"],

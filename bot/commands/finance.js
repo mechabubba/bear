@@ -74,7 +74,7 @@ module.exports = new CommandBlock({
                     .setTimestamp(p.regularMarketTime)
                     .setAuthor({
                         name: p.shortName || p.longName ? `${p.shortName || p.longName} (${p.symbol})` : p.symbol,
-                        url: `https://finance.yahoo.com/quote/${p.symbol}`
+                        url: `https://finance.yahoo.com/quote/${p.symbol}`,
                     });
 
                 const desc = (sd.previousClose != null ? `Prev. Close:   ${(sd.previousClose).toFixed(4)}\n` : "") +

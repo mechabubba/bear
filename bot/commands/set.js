@@ -142,10 +142,10 @@ module.exports = [
         locked: "hosts",
     }, async function(client, message, content, args) {
         await sleep(2000); // Wait 2 seconds to give image links a higher chance of embedding
-        
+
         const url = resolveInputToImage(await message.fetch(), content);
         if (!url) return message.reply(`${client.reactions.negative.emote} No image detected; you need to attatch or link to an image. Perform \`help ${this.firstName}\` for more information.`);
-        
+
         try {
             await client.user.setAvatar(url);
         } catch (error) {
@@ -164,7 +164,7 @@ module.exports = [
     }, async function(client, message, content, args) {
         if (!content) return message.reply(`${client.reactions.negative.emote} No text provided. Perform \`help ${this.firstName}\` for more information.`);
         if (!validateUsername(content)) return message.reply(`${client.reactions.negative.emote} Username must be 2 to 32 characters long and not contain \`@\`, \`#\`, \`:\`, or \` \`\`\` \`.`);
-        
+
         try {
             await client.user.setUsername(content);
         } catch (error) {
