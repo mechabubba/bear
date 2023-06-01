@@ -16,7 +16,7 @@ module.exports = new CommandBlock({
     usage: "[query]",
     locked: ["hosts"]
 }, async function(client, message, content, args) {
-    const appid = client.config.get(["keys", "wolfram_appid"]);
+    const appid = client.config.get(["secrets", "wolfram_appid"]);
     if(!appid) return message.reply(`${client.reactions.negative.emote} The bot does not have a configured Wolfram Alpha AppID, which is necessary to make calls to its API!`);
     if(!content) return message.reply(`${client.reactions.negative.emote} You must input a piece of text to query.`);
 

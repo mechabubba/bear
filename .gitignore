@@ -39,6 +39,7 @@ Thumbs.db
 *.env.test
 **/data/*
 !**/data/.gitkeep
+!**/data/countries-states-cities.min.json
 **/temp/*
 !**/temp/.gitkeep
 **/logs/*

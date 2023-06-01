@@ -69,8 +69,9 @@ module.exports.defaultConfig = {
             "reminderalert": "620996211188695041",
         },
     },
-    "keys": {
+    "secrets": {
         "wolfram_appid": null,
+        "steam_apikey": null,
     },
 };
 
