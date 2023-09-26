@@ -3,6 +3,7 @@ const CommandConstruct = require("./CommandConstruct");
 const EventConstruct = require("./EventConstruct");
 const ReminderEmitter = require("./ReminderEmitter");
 const Handler = require("./Handler");
+const { TimedIntervalCache } = require("./TimedCache"); 
 const log = require("./log");
 
 const Discord = require("discord.js");
@@ -80,6 +81,12 @@ class Client extends Discord.Client {
          * @type {ReminderEmitter}
          */
         this.reminders = new ReminderEmitter(this);
+
+        /**
+         * Temporary command logging.
+         * @type {TimedIntervalCache}
+         */
+        this.cmdlog = new TimedIntervalCache();
     }
 }
 

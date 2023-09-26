@@ -150,7 +150,7 @@ class CommandConstruct extends BaseConstruct {
      * @param {Discord.Message} message
      * @param {...*} [passThrough]
      */
-    runByName(name, message, ...passThrough) {
+    runByName(name, message, options = {}, ...passThrough) {
         if (!name || !message) return;
         if (!this.index.has(name)) {
             this.client.emit("ignoredMessage", name, message);
@@ -158,7 +158,7 @@ class CommandConstruct extends BaseConstruct {
         }
         const id = this.index.get(name);
         if (!this.cache.has(id)) return log.warn(`Command name "${name}" was mapped to id "${id}" but no corresponding command block found in the cache`);
-        this.run(id, message, ...passThrough);
+        this.run(id, message, options, ...passThrough);
     }
 }
 

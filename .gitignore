@@ -48,5 +48,4 @@ Thumbs.db
 # bot stuff
 bot/commands/disabled/
 modules/BearDB.js
-modules/TimedCache.js
 modules/ConfigManager.js
