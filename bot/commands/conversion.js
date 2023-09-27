@@ -20,6 +20,7 @@ module.exports = [
         description: "Converts hexadecimal to text.",
         usage: "[hex]",
     }, async function(client, message, content, args) {
+        content = content.replace(/[^0-9A-Fa-f]/g, "");
         if(!content) return message.reply(`${client.reactions.negative.emote} ${nocontent}`);
         let buf = "";
         for(let i = 0; i < content.length; i += 2) {
@@ -41,6 +42,7 @@ module.exports = [
         description: "Converts base64 to text.",
         usage: "[base64]",
     }, async function(client, message, content, args) {
+        content = content.replace(/[^0-9A-Za-z./=]/g, "")
         if(!content) return message.reply(`${client.reactions.negative.emote} ${nocontent}`);
         const buf = Buffer.from(content, "base64").toString();
         return message.reply({ content: `\`\`\`\n${buf.length > 1993 ? buf.substring(0, 1990) + "..." : buf}\`\`\``, allowedMentions: { repliedUser: false } });
