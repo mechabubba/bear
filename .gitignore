@@ -44,6 +44,8 @@ Thumbs.db
 !**/temp/.gitkeep
 **/logs/*
 !**/logs/.gitkeep
+bin/
+!bin/.gitkeep
 
 # bot stuff
 bot/commands/disabled/
