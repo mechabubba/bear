@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 const CommandBlock = require("../../modules/CommandBlock");
 const { spawn, execSync } = require("child_process");
 const { createHash } = require("crypto");
@@ -7,26 +6,16 @@ const log = require("../../modules/log");
 
 module.exports = new CommandBlock({
     names: ["latex"],
-    description: "*Tries* to render a string of latex.\nNotes;\n- GIF functionality is broken.\n- Sometimes it shits the bed.\n\nRenderer modified and based on [mathtex]() by Josh Forkosh Associates, Inc.",
+    description: "*Tries* to render a string of latex.\nNote that sometimes it will shit the bed without any discernable reason.\n\nThe renderer is from the standard texlive debian package, with images generated through a special binary based on [mathtex](https://github.com/mechabubba/mathtex) by Josh Forkosh Associates, Inc (modified by mechabubba).",
     usage: "[LᴬTₑX]"
 }, function(client, message, content, args) {
     const opts = {
-        encoding: "png",
-        packages: ["color"],
+        defaultPackages: ["amsmath", "amsfonts", "amssymb", "color"], // default packages (handled by mathtex)
+        newPackages: [],
     };
 
     if (!content) {
         return message.reply(`${client.reactions.negative.emote} You must input a piece of text to render.`);
-    }
-
-    // pre-pre-processing?
-    // og binary handles these options poorly. should be looked into...
-    
-    // handle gif vs png output. gif seems to be broken...?
-    content.replace(/\\png/, "");
-    if (content.includes("\\gif")) {
-        content.replace(/\\gif/, "");
-        opts.encoding = "";
     }
 
     // handle user provided packages
@@ -38,43 +27,46 @@ module.exports = new CommandBlock({
         if(!packageinstalled(pkg)) {
             return message.reply(`${client.reactions.negative.emote} Package \`${pkg}\` is not installed.`);
         }
-        if(!opts.packages.includes(pkg)) {
+        if(!opts.defaultPackages.includes(pkg) && !opts.newPackages.includes(pkg)) {
             opts.packages.push(pkg);
         }
         content = content.replace(new RegExp(`\\\\usepackage{${pkg}}`, "g"), "")
     }
 
-    let eqn = `${opts.encoding ? `\\${opts.encoding}` : ""} ${opts.packages.map(x => `\\usepackage{${x}}`).join(" ")} \\color{white} ${content}`; 
+    let eqn = `${opts.newPackages.map(x => `\\usepackage{${x}}`).join(" ")} \\color{white} ${content}`; 
     let buf = Buffer.from([]);
+    let err = ""; // error data
     log.debug(`INPUT EQN: ${eqn}`);
 
-    const child = spawn("./bin/mathtex", [eqn, "-m 0", "-n 1", "-s 1"]);
+    const child = spawn("./bin/mathtex", ["-m 0", "-d 240", "-s", "-t", eqn]);
     let threw = false;
 
     child.stdout.on("data", (d) => {
-        log.debug(d);
-        log.debug(d.toString('utf8'));
+        //log.debug(d);
+        //log.debug(d.toString('utf8'));
         buf = Buffer.concat([buf, d])
     });
     child.stderr.on("data", (d) => {
-        threw = true;
-        log.error(d);
-        log.error(d.toString());
-        return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${d}\`\`\``);
+        if (!d.toString().includes("locate")) {
+            threw = true; // temp
+        }
+        err += d.toString();
     });
     
     child.on("close", (code) => {
         if(threw) {
-            return;
+            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${err}\`\`\``);
         }
 
+        // mathtex supports png and gif output via a directive. check for either here.
         let ext = buf.subarray(0, 8).toString("latin1");
         if(ext.startsWith('\x89\x50\x4E\x47\x0D\x0A\x1A\x0A')) {
             ext = "png";
         } else if (ext.startsWith('\x47\x49\x46\x38')) {
             ext = "gif";
         } else {
-            ext = undefined;
+            // should never happen
+            ext = undefined; 
         }
         const attachment = new MessageAttachment(buf, `out${ext ? `.${ext}` : ""}`);
         return message.reply({ files: [attachment], allowedMentions: { repliedUser: false } });
