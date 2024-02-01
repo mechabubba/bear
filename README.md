@@ -5,7 +5,7 @@
 
 *"the best discord bot"* — @everyone
 
-bear [stylized accordingly] is my personal Discord bot. While it doesn't currently have a main focus or utility, it includes many features that I (mechabubba) find useful and use regularly. You can invite the official bot [here](https://discord.com/oauth2/authorize?client_id=435224030459723776&scope=bot&permissions=8); do note that this link will automatically give it the "`ADMINISTRATOR`" permission.
+bear [stylized accordingly] is my personal Discord bot. While it doesn't currently have a main focus or utility, it includes many features that I find useful and use regularly. You can invite the official bot [here](https://discord.com/oauth2/authorize?client_id=435224030459723776&scope=bot&permissions=8); do note that this link will automatically give it the "`ADMINISTRATOR`" permission.
 
 bear is a modified fork of [sandplate](https://github.com/06000208/sandplate) 0.0.7, a powerful template bot. See its readme for more information.
 
