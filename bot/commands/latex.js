@@ -63,7 +63,7 @@ module.exports = new CommandBlock({
         }
 
         // mathtex supports .png and .gif output via a directive. Check for either via magic bytes here.
-        let ext = buf.subarray(0, 8).toString("latin1");
+        let ext = buf.subarray(0x00, 0x08).toString("latin1");
         if(ext.startsWith('\x89\x50\x4E\x47\x0D\x0A\x1A\x0A')) {
             ext = "png";
         } else if (ext.startsWith('\x47\x49\x46\x38')) {
@@ -72,6 +72,27 @@ module.exports = new CommandBlock({
             // Should never happen...
             ext = undefined; 
         }
+
+        // Determine size of the image. If its a 1x1 image, nothing got rendered; don't bother attaching it.
+        let dimensions, width, height;
+        switch(ext) {
+            case "png": // First eight bytes after 'IHDR' are width and height (four bytes each, big endian).
+                dimensions = buf.subarray(0x10, 0x18);
+                width = dimensions.readInt32BE(0);
+                height = dimensions.readInt32BE(4);
+                break;
+
+            case "gif": // First four bytes after magics are width and height (two bytes each, little endian).
+                dimensions = buf.subarray(0x06, 0x0A);
+                width = dimensions.readInt16LE(0);
+                height = dimensions.readInt16LE(2);
+                break;
+        }
+        
+        if (width == 1 || height == 1) {
+            return message.reply({ content: "(expression generated an empty image)", allowedMentions: { repliedUser: false } });
+        }
+
         const attachment = new MessageAttachment(buf, `out${ext ? `.${ext}` : ""}`);
         return message.reply({ files: [attachment], allowedMentions: { repliedUser: false } });
     });
