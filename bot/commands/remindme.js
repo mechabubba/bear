@@ -15,17 +15,16 @@ const slg = ["hosts"];
 module.exports = new CommandBlock({
     names: ["remindme", "remind", "reminder", "setreminder"],
     description: "Creates a reminder that will ping you at a certain date, interval, or time. Able to use human-written date/time statements or cron statements.\n• Steps, ranges, and asterisks are supported as cron statement elements.\n• *Some* nonstandard entries, such as @yearly, @monthly, @weekly, etc, are also supported. These can be prefaced with a `-` instead of an `@` so to avoid pinging random people.\n• Triggering a reminder early will cancel it, regardless if it's a cron statement or not.\n\n**For server owners:** Kicking an offending user (or me!) using this command for evil will automatically stop the reminder when it ticks.",
-    usage: "[[date / time / cron / human-readable string] | [message]], [list (\"*\" or channel_id?)], [trigger [id]], [edit [id] [message]], [remove [id]]",
+    usage: "[\"[date / time / cron / human-readable string] | [message]\"], [list (\"*\" || channel_id)], [trigger [id]], [edit [id] [message]], [remove [id]]",
 }, async function(client, message, content, args) {
+    console.log(content);
     if(!args[0]) return message.reply(`${client.reactions.negative.emote} Missing an argument. Perform \`help ${this.firstName}\` for more information.`);
 
     const subcmd = args.shift();
     switch(subcmd) {
         case "list": {
             const chan = args.shift();
-            const embed = new MessageEmbed()
-                .setColor("9B59B6")
-                .setTitle(`Reminders for ${message.author.username}`);
+            const embed = new MessageEmbed();
 
             const results = await client.reminders.getReminders(message.author.id, (r) => {
                 if((chan && (chan == "*" || chan == r.channelID)) || (!chan && (r.channelID == message.channel.id)) || (r.isDM && message.channel.isDMBased())) {
@@ -59,8 +58,22 @@ module.exports = new CommandBlock({
                 embed.setDescription(`No reminders${(chan && chan === "*") ? "" : " in this channel"}.`);
             }
 
-            embed.setTitle(`Reminders for ${message.author.username}`);
-            embed.setFooter({ text: `${results.length} active reminder(s)${(chan && chan === "*") ? "" : " here"}. ${large ? "Only displaying the first 25! " : ""}• See \`help remindme\` for usage information.` });
+            let title = `Reminders for ${message.author.username}`;
+            if (chan) {
+                // problem. we cannot rely solely on `client.channels` to get the right channel name.
+                // we will also not always have a guild id; we could try to steal one from a reminder that has a matching guild id, but said reminder won't always be there.
+                // revisit this...
+                try {
+                    const chan = await client.channels.fetch(chan);
+                    title += ` in #${chan.name}`;
+                } catch(e) {
+                    title += ` in an unknown channel?`;
+                }
+            }
+
+            embed.setColor("9B59B6")
+                .setTitle(title)
+                .setFooter({ text: `${results.length} active reminder(s)${(chan && chan === "*" || !chan) ? "" : " here"}. ${large ? "Only displaying the first 25! " : ""}• See \`help remindme\` for usage information.` });
             return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false } });
         }
 
@@ -125,7 +138,7 @@ module.exports = new CommandBlock({
             }
             ID = ID.toLowerCase();
 
-            const text = args.join(" ");
+            const text = content.substring(`edit ${ID}`.length, content.length);
             if(!text) {
                 return message.reply(`${client.reactions.negative.emote} You must input a piece of text to change it to!\nIf you're looking to remove a reminder, use the \`${this.firstName} stop\` command.`);
             }
@@ -140,8 +153,9 @@ module.exports = new CommandBlock({
                 reminder.message = text;
                 client.storage.set(["local", "reminders", message.author.id, ID], reminder);
 
+                const diff = `\`\`\`diff\n- ${old.replace(/\n/g, "\n- ")}\n+${reminder.message.replace(/\n/g, "\n+ ")}\`\`\``;
                 return message.reply({
-                    content: `${client.reactions.positive.emote} Your reminders text has been updated.\`\`\`diff\n- ${old}\n+ ${reminder.message}\`\`\``,
+                    content: `${client.reactions.positive.emote} Your reminders text has been updated.${diff}`,
                     allowedMentions: { parse: [], repliedUser: false },
                 });
             } catch(e) {
