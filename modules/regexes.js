@@ -41,3 +41,10 @@ module.exports.token = /(?<mfaToken>mfa\.[a-z0-9_-]{20,})|(?<basicToken>[a-z0-9_
  * The latter two ids may be omitted (ie. `https://discord.com/channels/1` is valid), as some purposes only require certain ids
  */
 module.exports.messageURL = /^https?:\/\/discord(?:app)?\.com\/channels\/(\d+)\/?(\d+)?\/?(\d+)?\/?$/i;
+
+/**
+ * Matches the format of a URL.
+ * 
+ * Taken from https://urlregex.com/.
+ */
+module.exports.URL = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\](\w*)))?)/;
