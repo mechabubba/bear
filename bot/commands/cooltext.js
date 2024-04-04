@@ -17,7 +17,7 @@ module.exports = [
     }, async function(client, message, content, [font, ...args]) {
         if(!content) return message.reply(`${client.reactions.negative.emote} You must input a piece of text to render!`);
         
-        const text = args.join();
+        const text = args.join(" ");
         if(text.length > settings.charlimit) return message.reply(`${client.reactions.negative.emote} There is a character limit of ${settings.charlimit} per image.`);
 
         const _now = Date.now();
