@@ -61,7 +61,6 @@ module.exports = [
         usage: "[text]",
         clientChannelPermissions: ["ATTACH_FILES"]
     }, async (client, message, content, args) => {
-        args.shift();
         return client.commands.runByName("cooltext", message, "burning", ["burning", ...args]);
     })
 ]
