@@ -1,5 +1,6 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const log = require("../../modules/log");
+const { isAvailable } = require("../../modules/miscellaneous");
 const fs = require("fs");
 const os = require("os");
 const { spawn, execSync } = require("child_process");
@@ -79,14 +80,11 @@ const cmd = (client, message, content, _, is_sh = true) => {
 }
 
 // Ran on command initialization.
-try {
-    cowfiles = execSync("cowsay -l | tail -n +2 | tr '\n' ' '").toString(); // In order: get list, cut off header line, and replace all newlines to strings.
-    if(/not found|not recognized/g.test(cowfiles)) {
-        throw new Error("`cowsay` is not a recognized command.");
-    }
-    cowfiles = cowfiles.split(" ").slice(0, -1); // Cut off last invalid value.
-} catch(e) {
-    // Cowsay not installed, do not instantiate it as a command.
-    log.warn("`cowsay` is not installed; uninstantiating it as a command.");
+if (!isAvailable("fortune") || !isAvailable("cowsay")) {
+    log.warn("Either cowsay or fortune wasn't found on your path; until either of these are accessible, the `fortune` command will be unavailable. Run the `debug` bot command for more information.");
     module.exports.splice(-1);
+} else {
+    // In order: get list, cut off header line, and replace all newlines to strings.
+    cowfiles = execSync("cowsay -l | tail -n +2 | tr '\n' ' '").toString();
+    cowfiles = cowfiles.split(" ").slice(0, -1);
 }

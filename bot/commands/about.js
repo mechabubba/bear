@@ -1,8 +1,7 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const { randomColor, gitinfo, humanizeDuration } = require("../../modules/miscellaneous");
 const package = require("../../package.json");
-const { MessageEmbed, Permissions } = require("discord.js");
-const djsver = require("discord.js").version;
+const { MessageEmbed, Permissions, version } = require("discord.js");
 const { DateTime } = require("luxon");
 
 // The permissions to give to the invite.

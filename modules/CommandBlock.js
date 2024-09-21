@@ -240,7 +240,7 @@ class CommandBlock extends BaseBlock {
         // Small hack to make my life easier, so we dont need to check these two perms every time.
         permissions = ["VIEW_CHANNEL", "SEND_MESSAGES", ...permissions];
         /** @type {Discord.GuildMember} */
-        const member = useClient ? message.guild.me : message.member;
+        const member = useClient ? message.guild.members.me : message.member;
         if (useChannel) {
             // This supports channel overrides, administrator, and guild owner https://github.com/discordjs/discord.js/blob/51551f544b80d7d27ab0b315da01dfc560b2c115/src/structures/GuildChannel.js#L153
             return message.channel.permissionsFor(member).has(permissions, true);

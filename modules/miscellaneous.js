@@ -8,6 +8,8 @@ const { promisify } = require("util");
 const { isArray, isString, isFinite } = require("lodash");
 const { Permissions } = require("discord.js");
 const { execSync } = require("child_process");
+const { accessSync, constants } = require("fs");
+const path = require("path");
 
 /**
  * Lets you "pause" for X amount of time, in milliseconds. (This is setTimeout's promise based custom variant)
@@ -161,7 +163,7 @@ module.exports.weightedRandom = (arr, weight) => {
     throw new Error("This should never happen. Prepare to die.");
 };
 
-const entities = {
+const html_entities = {
     "amp":    "&",
     "lt":     "<",
     "gt":     ">",
@@ -206,8 +208,8 @@ module.exports.unescapeHTML = (input = "") => {
             ent = String.fromCharCode(codepoint);
         } else {
             const code = ent.substr(1, ent.length - 2);
-            if(code in entities) {
-                ent = entities[code];
+            if(code in html_entities) {
+                ent = html_entities[code];
             } else {
                 ent = `&${code};`; // Visually similar but distinct from the above regex.
             }
@@ -217,6 +219,15 @@ module.exports.unescapeHTML = (input = "") => {
     return input;
 };
 
+const time_periods = [
+    ["year", 60 * 60 * 24 * 365 * 1000],
+    ["month", 60 * 60 * 24 * 30 * 1000],
+    ["day", 60 * 60 * 24 * 1000],
+    ["hour", 60 * 60 * 1000],
+    ["minute", 60 * 1000],
+    ["second", 1000],
+];
+
 /**
  * "Humanizes" a millisecond duration.
  * Luxons Duration class doesn't format uptimes very well (or at all?) above 24 hours, so this function does that.
@@ -224,16 +235,8 @@ module.exports.unescapeHTML = (input = "") => {
  * @returns {string}
  */
 module.exports.humanizeDuration = (millis) => {
-    const periods = [
-        ["year", 60 * 60 * 24 * 365 * 1000],
-        ["month", 60 * 60 * 24 * 30 * 1000],
-        ["day", 60 * 60 * 24 * 1000],
-        ["hour", 60 * 60 * 1000],
-        ["minute", 60 * 1000],
-        ["second", 1000],
-    ];
     const strings = [];
-    for(const period of periods) {
+    for(const period of time_periods) {
         if(millis > period[1]) {
             const value = Math.floor(millis / period[1]);
             strings.push(`${value} ${period[0]}${value >= 1 ? "s" : ""}`);
@@ -243,36 +246,81 @@ module.exports.humanizeDuration = (millis) => {
     return strings.join(", ");
 };
 
+const size_magnitudes = [
+    ["terabytes", "TB", 10 ** 12],
+    ["gigabytes", "GB", 10 ** 9],
+    ["megabytes", "MB", 10 ** 6],
+    ["kilobytes", "kB", 10 ** 3],
+    ["bytes", "B", 1]
+];
+
+/**
+ * "Humanizes" a byte value.
+ * @param {number} bytes The amount of bytes. 
+ * @returns {string}
+ */
+module.exports.humanizeSize = (bytes, precision = 2, fullname = false) => {
+    for (const mag of size_magnitudes) {
+        if (bytes < mag[2]) continue;
+        return `${(bytes / mag[2]).toPrecision(precision)}${fullname ? (" " + mag[0]) : mag[1]}`;
+    }
+    return "?";
+}
+
+/**
+ * Checks if a package or file is installed. Preface the file with a '/' to search for a binary relevant to the install directory, or '//' to search for a binary relevant to the root.
+ * @param {string} bin 
+ * @returns {boolean}
+ */
+module.exports.isAvailable = (bin) => {
+    if (bin.startsWith("/")) {
+        bin = bin.slice(1);
+        if (!bin.startsWith('/')) {
+            bin = path.relative(path.dirname(require.main.filename), bin);
+        }
+
+        try {
+            accessSync(bin, constants.R_OK | constants.X_OK);
+            return true;
+        } catch(e) {
+            return false;
+        }
+    } else {
+        try {
+            execSync(`which ${bin}`);
+            return true;
+        } catch(e) {
+            return false;
+        }
+    }
+}
+
 /**
  * A collection of user agents.
- * Source: Top 10 user agents from here; https://www.useragents.me/ (updated March 26th, 2024).
+ * Source: Top 10 user agents from here; https://www.useragents.me/ (updated September 21st, 2024).
  */
 module.exports.useragents = {
     bear: `bear/${this.gitinfo("%h")} (by mechabubba)`,
     random: [
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.3",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.3",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:124.0) Gecko/20100101 Firefox/124.",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.3",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.4",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 OPR/108.0.0.",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 Edg/121.0.0.",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.5",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.5",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.3",
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.3",
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 OPR/108.0.0.",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.",
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.3",
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.3",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.3",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.3",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36 Edg/128.0.0.",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:129.0) Gecko/20100101 Firefox/129.",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.3	2.1",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 OPR/112.0.0.",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 Edg/127.0.0.",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36 Edg/124.0.0.",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.",
+        "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/113.",
+        "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:129.0) Gecko/20100101 Firefox/129.",
+        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.3",
         "Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.",
-        "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.14",
+        "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.14",
         "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/109.0.0.0 Safari/537.36 Edg/109.0.1518.10",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/118.",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.3",
-        "Mozilla/5.0 (Windows NT 10.0; WOW64; Trident/7.0; rv:11.0) like Geck",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36 Edg/107.0.1418.2",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/112.0.0.0 Safari/537.36 Edg/112.0.1722.3",
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36 Edg/123.0.0."
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.",
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.3"
     ],
 };

@@ -1,45 +1,54 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const fetch = require("node-fetch");
+const { invertBy } = require("lodash");
 const log = require("../../modules/log");
 const { useragents } = require("../../modules/miscellaneous");
+const { MessageAttachment } = require("discord.js");
 
 const debug = false; // Set to true to send the JSON output over the regular output.
 
 module.exports = new CommandBlock({
     names: ["translate", "trans"],
-    description: "Translates text using the Google Translate API.\n\n**Language settings:** By default, the command takes given text and translates it to english. The `source` parameter can override this in one of two ways;\n• Set it to an (optional) ISO-639 language code to translate the text to a different language. Note that some supported languages differ from this standard.\n• Force it to translate between different languages by placing an underscore `_` in between the source and the destination language; for example, `zh-cn_es` would attempt to translate from simplified chinese to spanish.\n\nView all supported languages [here!](https://cloud.google.com/translate/docs/languages)",
-    usage: `(source) [foreign text]`,
+    description: "Translates text using the Google Translate API.\n\n**Language settings:** By default, the command takes given text and translates it to english. The `source` parameter can override this in one of two ways;\n• Set it to an (optional) ISO-639 language code to translate the text to a different language. Note that some supported languages differ from this standard.\n• Force it to translate between different languages by placing an underscore `_` in between the source and the destination language; for example, `zh-cn_es` would attempt to translate from simplified chinese to spanish.\n\nYou can view all of the supported languages by invoking the `--list` flag. Support for these languages are defined in [the Google Cloud docs](https://cloud.google.com/translate/docs/languages).",
+    usage: "[\"--list\"] | [(source) [...text]]",
 }, async function(client, message, content, args) {
     if(!content) return message.reply(`${client.reactions.negative.emote} You must input a piece of text to translate.`);
 
-    const langs = getlang(args[0]);
-    if(langs !== undefined) args.shift();
-
-    const api = `https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=${langs ? langs.sl : "auto"}&tl=${langs ? langs.tl : "en"}&q=${encodeURIComponent(args.join(" "))}`;
-    try {
-        const resp = await fetch(api, {
-            headers: {
-                "User-Agent": useragents.random[Math.floor(Math.random() * useragents.random.length)],
-            },
-        });
-        if(!resp.ok) throw new Error(resp.statusText);
-
-        const json = await resp.json();
-
-        let translation = "";
-        for(let i = 0; i < json[0].length; i++) {
-            translation += json[0][i][0];
+    if (args[0] == "--list") {
+        const flipped = invertBy(languages); // need lodash for multivalue (dont feel like writing it myself rn)
+        const arr = Object.keys(flipped).map(x => `${x} (${Array.isArray(flipped[x]) ? flipped[x].join(", ") : flipped[x]})`);
+        const attach = new MessageAttachment(Buffer.from(arr.join("\n")), "langs.txt");
+        message.reply({ content: `Here is a list of all of the currently supported languages. In parenthesis are the aliases you can use to convert text between their respective languages. Perform \`help ${this.firstName}\` for more information.`, files: [attach], allowedMentions: { repliedUser: false }})
+    } else {
+        const langs = getlang(args[0]);
+        if(langs !== undefined) args.shift();
+    
+        const api = `https://translate.googleapis.com/translate_a/single?client=gtx&dt=t&sl=${langs ? langs.sl : "auto"}&tl=${langs ? langs.tl : "en"}&q=${encodeURIComponent(args.join(" "))}`;
+        try {
+            const resp = await fetch(api, {
+                headers: {
+                    "User-Agent": useragents.random[Math.floor(Math.random() * useragents.random.length)],
+                },
+            });
+            if(!resp.ok) throw new Error(resp.statusText);
+    
+            const json = await resp.json();
+    
+            let translation = "";
+            for(let i = 0; i < json[0].length; i++) {
+                translation += json[0][i][0];
+            }
+    
+            const sjson = JSON.stringify(json, null, 4);
+            if(debug) log.debug(sjson);
+    
+            return message.reply({
+                content: debug ? `\`\`\`\n${sjson.length > 1993 ? sjson.substring(1990) + "..." : sjson}\`\`\`` : translation,
+                allowedMentions: { parse: [], repliedUser: false },
+            });
+        } catch(e) {
+            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
-
-        const sjson = JSON.stringify(json, null, 4);
-        if(debug) log.debug(sjson);
-
-        return message.reply({
-            content: debug ? `\`\`\`\n${sjson.length > 1993 ? sjson.substring(1990) + "..." : sjson}\`\`\`` : translation,
-            allowedMentions: { parse: [], repliedUser: false },
-        });
-    } catch(e) {
-        return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
     }
 });
 
@@ -115,6 +124,7 @@ const languages = {
     "ga": "Irish",
     "it": "Italian",
     "ja": "Japanese",
+    "jp": "Japanese", // non-standard
     "jw": "Javanese",
     "kn": "Kannada",
     "kk": "Kazakh",
