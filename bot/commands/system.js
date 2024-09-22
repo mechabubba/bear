@@ -8,6 +8,7 @@ const { humanizeDuration, humanizeSize, gitinfo, isAvailable } = require("../../
 const { MessageEmbed } = require("discord.js");
 const { DateTime } = require("luxon");
 const { accessSync, constants } = require("fs");
+const log = require("../../modules/log");
 
 module.exports = [
     new CommandBlock({
@@ -63,6 +64,12 @@ module.exports = [
         const repo = package.repository.url.split(".git")[0];
         const branch = execSync("git rev-parse --abbrev-ref HEAD").toString();
 
+        const commit_msg_header = `Commit [\`${gitinfo("%h")}\`](${repo}/commit/${gitinfo("%H")}) on branch [\`${branch}\`](${repo}/tree/${branch})\`\`\`\n`;
+        let commit_msg = execSync("git show -s HEAD").toString();
+        if ((commit_msg_header.length + commit_msg.length + 3) > 1024) {
+            commit_msg = commit_msg.slice(0, (1024 - commit_msg_header.length - (3 * 2))) + "...";
+        }
+
         embed.setTitle(title);
         embed.setColor(client.config.get("metadata.color"));
         embed.addFields(
@@ -99,9 +106,10 @@ module.exports = [
             {
                 name: "Latest Commit",
                 value: [
-                    `Commit [\`${gitinfo("%h")}\`](${repo}/commit/${gitinfo("%H")}) on branch [\`${branch}\`](${repo}/tree/${branch})\`\`\``,
-                    `${execSync("git show -s HEAD").toString()}\`\`\``
-                ].join("\n")
+                    commit_msg_header,
+                    commit_msg,
+                    "```"
+                ].join("")
             },
         );
         return message.reply({ embeds: [embed], allowedMentions: { repliedUser: false }});
