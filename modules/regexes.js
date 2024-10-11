@@ -48,3 +48,10 @@ module.exports.messageURL = /^https?:\/\/discord(?:app)?\.com\/channels\/(\d+)\/
  * Taken from https://urlregex.com/.
  */
 module.exports.URL = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[\-;:&=\+\$,\w]+@)?[A-Za-z0-9\.\-]+|(?:www\.|[\-;:&=\+\$,\w]+@)[A-Za-z0-9\.\-]+)((?:\/[\+~%\/\.\w\-_]*)?\??(?:[\-\+=&;%@\.\w_]*)#?(?:[\.\!\/\\](\w*)))?)/;
+
+/**
+ * Matches an IPv4 IP.
+ * 
+ * Taken from https://stackoverflow.com/a/36760050/17188891.
+ */
+module.exports.IPv4 = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$/;

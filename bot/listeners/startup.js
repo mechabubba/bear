@@ -25,6 +25,15 @@ module.exports = new ListenerBlock({
         log.info(`Added the bot's owner "${owner}" to the hosts user group.`);
     }
 
+    // Remove all commands dependant on non-existing packages.
+    client.commands.cache.forEach((cmd, id, map) => {
+        const unmet = cmd.unmetDependencies();
+        if (unmet.length > 0) {
+            log.warn(`Unloading command "${cmd.firstName}" for having unmet dependencies; ${unmet.join(", ")}`);
+            client.commands.unload(cmd);
+        }
+    });
+
     // Notify the channel log of liveliness.
     const clogging = client.config.get("commands.channellogging");
     if(clogging.enabled) {

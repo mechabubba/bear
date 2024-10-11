@@ -1,5 +1,4 @@
 const CommandBlock = require("../../modules/CommandBlock");
-const log = require("../../modules/log");
 const { isAvailable } = require("../../modules/miscellaneous");
 const fs = require("fs");
 const os = require("os");
@@ -24,6 +23,7 @@ module.exports = [
         names: ["fortune"],
         description: "Get a fortune.\n\nRelies on [cowsay](https://salsa.debian.org/debian/cowsay) and [fortune-mod](https://github.com/shlomif/fortune-mod).",
         usage: "(cowfile), list",
+        dependencies: ["fortune", "cowsay"]
     }, function(client, message, content, [cowfile, ...args]) {
         if (cowfile && !cowfiles.includes(cowfile)) {
             if (cowfile == "list") {
@@ -80,11 +80,7 @@ const cmd = (client, message, content, _, is_sh = true) => {
 }
 
 // Ran on command initialization.
-if (!isAvailable("fortune") || !isAvailable("cowsay")) {
-    log.warn("Either cowsay or fortune wasn't found on your path; until either of these are accessible, the `fortune` command will be unavailable. Run the `debug` bot command for more information.");
-    module.exports.splice(-1);
-} else {
+if (!isAvailable("cowsay")) {
     // In order: get list, cut off header line, and replace all newlines to strings.
-    cowfiles = execSync("cowsay -l | tail -n +2 | tr '\n' ' '").toString();
-    cowfiles = cowfiles.split(" ").slice(0, -1);
+    cowfiles = execSync("cowsay -l | tail -n +2 | tr '\n' ' '").toString().split(" ").slice(0, -1);
 }

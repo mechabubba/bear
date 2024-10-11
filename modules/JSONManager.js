@@ -58,7 +58,7 @@ class JSONManager {
 
         const _hash = hash(this.data);
         if(this._prevHash == _hash) {
-            if(this.options.verbose) log.warn("Object has not changed since last save; not doing anything.");
+            if(this.options.verbose) log.info("Object has not changed since last save; not doing anything.");
             return;
         }
         this._prevHash = _hash;
@@ -87,14 +87,14 @@ class JSONManager {
 
         i.duration ??= 300000; // 5 minute default.
         this.interval = setInterval(() => {
-            if(this.options.verbose) log.warn(`Attempting to save file ${path.basename(this.filepath)}...`);
+            if(this.options.verbose) log.info(`Attempting to save file ${path.basename(this.filepath)}...`);
             this.save();
         }, i.duration);
     }
 
     open() {
         if(this.ready && this.options.safety) {
-            if(this.options.verbose) log.warn("Attempting to reload the file while safetys are in place! Set `options.safety` to false to do this.");
+            if(this.options.verbose) log.warn("Attempting to reload the file while safeties are in place! Set `options.safety` to false to do this.");
             return;
         }
 

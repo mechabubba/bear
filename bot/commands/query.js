@@ -2,8 +2,7 @@ const dns = require("dns").promises;
 const { MessageEmbed, Util } = require("discord.js");
 const query = require("source-server-query");
 const CommandBlock = require("../../modules/CommandBlock");
-
-const ipv4 = /^((25[0-5]|(2[0-4]|1\d|[1-9]|)\d)(\.(?!$)|$)){4}$/; // https://stackoverflow.com/a/36760050/17188891
+const { IPv4 } = require("../../modules/regexes");
 
 module.exports = new CommandBlock({
     names: ["query", "q", "srcds"],
@@ -30,7 +29,7 @@ module.exports = new CommandBlock({
 
     const vanity = ip + (port == 27015 ? "" : `:${port}`);
 
-    if(!ipv4.test(ip)) {
+    if(!IPv4.test(ip)) {
         try {
             ip = await resolveHostname(ip);
         } catch(e) {

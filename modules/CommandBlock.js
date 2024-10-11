@@ -1,5 +1,5 @@
 const BaseBlock = require("./BaseBlock");
-const { isArrayOfStrings, isPermissionResolvable } = require("./miscellaneous");
+const { isArrayOfStrings, isPermissionResolvable, isAvailable } = require("./miscellaneous");
 const { has, defaultsDeep, isNil, isArray, isPlainObject, isFunction, isString, isBoolean } = require("lodash");
 const log = require("./log");
 const { defaultCommandData } = require("./defaultData");
@@ -205,6 +205,43 @@ class CommandBlock extends BaseBlock {
     /**
      * @param {Discord.Message} message
      * @returns {boolean}
+     * @todo this is a little scuffed, needs to be cleaned up. shouldn't rely on the Message class.
+     */
+    checkGuildStatus(message) {
+        if (isString(this.guilds)) {
+            if(this.guilds === message.guild.id) return true;
+            return false;
+        } else if (isArray(this.guilds)) {
+            for(const guildID of this.guilds) {
+                if(guildID === message.guild.id) return true;
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Returns a list of unmet dependencies.
+     * @returns {[string]} A list of unmet dependencies.
+     */
+    unmetDependencies() {
+        const unmet = [];
+        if (isString(this.dependencies)) {
+            if(!isAvailable(this.dependencies)) {
+               unmet.push(this.dependencies);
+            }
+        } else if (isArray(this.dependencies)) {
+            for(const dependency of this.dependencies) {
+                if(!isAvailable(dependency)) unmet.push(dependency);
+            }
+        }
+        return unmet;
+    }
+
+    /**
+     * @param {Discord.Message} message
+     * @returns {boolean}
      */
     checkLocked(message) {
         const client = message.client;
@@ -276,6 +313,8 @@ class CommandBlock extends BaseBlock {
         }
         if (has(data, "nsfw") && !isNil(data.nsfw)) if (!isBoolean(data.nsfw)) throw new TypeError("CommandBlock#nsfw must be a boolean.");
         if (has(data, "locked") && !isNil(data.locked)) if (!isBoolean(data.locked) && !isString(data.locked) && !isArrayOfStrings(data.locked)) throw new TypeError("CommandBlock#locked must be a boolean, string, or an Array of strings.");
+        if (has(data, "guilds") && !isNil(data.guilds)) if (!isString(data.guilds) && !isArrayOfStrings(data.guilds)) throw new TypeError("CommandBlock#guilds must be a string or an Array of strings.");
+        if (has(data, "dependencies") && !isNil(data.dependencies)) if (!isString(data.dependencies) && !isArrayOfStrings(data.dependencies)) throw new TypeError("CommandBlock#dependencies must be a string or an Array of strings.");
         if (has(data, "clientPermissions") && !isNil(data.clientPermissions)) {
             if (isArray(data.clientPermissions)) {
                 for (const value of data.clientPermissions) {

@@ -1,15 +1,14 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const { spawn, execSync } = require("child_process");
-const { accessSync, constants } = require("fs");
-const { Util, MessageAttachment } = require("discord.js");
-const log = require("../../modules/log");
-const { isAvailable } = require("../../modules/miscellaneous");
+const { MessageAttachment } = require("discord.js");
 
 module.exports = [
     new CommandBlock({
         names: ["latex"],
         description: "*Tries* to render a string of latex. Note that sometimes it will shit the bed without any discernable reason.\n\nThe renderer is from the standard texlive debian package, with images generated through a special binary based on [mathtex](https://github.com/mechabubba/mathtex) by Josh Forkosh Associates, Inc (modified by mechabubba).\n\nThis project is a work in progress.",
-        usage: "[LᴬTₑX]"
+        usage: "[LᴬTₑX]",
+        clientChannelPermissions: ["ATTACH_FILES"],
+        dependencies: ["/bin/mathtex", "latex", "dvipng"]
     }, function(client, message, content, args) {
         const opts = {
             defaultPackages: ["amsmath", "amsfonts", "amssymb", "color"], // Default packages (currently already handled by mathtex).
@@ -106,13 +105,4 @@ const packageinstalled = (name) => {
         return false;
     }
     return true;
-}
-
-// Check dependencies.
-if (!isAvailable("latex") || !isAvailable("dvipng")) {
-    log.warn("Either latex or dvipng wasn't found on your path; until either of these are accessible, the `latex` command will be unavailable. Run the `debug` bot command for more information.");
-    module.exports.splice(-1);
-} else if (!isAvailable("/bin/mathtex")) {
-    log.warn("A mathtex binary wasn't found in the bots bin folder; the `latex` command will be unavailable until this is compiled and installed.");
-    module.exports.splice(-1);
 }

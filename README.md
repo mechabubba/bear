@@ -12,14 +12,14 @@ bear is a modified fork of [sandplate](https://github.com/06000208/sandplate) 0.
 ## Installing
 1. `git clone https://github.com/mechabubba/bear.git`.
 2. Enter the folder and `npm i`.
-3. Install a bunch of shit;
+3. **Optional:** Install a bunch of shit;
 ```sh
-# for debian/raspbian users;
+# for debian users;
 $ sudo apt-get install fortune-mod cowsay texlive
-
-# you don't have to install these all at once! you can run the `debug` bot command to see what your setup supports and doesn't support. :)
+# do note that these applications should be on your users $PATH. they're all technically optional; check the `debug` command to see what your server does and doesn't support :)
 ```
-4. Compile [`mathtex`](https://github.com/mechabubba/mathtex) (name the binary `mathtex`) and throw that in the bin folder.
+4. **Optional:** Add the [Selenium Firefox driver](https://github.com/mozilla/geckodriver/releases/) to your PATH. This is used in the `sc` commmand.
+5. **Optional:** Compile [`mathtex`](https://github.com/mechabubba/mathtex) (name the binary `mathtex`) and throw that in the bin folder. This is used in the `latex` command.
 
 ## Launching
 Running `node index.js` initially will create a config.json file in the data folder. Throw a bot token in there under `client.token` and now you're cooking with gas.

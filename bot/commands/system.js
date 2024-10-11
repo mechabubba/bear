@@ -7,8 +7,6 @@ const CommandBlock = require("../../modules/CommandBlock");
 const { humanizeDuration, humanizeSize, gitinfo, isAvailable } = require("../../modules/miscellaneous");
 const { MessageEmbed } = require("discord.js");
 const { DateTime } = require("luxon");
-const { accessSync, constants } = require("fs");
-const log = require("../../modules/log");
 
 module.exports = [
     new CommandBlock({
@@ -16,8 +14,7 @@ module.exports = [
         description: "Returns some information that may be helpful in installing or debugging.\n\nGenerally, if its not entirely green, something is wrong.",
         locked: ["hosts"]
     }, function(client, message, content, args) {
-        // this command could be more elegant
-        // perhaps command blocks could have a "depends" property... and could loop through all blocks and test this way
+        /** @todo this command needs to be rewritten. command blocks now have a "dependencies" property, which should be reflected here instead of this jazz. */
         const msgs = [];
 
         msgs.push("Checking available packages...");
@@ -34,7 +31,8 @@ module.exports = [
 
         msgs.push("\nChecking for local binaries...");
         const bins = [
-            { name: "mathtex", is: isAvailable("/bin/mathtex"), for: ["latex"] }
+            { name: "mathtex",     is: isAvailable("/bin/mathtex"),     for: ["latex"] },
+            { name: "geckodriver", is: isAvailable("/bin/geckodriver"), for: ["screenshot"] }
         ];
 
         for (const bin of bins) {

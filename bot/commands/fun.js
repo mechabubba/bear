@@ -42,7 +42,7 @@ module.exports = [
         clientChannelPermissions: ["ATTACH_FILES"],
     }, async function(client, message, content, [font, ...args]) {
         if(!content) return message.reply(`${client.reactions.negative.emote} You must input a piece of text to render!`);
-        
+
         const text = args.join(" ");
         if(text.length > cooltext_settings.charlimit) return message.reply(`${client.reactions.negative.emote} There is a character limit of ${cooltext_settings.charlimit} per image.`);
 
@@ -87,6 +87,6 @@ module.exports = [
         usage: "[text]",
         clientChannelPermissions: ["ATTACH_FILES"]
     }, async function(client, message, content, args) {
-        return client.commands.runByName("cooltext", message, "burning", ["burning", ...args]);
+        return client.commands.runByName("cooltext", message, null, ["burning", ...args]);
     })
 ];

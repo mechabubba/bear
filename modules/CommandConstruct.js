@@ -118,6 +118,10 @@ class CommandConstruct extends BaseConstruct {
                 this.client.emit("nsfwRejection", command, message);
                 return;
             }
+            if(!command.checkGuildStatus(message)) {
+                this.client.emit("lockedRejection", command, message); // @todo kinda scuffed, shouldn't use this emit. doesnt affect anything now but if this ever moves into bear this should be cleaned up.
+                return;
+            }
             if (!command.checkPermissions(message, command.clientPermissions, true, false)) {
                 this.client.emit("permissionRejection", command, message, command.clientPermissions, true, false);
                 return;
