@@ -1,4 +1,5 @@
 const path = require("path");
+const { Worker } = require("worker_threads");
 const CommandBlock = require("../../modules/CommandBlock");
 const { URL } = require("../../modules/regexes");
 const { MessageAttachment } = require("discord.js");
@@ -14,16 +15,22 @@ const opts = new Options()
     .addArguments("--driver-configuration", `webdriver-path=${webdriver_path}`)
     .setAcceptInsecureCerts(true);
 
+const driver = new Builder()
+    .forBrowser(Browser.FIREFOX)
+    .setFirefoxService(serviceBuilder)
+    .setFirefoxOptions(opts)
+    .build();
+
 module.exports = [
     new CommandBlock({
         names: ["screenshot", "sc"],
-        description: "Screenshots a webpage.",
+        description: "Screenshots a webpage.\n\nWork in progress; there are some bugs.",
         usage: "[URL]",
         clientChannelPermissions: ["ATTACH_FILES"],
         dependencies: "/bin/geckodriver"
     }, async (client, message, contents, [url, ...args]) => {
         if (!/^http[s]?:\/\//g.test(url)) {
-            url = "https://" + url;
+            url = "http://" + url;
         }
         if (!URL.test(url)) {
             return message.reply(`${client.reactions.negative.emote} The supplied text was not a URL!`);
@@ -38,15 +45,11 @@ module.exports = [
             b64 = Buffer.from(url).toString("base64");
         }
 
-        const driver = await new Builder()
-            .forBrowser(Browser.FIREFOX)
-            .setFirefoxService(serviceBuilder)
-            .setFirefoxOptions(opts)
-            .build();
-
         await driver.manage().window().setRect({ width: 1920, height: 1080 });
         try {
             const date_reached = Date.now();
+
+            message.channel.sendTyping();
             await driver.get(url)
             const sc = await driver.takeScreenshot();
 
@@ -54,8 +57,6 @@ module.exports = [
             return message.reply({ files: [attachment], allowedMentions: { repliedUser: false } });
         } catch(e) {
             return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``)  
-        } finally {
-            await driver.quit();
         }
     })
 ];
