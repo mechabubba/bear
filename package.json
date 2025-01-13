@@ -28,6 +28,7 @@
     "luxon": "^2.0.2",
     "node-fetch": "^2.7.0",
     "node-object-hash": "^2.3.10",
+    "openai": "^4.78.1",
     "seedrandom": "^3.0.5",
     "selenium-webdriver": "^4.21.0",
     "semver": "^7.3.7",

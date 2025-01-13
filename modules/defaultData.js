@@ -31,7 +31,9 @@
  * @property {EmojiIdentifierResolvable} metadata.reactions.offline Emoji representing the status of being offline.
  * @property {EmojiIdentifierResolvable} metadata.reactions.reminderalert Emoji used strictly for reminders.
  * @property {Object} keys Keys and sensitive stuff. Like the bot token, but for other websites!
- * @property {string} keys.wolfram_appid Wolfram App ID for the wolfram command.
+ * @property {string} keys.wolfram_appid Wolfram App ID for the `wolfram` command.
+ * @property {string} keys.steam_apikey Steam Web API key for the `steam` command.
+ * @property {string} keys.openai_apikey OpenAI API key for the `chatgpt` command.
  */
 module.exports.defaultConfig = {
     "client": {
@@ -72,6 +74,7 @@ module.exports.defaultConfig = {
     "secrets": {
         "wolfram_appid": null,
         "steam_apikey": null,
+        "openai_apikey": null,
     },
 };
 

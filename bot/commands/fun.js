@@ -1,6 +1,8 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const { sleep } = require("../../modules/miscellaneous");
+const { CircularBuffer } = require("../../modules/RandomStructs");
 const fetch = require("node-fetch");
+const OpenAI = require("openai");
 
 const ball_responses = ["As I see it, yes.", "Ask again later.", "Better not tell you now.", "Cannot predict now.", "Concentrate and ask again.", "Don't count on it.", "It is certain.", "It is decidedly so.", "Most likely.", "My reply is no.", "My sources say no.", "Outlook not so good.", "Outlook good.", "Reply hazy, try again.", "Signs point to yes.", "Very doubtful.", "Without a doubt.", "Yes.", "Yes - definitely.", "You may rely on it."];
 const cooltext_font_endpoints = require("../../data/cooltext_font_endpoints.json"); /** A list of fonts and font endpoints from cooltext.com. */
@@ -8,6 +10,13 @@ const cooltext_settings = {
     charlimit: 256, /** (Very arbitrary) character limit for each image. */
     cooldown: 500,  /** Cooldown in ms. */
 };
+
+const openai_queries = new CircularBuffer(20);
+const openai_system = {
+    role: "developer",
+    content: "You are a helpful assistant for a bot. Messages will come in as \"<name>/<chan_id> says: <thought>\", and you'll do your best to give an appropriate answer."
+};
+let openai = null;
 
 module.exports = [
     new CommandBlock({
@@ -83,10 +92,48 @@ module.exports = [
     }),
     new CommandBlock({
         names: ["burning"],
-        description: "Makes really awesome burning text, generated from https://cooltext.com. \n\nThis command is an alias of `cooltext burning`.",
+        description: "Makes really awesome burning text, generated from https://cooltext.com.\n\nThis command is an alias of `cooltext burning`.",
         usage: "[text]",
         clientChannelPermissions: ["ATTACH_FILES"]
     }, async function(client, message, content, args) {
         return client.commands.runByName("cooltext", message, null, ["burning", ...args]);
+    }),
+    new CommandBlock({
+        names: ["chatgpt", "gpt"],
+        description: "Ask something to ChatGPT.\n\nNote that the bot cannot parse attachments.",
+        usage: "[query]",
+    }, async (client, message, content, args) => {
+        let key = client.config.get(["secrets", "openai_apikey"]);
+        if (!key) return message.reply(`${client.reactions.negative.emote} No API key provided! Please set one in \`data/config.json\`.`);
+
+        if (!openai) openai = new OpenAI({ apiKey: key });
+        try {
+            /*
+            note: very naive implementation of this. trying to be token-efficient, but things could be efficient on the servers end.
+            one would want to have multiple queues of messages per user, per channel. for now, i'm feeding it the last 25 messages it got in total.
+            for what its worth, this bot doesn't get a lot of action. however this might change going forward. so future me, enjoy the work :)
+            */
+            const response = await openai.chat.completions.create({
+                model: "chatgpt-4o-latest",
+                messages: [
+                    openai_system,
+                    { role: 'user', content: `Previous interactions were;${openai_queries.data.map(x => "\n- " + x.identifier + " said: " + x)}`},
+                    { role: 'user', content: `${message.author.id}/${message.guild.id} says: ${content}` }
+                ]
+            });
+            const r = response.choices[0].message.content;
+            openai_queries.put({
+                identifier: `${message.author.username}/${message.guild.id}`,
+                content,
+            });
+            openai_queries.put({
+                identifier: `ChatGPT`,
+                content: r,
+            })
+            openai_queries.put(r)
+            return message.reply({ content: r, allowedMentions: { repliedUser: false } })
+        } catch(e) {
+            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
+        }
     })
 ];

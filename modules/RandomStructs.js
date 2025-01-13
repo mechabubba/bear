@@ -87,4 +87,46 @@ class TimedCache {
     }
 }
 
-module.exports = { TimedCache, TimedIntervalCache };
+/**
+ * CircularBuffer acts as a buffer that rolls around itself. Oldest data gets recycled.
+ */
+class CircularBuffer {
+    constructor(length, options = {}) {
+        this.length = length;
+        this.options = options;
+
+        this.rIndex = 0;
+        this.wIndex = 0;
+
+        this.data = [];
+    }
+
+    get() {
+        if (this.isEmpty())
+            return null;
+        let data = this.data[this.rIndex++];
+        this.rIndex = this.rIndex % this.length;
+        return data
+    }
+
+    put(data, override = false) {
+        if (this.isFull()) {
+            // If overridden, read index could inadvertantly be "overlapped". This is indicative by a "false" return code.
+            // Work with caution!
+            if (!override) return false;
+        }
+        this.data[this.wIndex++] = data;
+        this.wIndex = this.wIndex % this.length;
+        return true;
+    }
+
+    isFull() {
+        return (this.data.length == this.length ? true : false);
+    }
+
+    isEmpty() {
+        return (this.data.length ? false : true);
+    }
+}
+
+module.exports = { TimedCache, TimedIntervalCache, CircularBuffer };

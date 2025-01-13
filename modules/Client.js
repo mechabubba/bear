@@ -3,7 +3,7 @@ const CommandConstruct = require("./CommandConstruct");
 const EventConstruct = require("./EventConstruct");
 const ReminderEmitter = require("./ReminderEmitter");
 const Handler = require("./Handler");
-const { TimedIntervalCache } = require("./TimedCache"); 
+const { TimedIntervalCache } = require("./RandomStructs"); 
 const log = require("./log");
 
 const Discord = require("discord.js");
