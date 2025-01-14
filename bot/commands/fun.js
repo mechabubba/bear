@@ -14,7 +14,7 @@ const cooltext_settings = {
 const openai_queries = new CircularBuffer(20);
 const openai_system = {
     role: "developer",
-    content: "You are a helpful assistant for a bot. Messages will come in as \"<name>/<chan_id> says: <thought>\", and you'll do your best to give an appropriate answer."
+    content: "You are a helpful assistant for a bot. Messages will come in as \"<name>/<guild_id> says: <thought>\", and you'll do your best to give an appropriate answer. Please keep your responses within the scope of the users guild ID; don't include information from other guilds."
 };
 let openai = null;
 
@@ -109,7 +109,7 @@ module.exports = [
         if (!openai) openai = new OpenAI({ apiKey: key });
         try {
             /*
-            note: very naive implementation of this. trying to be token-efficient, but things could be efficient on the servers end.
+            note: very naive implementation of this. trying to be token-efficient, but things could be more efficient on the bots end.
             one would want to have multiple queues of messages per user, per channel. for now, i'm feeding it the last 25 messages it got in total.
             for what its worth, this bot doesn't get a lot of action. however this might change going forward. so future me, enjoy the work :)
             */
@@ -117,7 +117,7 @@ module.exports = [
                 model: "chatgpt-4o-latest",
                 messages: [
                     openai_system,
-                    { role: 'user', content: `Previous interactions were;${openai_queries.data.map(x => "\n- " + x.identifier + " said: " + x)}`},
+                    { role: 'user', content: `Previous interactions were;\n${openai_queries.data.map(x => "- " + x.identifier + " said: " + x.content).join("\n")}`},
                     { role: 'user', content: `${message.author.id}/${message.guild.id} says: ${content}` }
                 ]
             });
