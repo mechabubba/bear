@@ -65,6 +65,11 @@ module.exports = new CommandBlock({
         });
 
         /* eslint-disable curly */
+        if(command.names.length > 1) fields.push({
+            name: "Aliases",
+            value: command.names.slice(1).map(x => `\`${x}\``).join(", "),
+            inline: true,
+        })
         if(!command.channelTypes.includes("DM")) fields.push({
             name: "Direct Messages",
             value: "Disallowed",

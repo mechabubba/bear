@@ -11,10 +11,9 @@ const cooltext_settings = {
     cooldown: 500,  /** Cooldown in ms. */
 };
 
-const openai_queries = new CircularBuffer(20);
 const openai_system = {
     role: "developer",
-    content: "You are a helpful assistant for a bot. Messages will come in as \"<name>/<guild_id> says: <thought>\", and you'll do your best to give an appropriate answer. Please keep your responses within the scope of the users guild ID; don't include information from other guilds."
+    content: "You are an AI feature for a chatbot named \"bear\". Messages will come in as \"<name> writes: <thought>\", and you'll do your best to give an appropriate answer. You are also provided a small selection of previous messages for context; messages from you will be marked as \"*OpenAI\". Respond without replicating any prefixes or other structural formatting, unless explicitly required."
 };
 let openai = null;
 
@@ -99,39 +98,43 @@ module.exports = [
         return client.commands.runByName("cooltext", message, null, ["burning", ...args]);
     }),
     new CommandBlock({
-        names: ["chatgpt", "gpt"],
+        names: ["chatgpt", "gpt", "ai"],
         description: "Ask something to ChatGPT.\n\nNote that the bot cannot parse attachments.",
         usage: "[query]",
     }, async (client, message, content, args) => {
+        // getting everything in order
         let key = client.config.get(["secrets", "openai_apikey"]);
         if (!key) return message.reply(`${client.reactions.negative.emote} No API key provided! Please set one in \`data/config.json\`.`);
-
         if (!openai) openai = new OpenAI({ apiKey: key });
+        
+        // turning a mess into a smaller mess
+        let prev = { role: 'user' };
+        let queries = client.cookies[`openai_queries_${message.guild.id}`] ??= new CircularBuffer(20);
+        if (queries.isEmpty()) {
+            prev.content = "You have not interacted here previously.";
+        } else {
+            prev.content = `Here are your previous interactions;\n${queries.data.map(x => "- " + x.identifier + " wrote: " + x.content).join("\n")}`;
+        }
+
         try {
-            /*
-            note: very naive implementation of this. trying to be token-efficient, but things could be more efficient on the bots end.
-            one would want to have multiple queues of messages per user, per channel. for now, i'm feeding it the last 25 messages it got in total.
-            for what its worth, this bot doesn't get a lot of action. however this might change going forward. so future me, enjoy the work :)
-            */
             const response = await openai.chat.completions.create({
                 model: "chatgpt-4o-latest",
                 messages: [
                     openai_system,
-                    { role: 'user', content: `Previous interactions were;\n${openai_queries.data.map(x => "- " + x.identifier + " said: " + x.content).join("\n")}`},
-                    { role: 'user', content: `${message.author.id}/${message.guild.id} says: ${content}` }
+                    prev,
+                    { role: 'user', content: `${message.author.username} writes: ${content}` }
                 ]
             });
-            const r = response.choices[0].message.content;
-            openai_queries.put({
-                identifier: `${message.author.username}/${message.guild.id}`,
+            const resp = response.choices[0].message.content;
+            queries.put({
+                identifier: message.author.username,
                 content,
             });
-            openai_queries.put({
-                identifier: `ChatGPT`,
-                content: r,
-            })
-            openai_queries.put(r)
-            return message.reply({ content: r, allowedMentions: { repliedUser: false } })
+            queries.put({
+                identifier: `*OpenAI`,
+                content: resp,
+            });
+            return message.reply({ content: resp, allowedMentions: { repliedUser: false } })
         } catch(e) {
             return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
