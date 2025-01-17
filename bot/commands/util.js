@@ -1,6 +1,8 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const { WebhookClient } = require("discord.js");
 
+const sdate = new Date(1993, 8, 1); // The beginning of Eternal September. Month index starts at 0.
+
 /** @todo May want to look into how the bot reacts when it cant `message.delete()` or `message.react()` */
 module.exports = [
     new CommandBlock({
