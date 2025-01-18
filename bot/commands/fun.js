@@ -135,7 +135,7 @@ module.exports = [
                 content: resp,
             });
             return message.reply({
-                content: resp.length > 2000 ? resp.substring(1997) + "..." : resp,
+                content: resp.length > 2000 ? resp.substring(0, 1997) + "..." : resp,
                 allowedMentions: { parse: [], repliedUser: false },
             });
         } catch(e) {
