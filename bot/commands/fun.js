@@ -134,7 +134,10 @@ module.exports = [
                 identifier: `*OpenAI`,
                 content: resp,
             });
-            return message.reply({ content: resp, allowedMentions: { repliedUser: false } })
+            return message.reply({
+                content: resp.length > 2000 ? resp.substring(1997) + "..." : resp,
+                allowedMentions: { parse: [], repliedUser: false },
+            });
         } catch(e) {
             return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
