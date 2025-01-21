@@ -109,11 +109,11 @@ module.exports = [
         
         // turning a mess into a smaller mess
         let prev = { role: 'user' };
-        let queries = client.cookies[`openai_queries_${message.guild.id}`] ??= new CircularBuffer(20);
+        let queries = client.cookies[`openai_queries_${message.guild.id}`] ??= new CircularBuffer(30, { override: true });
         if (queries.isEmpty()) {
             prev.content = "You have not interacted here previously.";
         } else {
-            prev.content = `Here are your previous interactions;\n${queries.data.map(x => "- " + x.identifier + " wrote: " + x.content).join("\n")}`;
+            prev.content = `Here are your previous interactions;\n${queries.data_queue.map(x => "- " + x.identifier + " wrote: " + x.content).join("\n")}`;
         }
 
         try {

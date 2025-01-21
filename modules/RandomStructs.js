@@ -89,6 +89,7 @@ class TimedCache {
 
 /**
  * CircularBuffer acts as a buffer that rolls around itself. Oldest data gets recycled.
+ * Theres probably a better name for this out there...
  */
 class CircularBuffer {
     constructor(length, options = {}) {
@@ -109,15 +110,26 @@ class CircularBuffer {
         return data
     }
 
-    put(data, override = false) {
+    put(data) {
         if (this.isFull()) {
             // If overridden, read index could inadvertantly be "overlapped". This is indicative by a "false" return code.
             // Work with caution!
-            if (!override) return false;
+            if (!this.options.override) {
+                console.warn("Warning: Not putting data into structure due to `this.options.override` being false.");
+                return false;
+            }
         }
         this.data[this.wIndex++] = data;
         this.wIndex = this.wIndex % this.length;
         return true;
+    }
+
+    get data_queue() {
+        // Based on the location of wIndex, we can return an array that acts as a queue of most recently added messages.
+        // Most of this is stolen from https://stackoverflow.com/a/33451102.
+        let arr = [...this.data];
+        arr.push(...arr.splice(0, (this.wIndex % this.data.length + this.data.length) % this.data.length))
+        return arr
     }
 
     isFull() {
