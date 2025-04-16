@@ -41,6 +41,7 @@ Thumbs.db
 !**/data/.gitkeep
 !**/data/countries-states-cities.min.json
 !**/data/cooltext_font_endpoints.json
+!**/data/spook.lines
 **/temp/*
 !**/temp/.gitkeep
 **/logs/*

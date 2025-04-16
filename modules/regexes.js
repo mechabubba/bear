@@ -24,6 +24,16 @@ module.exports.alphabetic = /^[A-Za-z]+$/;
 module.exports.numeric = /^\d+$/;
 
 /**
+ * Numeric match up to (and a little bit over) the safe number limit. First group is the number.
+ */
+module.exports.numeric_safeish = /^0*([1-9]\d{0,16}|0)$/;
+
+/**
+ * Numeric match up to (and a little bit over) the safe number limit, except zero. First group is the number.
+ */
+module.exports.numeric_safeish_nonnull = /^0*([1-9]\d{0,16})$/;
+
+/**
  * Matches only characters in the ranges A-Z, a-z, and any digit character (0-9) from the beginning to the end of the string.
  */
 module.exports.alphanumeric = /^[A-Za-z\d]+$/;

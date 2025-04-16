@@ -1,3 +1,4 @@
+const fs = require('node:fs/promises');
 const ListenerBlock = require("../../modules/ListenerBlock");
 const log = require("../../modules/log");
 const Reminder = require("../../modules/Reminder");
@@ -34,20 +35,6 @@ module.exports = new ListenerBlock({
         }
     });
 
-    // Notify the channel log of liveliness.
-    const clogging = client.config.get("commands.channellogging");
-    if(clogging.enabled) {
-        const guild = await client.guilds.fetch(clogging.guild);
-        if(guild.available) {
-            const embed = new MessageEmbed()
-                .setTitle(`\uD83C\uDF89 Bot is now fully functional!`)
-                .setColor("#43B581")
-                .setFooter({ text: `${DateTime.now().toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}` });
-            const channel = guild.channels.cache.get(clogging.channel);
-            channel.send({ embeds: [embed] });
-        }
-    }
-
     // Set up client.reactions object, so we dont have to get it from the config every time.
     // Each reaction has an `emote` (safe for chat usage) and `id` (safe for internal usage) key.
     client.reactions = {};
@@ -76,6 +63,24 @@ module.exports = new ListenerBlock({
         }
         if(isEmpty(client.storage.get(["local", "reminders", userID]))) {
             client.storage.delete(["local", "reminders", userID]);
+        }
+    }
+
+    // other nonsense
+    const spook = await fs.readFile("data/spook.lines", { encoding: "ascii" });
+    client.cookies["spook"] = spook.split("\0").map(x => x.trim());
+
+    // Notify the channel log of liveliness.
+    const clogging = client.config.get("commands.channellogging");
+    if(clogging.enabled) {
+        const guild = await client.guilds.fetch(clogging.guild);
+        if(guild.available) {
+            const embed = new MessageEmbed()
+                .setTitle(`\uD83C\uDF89 Bot is now fully functional!`)
+                .setColor("#43B581")
+                .setFooter({ text: `${DateTime.now().toLocaleString(DateTime.DATETIME_MED_WITH_SECONDS)}` });
+            const channel = guild.channels.cache.get(clogging.channel);
+            channel.send({ embeds: [embed] });
         }
     }
 

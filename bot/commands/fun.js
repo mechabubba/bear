@@ -1,6 +1,7 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const { sleep } = require("../../modules/miscellaneous");
 const { CircularBuffer } = require("../../modules/RandomStructs");
+const { numeric_safeish_nonnull } = require("../../modules/regexes");
 const fetch = require("node-fetch");
 const OpenAI = require("openai");
 
@@ -141,5 +142,29 @@ module.exports = [
         } catch(e) {
             return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         }
+    }),
+    new CommandBlock({
+        names: ["spook", "mxspook"],
+        description: "Use this command to troll the NSA. Inspired by the [emacs command of the same name](<https://www.gnu.org/software/emacs/manual/html_node/emacs/Mail-Amusements.html>) as well as a [brilliant schizo](<http://www.cypherspace.org/adam/shirt/>).",
+        usage: "(words)",
+    }, async (client, message, content, [words = "16", ...args]) => {
+        if (!words.match(numeric_safeish_nonnull)[1]) {
+            return message.reply(`${client.reactions.negative.emote} Invalid input, must be a number.`);
+        }
+        words = parseInt(words);
+        if (words > 512) {
+            return message.reply(`${client.reactions.negative.emote} W-woah buddy, relax a bit.`);
+        }
+
+        let resp = []; 
+        for (let i = 0; i < words; i++) {
+            resp.push(client.cookies.spook[Math.floor(client.cookies.spook.length * Math.random())]);
+        }
+        resp = resp.join(" ");
+
+        return message.reply({
+            content: resp.length > 2000 ? resp.substring(0, 1997) + "..." : resp,
+            allowedMentions: { parse: [], repliedUser: false },
+        });
     })
 ];
