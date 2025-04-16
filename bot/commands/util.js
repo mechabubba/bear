@@ -19,8 +19,8 @@ module.exports = [
         usage: "(...text)",
         clientChannelPermissions: ["MANAGE_MESSAGES"],
     }, async function(client, message, content, args) {
-        await message.channel.send({ content: content || "** **", allowedMentions: { parse: [] } });
-        return message.delete();
+        await message.delete();
+        return await message.channel.send({ content: content || "** **", allowedMentions: { parse: [] } });
     }),
     new CommandBlock({
         names: ["wecho"],

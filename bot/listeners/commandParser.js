@@ -1,8 +1,6 @@
 const ListenerBlock = require("../../modules/ListenerBlock");
 const { isArray } = require("lodash");
 
-const log = require("../../modules/log");
-
 /**
  * @todo Abstract message parsing to it's own function
  * @todo Should access control for unknown and blocked users be moved to their own functions?
@@ -43,8 +41,6 @@ module.exports = new ListenerBlock({
     let prefixed = false;
     let chainableName = null;
 
-    log.debug("cool");
-
     let content = message.content.trim();
     const lowercase = content.toLowerCase();
     if (configuration.prefix) {
@@ -63,12 +59,8 @@ module.exports = new ListenerBlock({
         }
     }
     if (!prefixed) {
-        log.debug(`msg type: ${message.type}`);
-        log.debug(`is reply? ${message.type == "REPLY"}`);
-        //log.debug(`reply is: ${message.reference.messageId}`);
         if (message.type == "REPLY" && client.chains.has(message.reference.messageId)) {
             // part of a chain. no prefix, but set a var stating this is whats being chained.
-            log.debug(`reply is: ${message.reference.messageId}`);
             chainableName = client.chains.get(message.reference.messageId);
         }
         else if (!configuration.mentions) return;
@@ -77,16 +69,14 @@ module.exports = new ListenerBlock({
         else if (!RegExp(`^<@!?${client.user.id}>`).test(lowercase)) return;
         else content = content.substring(content.indexOf(">") + 1).trim();
     }
-    log.debug(content);
     if (!content.length) return;
 
     const args = content.split(/[\n\r\s]+/g);
     const name = chainableName || args.shift().toLowerCase();
-    content = content.slice(name.length).trim();
-
-    log.debug(`chainableName: ${chainableName}`);
-    log.debug(`name:          ${name}`);
-    log.debug(`args:          ${args}`);
+    if (!chainableName) {
+        // if we're extending a chainable command, don't trim the existing content
+        content = content.slice(name.length).trim();
+    }
 
     client.emit("commandParsed", name, message, content.length ? content : null, args);
     client.commands.runByName(name, message, content.length ? content : null, args);

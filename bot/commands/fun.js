@@ -143,7 +143,7 @@ module.exports = [
         } catch(e) {
             msg = await message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
         } finally {
-            client.chains.set(msg.id, this.firstName); /** @todo this is a horrible way of doing things. */
+            return msg;
         }
     })
 ];
