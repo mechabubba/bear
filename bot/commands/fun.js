@@ -102,6 +102,7 @@ module.exports = [
         names: ["chatgpt", "gpt", "ai"],
         description: "Ask something to ChatGPT.\n\nNote that the bot cannot parse attachments.",
         usage: "[query]",
+        chainable: true,
     }, async (client, message, content, args) => {
         // getting everything in order
         let key = client.config.get(["secrets", "openai_apikey"]);
@@ -117,6 +118,7 @@ module.exports = [
             prev.content = `Here are your previous interactions;\n${queries.data_queue.map(x => "- " + x.identifier + " wrote: " + x.content).join("\n")}`;
         }
 
+        let msg;
         try {
             const response = await openai.chat.completions.create({
                 model: "chatgpt-4o-latest",
@@ -135,12 +137,14 @@ module.exports = [
                 identifier: `*OpenAI`,
                 content: resp,
             });
-            return message.reply({
+            msg = await message.reply({
                 content: resp.length > 2000 ? resp.substring(0, 1997) + "..." : resp,
                 allowedMentions: { parse: [], repliedUser: false },
             });
         } catch(e) {
-            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
+            msg = await message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
+        } finally {
+            return msg;
         }
     }),
     new CommandBlock({

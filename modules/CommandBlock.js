@@ -312,6 +312,7 @@ class CommandBlock extends BaseBlock {
             if (!isArrayOfStrings(data.scope, false)) throw new TypeError("CommandBlock#scope must be an Array of strings.");
         }
         if (has(data, "nsfw") && !isNil(data.nsfw)) if (!isBoolean(data.nsfw)) throw new TypeError("CommandBlock#nsfw must be a boolean.");
+        if (has(data, "chainable") && !isNil(data.chainable)) if (!isBoolean(data.chainable)) throw new TypeError("CommandBlock#chainable must be a boolean.");
         if (has(data, "locked") && !isNil(data.locked)) if (!isBoolean(data.locked) && !isString(data.locked) && !isArrayOfStrings(data.locked)) throw new TypeError("CommandBlock#locked must be a boolean, string, or an Array of strings.");
         if (has(data, "guilds") && !isNil(data.guilds)) if (!isString(data.guilds) && !isArrayOfStrings(data.guilds)) throw new TypeError("CommandBlock#guilds must be a string or an Array of strings.");
         if (has(data, "dependencies") && !isNil(data.dependencies)) if (!isString(data.dependencies) && !isArrayOfStrings(data.dependencies)) throw new TypeError("CommandBlock#dependencies must be a string or an Array of strings.");

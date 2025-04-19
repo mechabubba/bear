@@ -87,6 +87,14 @@ class Client extends Discord.Client {
          * @type {TimedIntervalCache}
          */
         this.cmdlog = new TimedIntervalCache();
+
+        /**
+         * Temporary message chains.
+         * @type {TimedIntervalCache}
+         */
+        this.chains = new TimedIntervalCache({
+            tts: 1800000
+        });
     }
 }
 

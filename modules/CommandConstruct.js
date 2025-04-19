@@ -105,7 +105,7 @@ class CommandConstruct extends BaseConstruct {
      * @param {[string]} [args=[]]
      * @param {...*} [passThrough]
      */
-    run(id, message, content = null, args = [], ...passThrough) {
+    async run(id, message, content = null, args = [], ...passThrough) {
         if (!this.cache.has(id)) return log.warn(`Command id "${id}" isn't mapped to a command in the cache, cannot run`);
         /** @type {CommandBlock} */
         const command = this.cache.get(id);
@@ -143,9 +143,14 @@ class CommandConstruct extends BaseConstruct {
             this.client.emit("lockedRejection", command, message);
             return;
         }
-        // all good
+
+        // all good. note the `await` line - this is required.
+        // if a command func is async, it returns a promise, if its sync it doesn't. need to await the promise to get the message object.
         this.client.emit("commandUsed", command, message, content, args, ...passThrough);
-        command.run(message, content, args, ...passThrough);
+        const msg = await command.run(message, content, args, ...passThrough);
+        if (command.chainable) {
+            this.client.chains.set(msg.id, command.names[0]);
+        }
     }
 
     /**
