@@ -33,7 +33,7 @@ module.exports = new CommandBlock({
     // This is the shittiest solution ever... but it works!
     // Truth be told, I don't like Discords new additions to their platform, but I might be inclined to start using buttons just because their reaction API is the worst API on the fucking planet.
     // awaitReactions() is the worst function in discord.js.
-    if(output.deletable) {
+    if(output.deletable && message.channel.type !== "DM") {
         await sleep(500);
         await output.react(save);
         await sleep(10 * 1000); // Change this to how many seconds you want to wait before checking if we should save the output.
