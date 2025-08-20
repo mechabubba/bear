@@ -74,7 +74,9 @@ module.exports.defaultConfig = {
     "secrets": {
         "wolfram_appid": null,
         "steam_apikey": null,
-        "openai_apikey": null,
+        "ai_openai_apikey": null,
+        "ai_deepseek_apikey": null,
+        "listenbrainz_token": null,
     },
 };
 

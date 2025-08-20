@@ -12,11 +12,21 @@ const cooltext_settings = {
     cooldown: 500,  /** Cooldown in ms. */
 };
 
-const openai_system = {
-    role: "developer",
-    content: "You are an AI feature for a chatbot named \"bear\". Messages will come in as \"<name> writes: <thought>\", and you'll do your best to give an appropriate answer. You are also provided a small selection of previous messages for context; messages from you will be marked as \"*OpenAI\". Respond without replicating any prefixes or other structural formatting, unless explicitly required."
+const ai_system_prompt = {
+    role: "system",
+    content: `You are an AI feature for a chatbot named "${package.name}". Messages will come in as "<name> writes: <thought>", and you'll do your best to respond in an appropriate manner. You are also provided a small selection of previous messages for context; messages from you will be prefaced with a star \"*\" character. Respond without replicating any prefixes or other structural formatting, unless explicitly required.`
 };
-let openai = null;
+const ai_settings = {
+    OpenAI: {
+        __client: null,
+        __model: "chatgpt-4o-latest",
+    },
+    DeepSeek: {
+        __client: null,
+        __model: "deepseek-chat",
+        baseURL: "https://api.deepseek.com/v1",
+    },
+};
 
 module.exports = [
     new CommandBlock({
@@ -43,6 +53,14 @@ module.exports = [
     }, async function(client, message, content, args) {
         if(!content) return message.reply(`${client.reactions.negative.emote} You need to ask it something!`);
         return message.reply({ content: `\uD83C\uDFB1 ${ball_responses[Math.floor(Math.random() * ball_responses.length)]}`, allowedMentions: { repliedUser: false } }); // if you're reading this, im sorry for ruining the magic
+    }),
+    new CommandBlock({
+        names: ["2ball", "2"],
+        description: "Shakes a magic 2 ball.",
+        usage: "[query]",
+    }, async function(client, message, content, args) {
+        if(!content) return message.reply(`${client.reactions.negative.emote} You need to ask it something!`);
+        return message.reply({ content: `\uD83C\uDFB1 ${Math.random() > 0.5 ? "True" : "False"}`, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
         names: ["cooltext"],
@@ -96,7 +114,7 @@ module.exports = [
         usage: "[text]",
         clientChannelPermissions: ["ATTACH_FILES"]
     }, async function(client, message, content, args) {
-        return client.commands.runByName("cooltext", message, null, ["burning", ...args]);
+        return client.commands.runByName("cooltext", message, `burning ${content}`, ["burning", ...args]);
     }),
     new CommandBlock({
         names: ["chatgpt", "gpt", "ai"],
@@ -104,48 +122,15 @@ module.exports = [
         usage: "[query]",
         chainable: true,
     }, async (client, message, content, args) => {
-        // getting everything in order
-        let key = client.config.get(["secrets", "openai_apikey"]);
-        if (!key) return message.reply(`${client.reactions.negative.emote} No API key provided! Please set one in \`data/config.json\`.`);
-        if (!openai) openai = new OpenAI({ apiKey: key });
-        
-        // turning a mess into a smaller mess
-        let prev = { role: 'user' };
-        let queries = client.cookies[`openai_queries_${message.guild.id}`] ??= new CircularBuffer(30, { override: true });
-        if (queries.isEmpty()) {
-            prev.content = "You have not interacted here previously.";
-        } else {
-            prev.content = `Here are your previous interactions;\n${queries.data_queue.map(x => "- " + x.identifier + " wrote: " + x.content).join("\n")}`;
-        }
-
-        let msg;
-        try {
-            const response = await openai.chat.completions.create({
-                model: "chatgpt-4o-latest",
-                messages: [
-                    openai_system,
-                    prev,
-                    { role: 'user', content: `${message.author.username} writes: ${content}` }
-                ]
-            });
-            const resp = response.choices[0].message.content;
-            queries.put({
-                identifier: message.author.username,
-                content,
-            });
-            queries.put({
-                identifier: `*OpenAI`,
-                content: resp,
-            });
-            msg = await message.reply({
-                content: resp.length > 2000 ? resp.substring(0, 1997) + "..." : resp,
-                allowedMentions: { parse: [], repliedUser: false },
-            });
-        } catch(e) {
-            msg = await message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
-        } finally {
-            return msg;
-        }
+        return ai_cmd(client, message, content, args, "OpenAI");
+    }),
+    new CommandBlock({
+        names: ["deepseek", "ds"],
+        description: "Ask something to DeepSeek.\n\nNote that the bot cannot parse attachments.",
+        usage: "[query]",
+        chainable: true,
+    }, async (client, message, content, args) => {
+        return ai_cmd(client, message, content, args, "DeepSeek");
     }),
     new CommandBlock({
         names: ["spook", "mxspook"],
@@ -170,5 +155,75 @@ module.exports = [
             content: resp.length > 2000 ? resp.substring(0, 1997) + "..." : resp,
             allowedMentions: { parse: [], repliedUser: false },
         });
+    }),
+    new CommandBlock({
+        names: ["listenbrainz", "lb"],
+        description: "Pull the most recent listening history from someones ListenBrainz account.",
+        usage: "[username]"
+    }, async (client, message, content, [username, ...args]) => {
+        let token = client.config.get(["secrets", "listenbrainz_token"]);
+        if (!token) return message.reply(`${client.reactions.negative.emote} No API key provided! Please set one in \`data/config.json\`.`)
+        if (!username) {
+            return message.reply(`${client.reactions.negative.emote} Provide a username to pull data from!`);
+        }
+        message.reply("soon...");
     })
 ];
+
+// turning a smaller mess into a bigger mess
+const ai_cmd = async (client, message, content, args, source = "mysteryman") => {
+    // getting everything in order
+    const getClient = (source) => {
+        const s = ai_settings[source];
+        if (s?.__client) return s.__client;
+
+        const key = client.config.get(["secrets", `ai_${source.toLowerCase()}_apikey`]);
+        if (!key) return undefined;
+
+        s.apiKey = key;
+        s.__client = new OpenAI(ai_settings[source]);
+        return s.__client;
+    }
+    const ai = getClient(source);
+    if (!ai) {
+        return message.reply(`${client.reactions.negative.emote} No ${source} API key provided! Please set one in \`data/config.json\`.`);
+    }
+
+    // turning a mess into a smaller mess
+    let prev = { role: 'user' };
+    let queries = client.cookies[`${source}_queries_${message.guild.id}`] ??= new CircularBuffer(30, { override: true });
+    if (queries.isEmpty()) {
+        prev.content = "You have not interacted here previously.";
+    } else {
+        prev.content = `Here are your previous interactions;\n${queries.data_queue.map(x => "- " + x.identifier + " wrote: " + x.content).join("\n")}`;
+    }
+
+    let msg;
+    try {
+        const response = await ai.chat.completions.create({
+            model: ai_settings[source].__model,
+            messages: [
+                ai_system_prompt,
+                prev,
+                { role: 'user', content: `${message.author.username} writes: ${content}` }
+            ]
+        });
+        const resp = response.choices[0].message.content;
+        queries.put({
+            identifier: message.author.username,
+            content,
+        });
+        queries.put({
+            identifier: `*${source}`,
+            content: resp,
+        });
+        msg = await message.reply({
+            content: resp.length > 2000 ? resp.substring(0, 1997) + "..." : resp,
+            allowedMentions: { parse: [], repliedUser: false },
+        });
+    } catch(e) {
+        msg = await message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
+    } finally {
+        return msg;
+    }
+}
