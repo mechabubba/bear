@@ -1,5 +1,6 @@
 const CommandBlock = require("../../modules/CommandBlock");
 const { WebhookClient } = require("discord.js");
+const { DateTime } = require("luxon");
 
 const sdate = new Date(1993, 8, 1); // The beginning of Eternal September. Month index starts at 0.
 
@@ -19,7 +20,9 @@ module.exports = [
         usage: "(...text)",
         clientChannelPermissions: ["MANAGE_MESSAGES"],
     }, async function(client, message, content, args) {
-        await message.delete();
+        if (message.channel.type !== "DM") {
+            await message.delete();
+        }
         return await message.channel.send({ content: content || "** **", allowedMentions: { parse: [] } });
     }),
     new CommandBlock({

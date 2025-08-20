@@ -197,7 +197,7 @@ class CommandBlock extends BaseBlock {
      * @returns {boolean}
      */
     checkNotSafeForWork(message) {
-        if (message.channel.type === "dm") return true;
+        if (message.channel.type === "DM") return true;
         if (!this.nsfw) return true;
         return message.channel.nsfw;
     }
@@ -272,7 +272,7 @@ class CommandBlock extends BaseBlock {
      * @returns {boolean}
      */
     checkPermissions(message, permissions, useClient = true, useChannel = false) {
-        if (message.channel.type === "dm") return true;
+        if (message.channel.type === "DM") return true;
         if (!permissions) return true;
         // Small hack to make my life easier, so we dont need to check these two perms every time.
         permissions = ["VIEW_CHANNEL", "SEND_MESSAGES", ...permissions];

@@ -17,7 +17,6 @@ const client = new Client({
     partials: [
         "USER",
         "CHANNEL",
-        "GUILD_MEMBER",
         "MESSAGE"
     ]
 });
