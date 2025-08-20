@@ -113,7 +113,7 @@ class CommandConstruct extends BaseConstruct {
             this.client.emit("channelTypeRejection", command, message);
             return;
         }
-        if (message.channel.type !== "dm") {
+        if (message.channel.type !== "DM") {
             if (!command.checkNotSafeForWork(message)) {
                 this.client.emit("nsfwRejection", command, message);
                 return;

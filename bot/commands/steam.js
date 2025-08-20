@@ -13,7 +13,7 @@ module.exports = [
     }, async function(client, message, content, [id]) {
         const apikey = client.config.get(["secrets", "steam_apikey"]);
         if(!apikey) {
-            return message.reply(`${client.reactions.negative.emote} You need to configure an API key.`);
+            return message.reply(`${client.reactions.negative.emote} No API key provided! Please set one in \`data/config.json\`.`);
         }
         if(!id) return message.reply(`${client.reactions.negative.emote} You must pass in a SteamID to get a users information.`);
 
