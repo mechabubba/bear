@@ -1,7 +1,7 @@
 const Client = require("./modules/Client");
 const log = require("./modules/log");
 const fse = require("fs-extra");
-const { Intents, PartialType, SnowflakeUtil } = require("discord.js");
+const { Intents, SnowflakeUtil } = require("discord.js");
 const { token } = require("./modules/regexes");
 
 // Instantiate client

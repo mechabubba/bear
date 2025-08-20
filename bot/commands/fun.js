@@ -1,3 +1,4 @@
+const package = require("../../package.json");
 const CommandBlock = require("../../modules/CommandBlock");
 const { sleep } = require("../../modules/miscellaneous");
 const { CircularBuffer } = require("../../modules/RandomStructs");
@@ -7,6 +8,7 @@ const OpenAI = require("openai");
 
 const ball_responses = ["As I see it, yes.", "Ask again later.", "Better not tell you now.", "Cannot predict now.", "Concentrate and ask again.", "Don't count on it.", "It is certain.", "It is decidedly so.", "Most likely.", "My reply is no.", "My sources say no.", "Outlook not so good.", "Outlook good.", "Reply hazy, try again.", "Signs point to yes.", "Very doubtful.", "Without a doubt.", "Yes.", "Yes - definitely.", "You may rely on it."];
 const cooltext_font_endpoints = require("../../data/cooltext_font_endpoints.json"); /** A list of fonts and font endpoints from cooltext.com. */
+const log = require("../../modules/log");
 const cooltext_settings = {
     charlimit: 256, /** (Very arbitrary) character limit for each image. */
     cooldown: 500,  /** Cooldown in ms. */
@@ -161,12 +163,46 @@ module.exports = [
         description: "Pull the most recent listening history from someones ListenBrainz account.",
         usage: "[username]"
     }, async (client, message, content, [username, ...args]) => {
-        let token = client.config.get(["secrets", "listenbrainz_token"]);
-        if (!token) return message.reply(`${client.reactions.negative.emote} No API key provided! Please set one in \`data/config.json\`.`)
         if (!username) {
-            return message.reply(`${client.reactions.negative.emote} Provide a username to pull data from!`);
+            //return message.reply(`${client.reactions.negative.emote} Provide a username to pull data from!`);
+            username = message.author.username; // try regardless...
         }
-        message.reply("soon...");
+
+        try {
+            const resp = await fetch(`https://api.listenbrainz.org/1/user/${encodeURIComponent(username)}/listens?count=1`);
+            const json = await resp.json();
+            if (json.error) {
+                throw new Error(json.error);
+            }
+            let lsn = json.payload.listens[0];
+            let trk = lsn.track_metadata;
+
+            /* the 30 second marker here is kinda bullshit. listenbrainz does not have a "currently listening" portion of their api. */
+            const cont = `[${lsn.user_name}](<https://listenbrainz.org/user/${lsn.user_name}/>) ${
+                (lsn.listened_at + 30) * 1000 > Date.now() ? "is listening" : "last listened"
+            } to **${
+                trk.mbid_mapping?.recording_mbid ? `[${trk.track_name}](<https://musicbrainz.org/recording/${trk.mbid_mapping.recording_mbid}>)` : trk.track_name
+            }** by **${
+                (trk.mbid_mapping && Array.isArray(trk.mbid_mapping.artists))
+                ? ((as) => {
+                    let c = "";
+                    for (const a of as) {
+                        c += `[${a.artist_credit_name}](<https://musicbrainz.org/artist/${a.artist_mbid}>)${a.join_phrase}`;
+                    }
+                    return c;
+                })(trk.mbid_mapping.artists)
+                : trk.artist_name
+            }** on **${
+                trk.release_name
+            }**.`;
+            return message.reply({
+                content: resp.length > 2000 ? cont.substring(0, 1997) + "..." : cont,
+                allowedMentions: { parse: [], repliedUser: false },
+            });
+        } catch(e) {
+            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``);
+        }
+
     })
 ];
 
@@ -190,8 +226,8 @@ const ai_cmd = async (client, message, content, args, source = "mysteryman") => 
     }
 
     // turning a mess into a smaller mess
-    let prev = { role: 'user' };
-    let queries = client.cookies[`${source}_queries_${message.guild.id}`] ??= new CircularBuffer(30, { override: true });
+    const prev = { role: 'user' };
+    let queries = client.cookies[`${source}_queries_${message.channel.type === "DM" ? message.author.id : message.guild.id}`] ??= new CircularBuffer(30, { override: true });
     if (queries.isEmpty()) {
         prev.content = "You have not interacted here previously.";
     } else {
