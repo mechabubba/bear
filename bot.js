@@ -1,7 +1,7 @@
 const Client = require("./modules/Client");
 const log = require("./modules/log");
 const fse = require("fs-extra");
-const { Intents, SnowflakeUtil } = require("discord.js");
+const { Intents, PartialType, SnowflakeUtil } = require("discord.js");
 const { token } = require("./modules/regexes");
 
 // Instantiate client
@@ -14,6 +14,12 @@ const client = new Client({
         Intents.FLAGS.DIRECT_MESSAGES,
         Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
     ],
+    partials: [
+        "USER",
+        "CHANNEL",
+        "GUILD_MEMBER",
+        "MESSAGE"
+    ]
 });
 
 // Token validation (config)
