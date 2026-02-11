@@ -11,7 +11,7 @@ module.exports = [
         description: "Screenshots a webpage. See the sent filename for information about the capture, such as the time captured and the URL encoded in base64.",
         usage: "[URL]",
         clientChannelPermissions: ["ATTACH_FILES"],
-        dependencies: "/bin/geckodriver"
+        dependencies: ["firefox", "/bin/geckodriver"]
     }, async (client, message, contents, [url, ...args]) => {
         if (!/^http[s]?:\/\//g.test(url)) {
             url = "http://" + url;

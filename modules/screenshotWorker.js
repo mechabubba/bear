@@ -4,17 +4,16 @@ const path = require("path");
 const { parentPort, workerData, isMainThread } = require("worker_threads");
 const fetch = require("node-fetch");
 const { Builder } = require("selenium-webdriver");
-const { Options } = require("selenium-webdriver/firefox");
+const { Options, ServiceBuilder } = require("selenium-webdriver/firefox");
 const { useragents } = require("./miscellaneous")
 
 if (isMainThread) process.exit(1);
 
 (async () => {
-    const webdriver_path = path.resolve(path.dirname(require.main.filename), "bin/geckodriver");
-
+    const webdriver_path = path.resolve(path.dirname(require.main.filename), "..", "bin", "geckodriver");
+    const service = new ServiceBuilder(webdriver_path);
     const opts = new Options()
         .addArguments("--headless")
-        .addArguments("--driver-configuration", `webdriver-path=${webdriver_path}`)
         .setAcceptInsecureCerts(true) // sure, whatever
 
     // Ignore non-html/pdf filetypes. Best way to determine if we should even try...
@@ -34,6 +33,7 @@ if (isMainThread) process.exit(1);
     try {
         driver = await new Builder()
             .forBrowser("firefox")
+            .setFirefoxService(service)
             .setFirefoxOptions(opts)
             .build();
 
@@ -45,6 +45,6 @@ if (isMainThread) process.exit(1);
     } catch (err) {
         parentPort.postMessage({ success: false, error: err.message });
     } finally {
-        await driver.quit(); // driver doesn't always exist.
+        if (driver) await driver.quit(); // driver doesn't always exist.
     }
 })();
