@@ -29,7 +29,7 @@ module.exports = [
                 return message.reply(`${client.reactions.negative.emote} Package \`${pkg}\` is not installed.`);
             }
             if(!opts.defaultPackages.includes(pkg) && !opts.newPackages.includes(pkg)) {
-                opts.packages.push(pkg);
+                opts.newPackages.push(pkg);
             }
             content = content.replace(new RegExp(`\\\\usepackage{${pkg}}`, "g"), "")
         }

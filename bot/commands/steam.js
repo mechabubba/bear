@@ -34,6 +34,9 @@ module.exports = [
 
         const resp = await fetch(`http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${apikey}&steamids=${steamID.getSteamID64()}`);
         const json = await resp.json();
+        if (!json.response.players.length) {
+            return message.reply(`${client.reactions.negative.emote} This user does not exist!`);
+        }
         const profile = json.response.players[0];
 
         const embed = new MessageEmbed()

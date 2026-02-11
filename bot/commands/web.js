@@ -1,30 +1,14 @@
-const path = require("path");
+const path = require("node:path");
+const { URL } = require("node:url");
 const { Worker } = require("worker_threads");
 const CommandBlock = require("../../modules/CommandBlock");
-const { URL } = require("../../modules/regexes");
+const rgx = require("../../modules/regexes");
 const { MessageAttachment } = require("discord.js");
-const { Builder, Browser } = require("selenium-webdriver");
-const { ServiceBuilder, Options } = require("selenium-webdriver/firefox");
-
-const webdriver_path = path.resolve(path.dirname(require.main.filename), "bin/geckodriver");
-
-// to point to local bin
-const serviceBuilder = new ServiceBuilder();
-const opts = new Options()
-    .addArguments("--headless")
-    .addArguments("--driver-configuration", `webdriver-path=${webdriver_path}`)
-    .setAcceptInsecureCerts(true);
-
-const driver = new Builder()
-    .forBrowser(Browser.FIREFOX)
-    .setFirefoxService(serviceBuilder)
-    .setFirefoxOptions(opts)
-    .build();
 
 module.exports = [
     new CommandBlock({
         names: ["screenshot", "sc"],
-        description: "Screenshots a webpage.\n\nWork in progress; there are some bugs.",
+        description: "Screenshots a webpage. See the sent filename for information about the capture, such as the time captured and the URL encoded in base64.",
         usage: "[URL]",
         clientChannelPermissions: ["ATTACH_FILES"],
         dependencies: "/bin/geckodriver"
@@ -32,7 +16,7 @@ module.exports = [
         if (!/^http[s]?:\/\//g.test(url)) {
             url = "http://" + url;
         }
-        if (!URL.test(url)) {
+        if (!rgx.URL.test(url)) {
             return message.reply(`${client.reactions.negative.emote} The supplied text was not a URL!`);
         }
 
@@ -45,18 +29,35 @@ module.exports = [
             b64 = Buffer.from(url).toString("base64");
         }
 
-        await driver.manage().window().setRect({ width: 1920, height: 1080 });
-        try {
+        // get ready to get thready
+        const worker = new Worker(
+            path.resolve(path.dirname(require.main.filename), "modules", "screenshotWorker.js"),
+            { workerData: { url } }
+        );
+
+        worker.once("message", async (res) => {
+            if (!res.success) {
+                if (/(about:neterror.*)\./.test(res.error)) {
+                    let ps = new URL(res.error.match(/(about:neterror.*)\./)[0]);
+                    res.error = `${ps.searchParams.get("d")} (${ps.searchParams.get("e")})`;
+                }
+                return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${res.error}\`\`\``);
+            }
+
             const date_reached = Date.now();
+            const attachment = new MessageAttachment(
+                Buffer.from(res.screenshot, "base64"),
+                `sc_${date_reached}_${b64}.png`
+            );
 
-            message.channel.sendTyping();
-            await driver.get(url)
-            const sc = await driver.takeScreenshot();
+            return message.reply({
+                files: [attachment],
+                allowedMentions: { repliedUser: false }
+            });
+        });
 
-            const attachment = new MessageAttachment(Buffer.from(sc, "base64"), `sc_${date_reached}_${b64}.png`);
-            return message.reply({ files: [attachment], allowedMentions: { repliedUser: false } });
-        } catch(e) {
-            return message.reply(`${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\``)  
-        }
+        worker.once("error", (e) => {
+            return message.reply(`${client.reactions.negative.emote} A worker error occured;\`\`\`\n${e.message}\`\`\``);
+        });
     })
 ];

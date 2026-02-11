@@ -1,6 +1,6 @@
 const package = require("../../package.json");
 const CommandBlock = require("../../modules/CommandBlock");
-const { sleep } = require("../../modules/miscellaneous");
+const { sleep, useragents } = require("../../modules/miscellaneous");
 const { CircularBuffer } = require("../../modules/RandomStructs");
 const { numeric_safeish_nonnull } = require("../../modules/regexes");
 const fetch = require("node-fetch");
@@ -8,7 +8,6 @@ const OpenAI = require("openai");
 
 const ball_responses = ["As I see it, yes.", "Ask again later.", "Better not tell you now.", "Cannot predict now.", "Concentrate and ask again.", "Don't count on it.", "It is certain.", "It is decidedly so.", "Most likely.", "My reply is no.", "My sources say no.", "Outlook not so good.", "Outlook good.", "Reply hazy, try again.", "Signs point to yes.", "Very doubtful.", "Without a doubt.", "Yes.", "Yes - definitely.", "You may rely on it."];
 const cooltext_font_endpoints = require("../../data/cooltext_font_endpoints.json"); /** A list of fonts and font endpoints from cooltext.com. */
-const log = require("../../modules/log");
 const cooltext_settings = {
     charlimit: 256, /** (Very arbitrary) character limit for each image. */
     cooldown: 500,  /** Cooldown in ms. */
@@ -33,17 +32,19 @@ const ai_settings = {
 module.exports = [
     new CommandBlock({
         names: ["2b2t"],
-        summary: "Gets the current queue length of 2b2t.",
-        description: "Gets the current queue length of 2b2t. Data fetched from [2b2t.io](https://2b2t.io/).",
+        summary: "Gets the current queue length on 2b2t.",
+        description: "Gets the current queue length on 2b2t. Data graciously provided from [api.2b2t.vc](https://api.2b2t.vc).",
     }, async function(client, message, content, args) {
         try {
-            const resp = await fetch("https://2b2t.io/api/queue?last=true");
+            const resp = await fetch("https://api.2b2t.vc/queue", {
+                headers: {
+                    "User-Agent": useragents.bear
+                }
+            });
             if(!resp.ok) throw new Error(resp.statusText);
 
             const json = await resp.json();
-            if(!json || !json[0] || !json[0][1]) throw new Error("Recieved malformed json.");
-
-            return message.reply({ content: `The 2b2t.org queue is **${json[0][1]}** users long.`, allowedMentions: { repliedUser: false } });
+            return message.reply({ content: `The 2b2t.org queue is **${json["regular"]}** users long (priority: **${json["prio"]}**).`, allowedMentions: { repliedUser: false } });
         } catch(e) {
             return message.reply({ content: `${client.reactions.negative.emote} An error occured;\`\`\`\n${e.message}\`\`\`` });
         }
@@ -54,11 +55,19 @@ module.exports = [
         usage: "[query]",
     }, async function(client, message, content, args) {
         if(!content) return message.reply(`${client.reactions.negative.emote} You need to ask it something!`);
-        return message.reply({ content: `\uD83C\uDFB1 ${ball_responses[Math.floor(Math.random() * ball_responses.length)]}`, allowedMentions: { repliedUser: false } }); // if you're reading this, im sorry for ruining the magic
+        return message.reply({ content: `\uD83C\uDFB1 ${ball_responses[Math.floor(Math.random() * ball_responses.length)]}`, allowedMentions: { repliedUser: false } });
+    }),
+    new CommandBlock({
+        names: ["3ball", "3"],
+        description: "Shakes a magic 3 ball?",
+        usage: "[query]",
+    }, async function(client, message, content, args) {
+        if(!content) return message.reply(`${client.reactions.negative.emote} You need to ask it something!`);
+        return message.reply({ content: `\uD83C\uDFB1 ${["Yes.", "No.", "Maybe."][Math.floor(Math.random() * 3)]}`, allowedMentions: { repliedUser: false } });
     }),
     new CommandBlock({
         names: ["2ball", "2"],
-        description: "Shakes a magic 2 ball.",
+        description: "Shakes a magic 2 ball?",
         usage: "[query]",
     }, async function(client, message, content, args) {
         if(!content) return message.reply(`${client.reactions.negative.emote} You need to ask it something!`);

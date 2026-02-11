@@ -80,7 +80,7 @@ const cmd = (client, message, content, _, is_sh = true) => {
 }
 
 // Ran on command initialization.
-if (!isAvailable("cowsay")) {
+if (isAvailable("cowsay")) {
     // In order: get list, cut off header line, and replace all newlines to strings.
     cowfiles = execSync("cowsay -l | tail -n +2 | tr '\n' ' '").toString().split(" ").slice(0, -1);
 }
