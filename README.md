@@ -20,6 +20,7 @@ $ sudo apt-get install fortune-mod cowsay texlive
 ```
 4. **Optional:** Add the [Selenium Firefox driver](https://github.com/mozilla/geckodriver/releases/) to your PATH. This is used in the `sc` commmand.
 5. **Optional:** Compile [`mathtex`](https://github.com/mechabubba/mathtex) (name the binary `mathtex`) and throw that in the bin folder. This is used in the `latex` command.
+6. **Optional:** Compile [DECtalk](https://github.com/dectalk/dectalk) or [DECtalkMini](https://github.com/dectalk/DECtalkMini), place the build contents in the `./bin/dectalk` folder. (right now english is the only supported language, and voices need to be input manually - will fix later :D)
 
 ## Launching
 Running `node index.js` initially will create a config.json file in the data folder. Throw a bot token in there under `client.token` and now you're cooking with gas.

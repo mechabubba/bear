@@ -32,7 +32,8 @@ module.exports = [
         msgs.push("\nChecking for local binaries...");
         const bins = [
             { name: "mathtex",     is: isAvailable("/bin/mathtex"),     for: ["latex"] },
-            { name: "geckodriver", is: isAvailable("/bin/geckodriver"), for: ["screenshot"] }
+            { name: "geckodriver", is: isAvailable("/bin/geckodriver"), for: ["screenshot"] },
+            { name: "say",         is: isAvailable("/bin/dectalk/say"), for: ["say"] }
         ];
 
         for (const bin of bins) {
