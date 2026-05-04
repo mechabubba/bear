@@ -9,22 +9,34 @@ const dectalk_pre_cmds = "[:phone on]";
 
 module.exports = [
     new CommandBlock({
-        names: ["dectalk", "talk", "say"],
-        description: "The bear can speak.\n\n(phonemes enabled by default)",
+        names: ["dectalk", "say"],
+        description: "The bear can speak. Speaks words in a voice channel via DECtalk.\n\nPhonemes enabled by default. aeiou",
         usage: "[text]",
         dependencies: ["/bin/dectalk/say"],
-        clientChannelPermissions: ["USE_EXTERNAL_EMOJIS", "ADD_REACTIONS"],
     }, async function(client, message, content, args) {
+        // small lambda because theres a lot of these here
+        const err = (x) => message.reply(`${client.reactions.negative.emote} ${x}`)
+
         if (!content) {
-            return await message.reply(`${client.reactions.negative.emote} You need to prompt the bot to say something.`);
+            return err(`You need to prompt the bot to say something.`);
         }
         if (message.channel.type === "DM") {
-            return await message.reply(`${client.reactions.negative.emote} This command is only available in guilds.`);
+            return err(`This command is only available in guilds.`);
         }
 
         const chan = message.member.voice.channel;
         if (!chan) {
-          return await message.reply(`${client.reactions.negative.emote} You must be in a voice channel to use this command.`);
+            return err(`You must be in a voice channel to use this command.`);
+        }
+        
+        if(!chan.viewable)  return err(`I cannot view this channel!`);
+        if(!chan.joinable)  return err(`I cannot join this channel!`);
+        if(!chan.speakable) return err(`I cannot speak in this channel!`);
+
+        // check if we're in another vc
+        const vc = message.guild.me.voice.channel;
+        if (vc && vc.id !== chan.id) {
+            return err(`I'm already in another voice channel!`);
         }
 
         // get the audio
@@ -32,11 +44,11 @@ module.exports = [
         try {
             let s = await spawnSync("./say", ["-p"], {
                 cwd: "./bin/dectalk",
-                input: content,
+                input: dectalk_pre_cmds + content,
             });
             buf = s.stdout;
         } catch(e) {
-            return await message.reply(`${client.reactions.negative.emote} You need to prompt the bot to say something.`);
+            return err(`You must prompt the bot to say something.`);
         }
 
         const st = Readable.from(buf);
@@ -62,12 +74,27 @@ module.exports = [
                 // failed, die in real life
                 connection.destroy();
                 player.stop();
+                log.debug("disconnected...")
             }
         });
 
+        // let it idle a bit...
         player.play(res);
-        player.on('error', (error) => log.error('audio player encountered an error:', error.message));
+        clearTimeout(client.cookies[`vc_idle_${chan.guildId}`]);
+
+        player.on('error', (error) => {
+            log.error('audio player encountered an error:', error.message)
+            connection.destroy();
+        });
         player.on(AudioPlayerStatus.Playing, () => {});
-        player.on(AudioPlayerStatus.Idle, () => connection.destroy()); // get outta town
+        player.on(AudioPlayerStatus.Idle, () => {
+            clearTimeout(client.cookies[`vc_idle_${chan.guildId}`]);
+            client.cookies[`vc_idle_${chan.guildId}`] = setTimeout(() => {
+                if (connection.state.status !== VoiceConnectionStatus.Destroyed) {
+                    // if we haven't already been disconnected in this timeframe, die
+                    connection.destroy();
+                }
+            }, 30_000)
+        });
     }),
 ];
